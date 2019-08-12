@@ -50,7 +50,7 @@ def create_argparse():
     parser.add_argument('-u', '--update', action='store_true', help='update repositories is they are alread checked out')
     parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
 
-    parser.add_argument('-c', '--clean', action='store_true', help='clean data from previous build')
+    #parser.add_argument('-c', '--clean', action='store_true', help='clean data from previous build')
     parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')
     
     # NOTE: testing will require 

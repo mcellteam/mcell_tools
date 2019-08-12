@@ -18,16 +18,15 @@ For the complete terms of the GNU General Public License, please see this URL:
 http://www.gnu.org/licenses/gpl-2.0.html
 """
 
-# NOTE: usage of a git library was considered, however, it was not clear whether they
-# really work on Windows and MacOS, therefore a simple wrapper functions were creted instead 
+# NOTE: usage of some a git library was considered, however, it was not clear whether they
+# really work on Windows and MacOS, therefore a simple wrapper functions were created instead 
 
 import os
 from utils import *
 
-
 BASE_URL = 'https://github.com/mcellteam/'
 REPOSITORIES = ['mcell'] # ..., 'nfsimCInterface'  ]
-MIN_GIT_VERSION= 'git version 1.9' # NOTE: compariason is rather basic now
+MIN_GIT_VERSION= 'git version 1.9' 
 ORIGIN = 'origin'
 
 def run_git_w_ascii_output(args, cwd):
@@ -45,6 +44,7 @@ def run_git_w_ec_check(args, cwd):
 
 def check_git_version():
     out = run_git_w_ascii_output(['--version'], os.getcwd())
+    # TODO: just a string compre for now..
     if out >= MIN_GIT_VERSION:
         log("Checked " + out + " - ok")
     else:
@@ -54,13 +54,20 @@ def check_git_version():
 def clone(name, opts):
     log("Repository '" + name + "' does not exist, cloning it...")
     run_git_w_ec_check(['clone', BASE_URL + name], opts.top_dir)
+    
+    # init and update submnodules if they are present
+    # will be removed once we get rid of submodules
+    repo_dir = os.path.join(opts.top_dir, name)
+    if (os.path.exists(os.path.join(repo_dir, '.gitmodules'))):
+        run_git_w_ec_check(['submodule', 'init'], repo_dir)
+        run_git_w_ec_check(['submodule', 'update'], repo_dir)
 
 
 def fetch(name, opts):
     run_git_w_ec_check(['fetch'], os.path.join(opts.top_dir, name))
 
 
-def checkout_branch(name, opts):
+def checkout(name, opts):
     log("Checking out branch '" + opts.branch + "'")
 
     repo_dir = os.path.join(opts.top_dir, name)
@@ -99,7 +106,7 @@ def get_or_update_repository(name, opts):
     fetch(name, opts)
     
     # checkout the required branch
-    checkout_branch(name, opts)
+    checkout(name, opts)
     
     # update 
     if opts.update:
