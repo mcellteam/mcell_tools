@@ -6,3 +6,5 @@ that will clone or update all the required repositories, build everything that i
 and assemble a blender bundle.
 The resulting bundle will then be used in testing.
  
+ 
+TODO: not sure if "build" is the best name...
