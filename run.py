@@ -38,9 +38,11 @@ class Options:
         self.update = False
         self.clean = False
         self.debug = False
+        self.only_build = False
+        
         self.branch = DEFAULT_BRANCH
         
-        # using cwd + '..' does not work with links as expected
+        # using os.getcwd() + '..' does not work with links as expected
         self.top_dir = os.path.dirname(get_cwd_no_link())
 
 
@@ -50,10 +52,11 @@ def create_argparse():
     parser.add_argument('-u', '--update', action='store_true', help='update repositories is they are alread checked out')
     parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
 
-    #parser.add_argument('-c', '--clean', action='store_true', help='clean data from previous build')
+    parser.add_argument('-c', '--clean', action='store_true', help='clean data from previous build')
     parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')
+
+    parser.add_argument('-o', '--only-build', action='store_true', help='run only build')
     
-    # NOTE: testing will require 
     parser.add_argument('-t', '--test', action='store_true', help='checkout and run tests')
     return parser
 
@@ -71,6 +74,8 @@ def process_opts():
         opts.clean = True
     if args.debug:
         opts.debug = True
+    if args.only_build:
+        opts.only_build = True
 
     return opts
     
@@ -82,13 +87,16 @@ if __name__ == "__main__":
     log("Top directory: " + opts.top_dir)
     
     # 1) get all the sources, update them optionally
-    repositories.get_or_update(opts)
+    if not opts.only_build:
+        repositories.get_or_update(opts)
     
     # 2) build
-    #build.build_all(opts)
+    build.build_all(opts)
     
-    # 3) test
-    #if opts.test:
+    # 3_ create bundle
+    
+    # 4) test
+    #if opts.test and not opts.only_build:
     #    test_all(opts)
     
     log("--- All tasks finished successfully ---")
