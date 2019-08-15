@@ -23,9 +23,10 @@ http://www.gnu.org/licenses/gpl-2.0.html
 
 import os
 from utils import *
+from settings import *
 
 BASE_URL = 'https://github.com/mcellteam/'
-REPOSITORIES = ['mcell'] # ..., 'nfsimCInterface'  ]
+REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER] # ..., 'nfsimCInterface'  ]
 MIN_GIT_VERSION= 'git version 1.9' 
 ORIGIN = 'origin'
 

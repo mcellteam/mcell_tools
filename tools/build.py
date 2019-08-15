@@ -23,35 +23,33 @@ import multiprocessing
 from utils import *
 from settings import *
 
-MCELL_BUILD = 'mcell_build'
-
 
 def build_mcell(work_dir, opts):
+
+    mcell_build_dir = os.path.join(work_dir, BUILD_DIR_MCELL)
     if opts.clean:
         # TODO
-        log("Dry clean of " + work_dir)
+        log("Dry clean of " + mcell_build_dir)
     
     
     log("Running mcell build...")
     
     # create working directory
-    mcell_build_dir = os.path.join(work_dir, MCELL_BUILD)
     if not os.path.exists(mcell_build_dir):
         os.makedirs(mcell_build_dir)
     
     # setup cmake build arguments
     cmake_cmd = ['cmake']
-    
-    cmake_cmd.append(os.path.join(opts.top_dir, 'mcell'))
+    cmake_cmd.append(os.path.join(opts.top_dir, REPO_NAME_MCELL))
     
     if opts.debug:
         build_type = 'Debug'
     else:
         build_type = 'Release'
+        if BUILD_OPTS_USE_LTO:
+            cmake_cmd.append('-DUSE_LTO=ON')
+        
     cmake_cmd.append('-DCMAKE_BUILD_TYPE=' + build_type)
-
-    if USE_LTO:
-        cmake_cmd.append('-DUSE_LTO=ON')
         
     # run cmake
     ec = run(cmake_cmd, mcell_build_dir)
@@ -66,7 +64,30 @@ def build_mcell(work_dir, opts):
     check_ec(ec, make_cmd)
         
 
+def build_cellblender(work_dir, opts):
+    
+    cellblender_build_dir = os.path.join(work_dir, BUILD_DIR_CELLBLENDER)
+    if opts.clean:
+        # TODO
+        log("Dry clean of " + cellblender_build_dir)
+
+    # create working directory
+    if not os.path.exists(cellblender_build_dir):
+        os.makedirs(cellblender_build_dir)
+        
+            # setup make build arguments
+    make_cmd = ['make', '-f', 'makefile', 'install', 
+         'INSTALL_DIR=' +  cellblender_build_dir ]
+    
+    # run make (in-source build)
+    ec = run(make_cmd, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, make_cmd)
+    
+
 def build_all(opts):
     work_dir = os.path.join(get_cwd_no_link(), WORK_DIR_NAME)
     build_mcell(work_dir, opts)
+    
+    # in-source build for now, should be fixed but it can work like this
+    build_cellblender(work_dir, opts)
     

@@ -24,6 +24,12 @@ This module contains diverse constants.
 
 WORK_DIR_NAME = 'work'
 
-USE_LTO = False  # higher performnce but slower build
+BUILD_OPTS_USE_LTO = False  # higher performnce but slower build
 
 BUILD_TIMEOUT = 600 # 10 minutes
+
+REPO_NAME_MCELL = 'mcell'
+REPO_NAME_CELLBLENDER = 'cellblender'
+
+BUILD_DIR_MCELL = 'build_mcell'
+BUILD_DIR_CELLBLENDER = 'build_cellblender' # this in fact an install dir for now 

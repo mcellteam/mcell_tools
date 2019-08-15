@@ -94,6 +94,7 @@ if __name__ == "__main__":
     build.build_all(opts)
     
     # 3_ create bundle
+    # later?
     
     # 4) test
     #if opts.test and not opts.only_build:
