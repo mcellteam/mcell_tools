@@ -23,7 +23,7 @@ import sys
 import subprocess
 import argparse
 
-sys.path.append(os.path.join(os.getcwd(), 'tools'))
+sys.path.append(os.path.join(os.getcwd(), 'scripts'))
 
 import repositories
 import build
