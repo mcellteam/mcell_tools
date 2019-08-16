@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Copyright (C) 2019 by
 The Salk Institute for Biological Studies and
@@ -23,10 +21,12 @@ http://www.gnu.org/licenses/gpl-2.0.html
 
 import os
 from utils import *
-from settings import *
+from build_settings import *
 
 BASE_URL = 'https://github.com/mcellteam/'
-REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER] # ..., 'nfsimCInterface'  ]
+REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, REPO_NAME_MCELL_TESTS] # ..., 'nfsimCInterface'  ]
+REPOSITORIES_ALLOWED_TO_BE_DIRTY = {REPO_NAME_MCELL_TESTS}
+
 MIN_GIT_VERSION= 'git version 1.9' 
 ORIGIN = 'origin'
 
@@ -77,15 +77,18 @@ def checkout(name, opts):
     branches = run_git_w_ascii_output(['branch', '-r'], repo_dir)
     full_name = ORIGIN + '/' + opts.branch 
     if not full_name in branches: # FIXME: improve check, we are just checking a substring
-        fatal_error("Error: remote branch '" + opts.branch + "' does not exit in repo '" + name + "'.")
+        fatal_error("Remote branch '" + opts.branch + "' does not exit in repo '" + name + "'.")
     
     # then we need to check that the branch is clean before we switch
     status = run_git_w_ascii_output(['status'], repo_dir)
     print(status)
     if not 'nothing to commit, working directory clean' in status:
-        fatal_error("Error: repository '" + name + "' is not clean. "
-                    "Either clean it manually or if you are sure that there are "
-                    "no changes that need to be kept run this script with '-c'.")
+        if not name in REPO_NAME_MCELL_TESTS:
+            fatal_error("Repository '" + name + "' is not clean. "
+                        "Either clean it manually or if you are sure that there are "
+                        "no changes that need to be kept run this script with '-c'.")
+        else:
+            warning("Repository '" + name + "' is not clean.")
     
     # finally we can switch
     run_git_w_ec_check(['checkout', opts.branch], repo_dir)
@@ -120,4 +123,6 @@ def get_or_update(opts):
     for name in REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
         get_or_update_repository(name, opts)
+    
+    
     

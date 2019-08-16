@@ -21,7 +21,7 @@ http://www.gnu.org/licenses/gpl-2.0.html
 import os
 import multiprocessing
 from utils import *
-from settings import *
+from build_settings import *
 
 
 def build_mcell(work_dir, opts):
@@ -62,6 +62,8 @@ def build_mcell(work_dir, opts):
     # run make 
     ec = run(make_cmd, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, make_cmd)
+    
+    return mcell_build_dir
         
 
 def build_cellblender(work_dir, opts):
@@ -83,11 +85,17 @@ def build_cellblender(work_dir, opts):
     ec = run(make_cmd, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, make_cmd)
     
+    return cellblender_build_dir
+
 
 def build_all(opts):
+    build_dirs = {}
+    
     work_dir = os.path.join(get_cwd_no_link(), WORK_DIR_NAME)
-    build_mcell(work_dir, opts)
+    build_dirs[REPO_NAME_MCELL] = build_mcell(work_dir, opts)
     
     # in-source build for now, should be fixed but it can work like this
-    build_cellblender(work_dir, opts)
+    build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(work_dir, opts)
+    
+    return build_dirs
     

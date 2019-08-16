@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Copyright (C) 2019 by
 The Salk Institute for Biological Studies and
@@ -101,7 +99,8 @@ def run(
     else:
         exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, sys.stdout)
 
-    log("Exit code: " + str(exit_code))
+    if verbose:
+        log("Exit code: " + str(exit_code))
     return exit_code
 
 
@@ -109,8 +108,13 @@ def log(msg):
     print("* " + msg)
 
 
+def warning(msg):
+    print("* Warning: " + msg)
+    sys.exit(1)    
+
+
 def fatal_error(msg):
-    print("* " + msg)
+    print("* Error: " + msg)
     sys.exit(1)    
    
 
