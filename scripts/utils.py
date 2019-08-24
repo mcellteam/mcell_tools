@@ -55,8 +55,12 @@ def run_with_ascii_output(cmd, cwd):
     
 
 
-def execute(cmd, cwd, timeout_sec, timeout_is_fatal, outfile):
-    proc = Popen(cmd, shell=False, cwd=cwd, stdout=outfile, stderr=subprocess.STDOUT)
+def execute(cmd, cwd, timeout_sec, timeout_is_fatal, outfile, shell=False):
+    if shell:
+        # for shell=True, the command must be a single string
+        cmd = str.join(" ", cmd)
+    
+    proc = Popen(cmd, shell=shell, cwd=cwd, stdout=outfile, stderr=subprocess.STDOUT)
     timer = Timer(timeout_sec, kill_proc, [proc, outfile, timeout_is_fatal])
     try:
         timer.start()
@@ -69,13 +73,14 @@ def execute(cmd, cwd, timeout_sec, timeout_is_fatal, outfile):
 
 def run(
         cmd, 
-        cwd=os.getcwd(), 
+        cwd=os.getcwd(),
         fout_name="", 
         append_path_to_output=False, 
         print_redirected_output=False, 
         timeout_sec=60,
         timeout_is_fatal = True, 
-        verbose=True
+        verbose=True,
+        shell=False 
         ):
     if verbose:
         log("    Executing: '" + str.join(" ", cmd) + "' " + str(cmd) + " in '" + cwd + "'")
@@ -91,13 +96,13 @@ def run(
             f.write(str.join(" ", cmd) + "\n")  # first item is the command being executed
             
             # run the actual command
-            exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, f)
+            exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, f, shell=shell)
 
         if (print_redirected_output):
             print_file(full_fout_path)
             
     else:
-        exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, sys.stdout)
+        exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, sys.stdout, shell=shell)
 
     if verbose:
         log("Exit code: " + str(exit_code))
@@ -106,15 +111,17 @@ def run(
 
 def log(msg):
     print("* " + msg)
+    sys.stdout.flush()
 
 
 def warning(msg):
     print("* Warning: " + msg)
-    sys.exit(1)    
+    sys.stdout.flush()
 
 
 def fatal_error(msg):
     print("* Error: " + msg)
+    sys.stdout.flush()
     sys.exit(1)    
    
 

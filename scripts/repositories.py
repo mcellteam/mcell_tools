@@ -83,12 +83,12 @@ def checkout(name, opts):
     status = run_git_w_ascii_output(['status'], repo_dir)
     print(status)
     if not 'nothing to commit, working directory clean' in status:
-        if not name in REPO_NAME_MCELL_TESTS:
+        if not opts.ignore_dirty and not name in REPOSITORIES_ALLOWED_TO_BE_DIRTY:
             fatal_error("Repository '" + name + "' is not clean. "
                         "Either clean it manually or if you are sure that there are "
                         "no changes that need to be kept run this script with '-c'.")
         else:
-            warning("Repository '" + name + "' is not clean.")
+            warning("Repository '" + name + "' is not clean, but this repo is allowed to be dirty.")
     
     # finally we can switch
     run_git_w_ec_check(['checkout', opts.branch], repo_dir)

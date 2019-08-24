@@ -24,9 +24,9 @@ from utils import *
 from build_settings import *
 
 
-def build_mcell(work_dir, opts):
+def build_mcell(opts):
 
-    mcell_build_dir = os.path.join(work_dir, BUILD_DIR_MCELL)
+    mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
     if opts.clean:
         # TODO
         log("Dry clean of " + mcell_build_dir)
@@ -39,36 +39,36 @@ def build_mcell(work_dir, opts):
         os.makedirs(mcell_build_dir)
     
     # setup cmake build arguments
-    cmake_cmd = ['cmake']
-    cmake_cmd.append(os.path.join(opts.top_dir, REPO_NAME_MCELL))
+    cmd_cmake = ['cmake']
+    cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_MCELL))
     
     if opts.debug:
         build_type = 'Debug'
     else:
         build_type = 'Release'
         if BUILD_OPTS_USE_LTO:
-            cmake_cmd.append('-DUSE_LTO=ON')
+            cmd_cmake.append('-DUSE_LTO=ON')
         
-    cmake_cmd.append('-DCMAKE_BUILD_TYPE=' + build_type)
+    cmd_cmake.append('-DCMAKE_BUILD_TYPE=' + build_type)
         
     # run cmake
-    ec = run(cmake_cmd, mcell_build_dir)
-    check_ec(ec, cmake_cmd)
+    ec = run(cmd_cmake, mcell_build_dir)
+    check_ec(ec, cmd_cmake)
     
     # setup make build arguments
-    make_cmd = ['make']
-    make_cmd.append('-j' + str(int(multiprocessing.cpu_count()/2))) 
+    cmd_make = ['make']
+    cmd_make.append('-j' + str(int(multiprocessing.cpu_count()/2))) 
     
     # run make 
-    ec = run(make_cmd, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, make_cmd)
+    ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_make)
     
     return mcell_build_dir
         
 
-def build_cellblender(work_dir, opts):
+def build_cellblender(opts):
     
-    cellblender_build_dir = os.path.join(work_dir, BUILD_DIR_CELLBLENDER)
+    cellblender_build_dir = os.path.join(opts.work_dir, BUILD_DIR_CELLBLENDER)
     if opts.clean:
         # TODO
         log("Dry clean of " + cellblender_build_dir)
@@ -78,12 +78,12 @@ def build_cellblender(work_dir, opts):
         os.makedirs(cellblender_build_dir)
         
             # setup make build arguments
-    make_cmd = ['make', '-f', 'makefile', 'install', 
+    cmd_make = ['make', '-f', 'makefile', 'install', 
          'INSTALL_DIR=' +  cellblender_build_dir ]
     
     # run make (in-source build)
-    ec = run(make_cmd, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, make_cmd)
+    ec = run(cmd_make, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_make)
     
     return cellblender_build_dir
 
@@ -91,11 +91,10 @@ def build_cellblender(work_dir, opts):
 def build_all(opts):
     build_dirs = {}
     
-    work_dir = os.path.join(get_cwd_no_link(), WORK_DIR_NAME)
-    build_dirs[REPO_NAME_MCELL] = build_mcell(work_dir, opts)
+    build_dirs[REPO_NAME_MCELL] = build_mcell(opts)
     
     # in-source build for now, should be fixed but it can work like this
-    build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(work_dir, opts)
+    build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
     
     return build_dirs
     
