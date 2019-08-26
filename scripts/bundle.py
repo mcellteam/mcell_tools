@@ -72,6 +72,11 @@ def unpack_python(opts, python_dir):
     check_ec(ec, cmd)
 
 
+def print_python_gcc_message(python_subdir): 
+    log("Python build might fail with gcc 4.9.2, see https://stackoverflow.com/questions/46279671/compile-python-3-6-2-on-debian-jessie-segfaults-on-sharedmods")
+    log("Try to run 'make' and 'make install' in '" + python_subdir + "' manually.") 
+
+
 def build_python(opts, python_dir, blender_python_subdir):
     #archive_path = PYTHON_ARCHIVE_PATH
     
@@ -91,12 +96,16 @@ def build_python(opts, python_dir, blender_python_subdir):
     cmd_make = ['make', parallel_arg]
     # fails when shell=False, might take long time to build
     ec = run(cmd_make, cwd=python_subdir, timeout_sec=BUILD_TIMEOUT*10, shell=True)
+    if ec != 0:
+        print_python_gcc_message(python_subdir)
     check_ec(ec, cmd_make)
 
     # running make install does not install everything correctly
     cmd_make_install = ['make', 'install', parallel_arg]
     # fails when shell=False, might take long time to build
     ec = run(cmd_make_install, cwd=python_subdir, timeout_sec=BUILD_TIMEOUT*10, shell=True)
+    if ec != 0:
+        print_python_gcc_message(python_subdir)
     check_ec(ec, cmd_make_install)
 
 
