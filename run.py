@@ -45,7 +45,7 @@ class Options:
         self.ignore_dirty = False
         self.debug = False
         
-        self.do_update = False
+        self.do_repos = False
         self.do_build = False
         self.do_bundle = False
         self.do_test = False
@@ -57,9 +57,8 @@ class Options:
         self.work_dir = os.path.join(self.top_dir, REPO_NAME_MCELL_TOOLS, WORK_DIR_NAME)
 
     def __repr__(self):
-        return \
-            'Options: ' \
-            'do_bundle: ' + str(self.do_bundle)
+        attrs = vars(self)
+        return ", ".join("%s: %s" % item for item in attrs.items())
             
 
 def create_argparse():
@@ -72,9 +71,10 @@ def create_argparse():
 
     parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
 
-    parser.add_argument('-q', '--only-build', action='store_true', help='run only build')
-    parser.add_argument('-w', '--only-bundle', action='store_true', help='build only bundle')
-    parser.add_argument('-e', '--only-test', action='store_true', help='run only tests')
+    parser.add_argument('-q', '--do-repos', action='store_true', help='get repositories (done by default when none of "qwer" args are set)')
+    parser.add_argument('-w', '--do-build', action='store_true', help='run build (done by default when none of "qwer" args are set)')
+    parser.add_argument('-e', '--do-bundle', action='store_true', help='build bundle (done by default when none of "qwer" args are set)')
+    parser.add_argument('-r', '--do-test', action='store_true', help='run tests (done by default when none of "qwer" args are set)')
     return parser
 
 
@@ -98,10 +98,17 @@ def process_opts():
     if args.branch:
         opts.branch = args.branch
                 
-    opts.do_update = not args.only_build and not args.only_bundle and not args.only_test
-    opts.do_build = not args.only_bundle and not args.only_test
-    opts.do_bundle = not args.only_build and not args.only_test
-    opts.do_test = not args.only_build and not args.only_bundle
+    opts.do_repos = args.do_repos
+    opts.do_build = args.do_build
+    opts.do_bundle = args.do_bundle
+    opts.do_test = args.do_test
+    
+    # no specific task was set, do all
+    if not (opts.do_repos or opts.do_build or opts.do_bundle or opts.do_test):
+        opts.do_repos = True
+        opts.do_build = True
+        opts.do_bundle = True
+        opts.do_test = True
 
     return opts
     
@@ -129,7 +136,7 @@ if __name__ == "__main__":
     log("Top directory: " + opts.top_dir)
 
     # 1) get all the sources, update them optionally
-    if opts.do_update:
+    if opts.do_repos:
         repositories.get_or_update(opts)
     
     # 2) build

@@ -24,6 +24,15 @@ from utils import *
 from build_settings import *
 
 
+def get_cmake_build_type_arg(opts):
+    if opts.debug:
+        build_type = 'Debug'
+    else:
+        build_type = 'Release'
+
+    return '-DCMAKE_BUILD_TYPE=' + build_type
+
+
 def build_mcell(opts):
 
     mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
@@ -41,15 +50,11 @@ def build_mcell(opts):
     # setup cmake build arguments
     cmd_cmake = ['cmake']
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_MCELL))
-    
-    if opts.debug:
-        build_type = 'Debug'
-    else:
-        build_type = 'Release'
-        if BUILD_OPTS_USE_LTO:
-            cmd_cmake.append('-DUSE_LTO=ON')
-        
-    cmd_cmake.append('-DCMAKE_BUILD_TYPE=' + build_type)
+
+    cmd_cmake.append(get_cmake_build_type_arg(opts))
+
+    if BUILD_OPTS_USE_LTO:
+        cmd_cmake.append('-DUSE_LTO=ON')
         
     # run cmake
     ec = run(cmd_cmake, mcell_build_dir)
@@ -88,6 +93,46 @@ def build_cellblender(opts):
     return cellblender_build_dir
 
 
+def build_gamer(opts):
+    gamer_build_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
+    gamer_install_dir = os.path.join(opts.work_dir, INSTALL_DIR_GAMER)
+    if opts.clean:
+        # TODO
+        log("Dry clean of " + gamer_build_dir)
+        log("Dry clean of " + gamer_install_dir)
+    
+    
+    log("Running gamer build...")
+    
+    # create working directory
+    if not os.path.exists(gamer_build_dir):
+        os.makedirs(gamer_build_dir)
+    
+    # setup cmake build arguments
+    cmd_cmake = ['cmake']
+    cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_GAMER))
+    cmd_cmake.append(get_cmake_build_type_arg(opts))
+    cmd_cmake.append('-DCMAKE_INSTALL_PREFIX:PATH=' + gamer_install_dir)
+        
+    # library casc requires __has_cpp_attribute c++17 - disable it
+    # maybe we can check gcc versio nan enable it but let's keep it simple for now
+    cmd_cmake.append('-DCMAKE_CXX_FLAGS=-D\'__has_cpp_attribute(x)=0\'')
+        
+    # run cmake
+    ec = run(cmd_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_cmake)
+    
+    # setup make build arguments
+    cmd_make = ['make', 'install']
+    cmd_make.append('-j' + str(int(multiprocessing.cpu_count()/2))) 
+    
+    # run make 
+    ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_make)
+    
+    return gamer_install_dir
+        
+
 def build_all(opts):
     build_dirs = {}
     
@@ -95,6 +140,9 @@ def build_all(opts):
     
     # in-source build for now, should be fixed but it can work like this
     build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
+    
+    
+    build_gamer(opts)
     
     return build_dirs
     

@@ -71,6 +71,7 @@ def execute(cmd, cwd, timeout_sec, timeout_is_fatal, outfile, shell=False):
     return exit_code
 
 
+# can be simplified by using subprocess.run from Python 3.5
 def run(
         cmd, 
         cwd=os.getcwd(),

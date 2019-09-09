@@ -38,9 +38,12 @@ REPO_NAME_MCELL = 'mcell'
 REPO_NAME_CELLBLENDER = 'cellblender'
 REPO_NAME_MCELL_TESTS = 'mcell_tests'
 REPO_NAME_MCELL_TOOLS = 'mcell_tools'
+REPO_NAME_GAMER = 'gamer'
 
 BUILD_DIR_MCELL = 'build_mcell'
 BUILD_DIR_CELLBLENDER = 'build_cellblender' # this in fact an install dir for now
+BUILD_DIR_GAMER = 'build_gamer'
+INSTALL_DIR_GAMER = 'install_gamer'
 
 BLENDER_VERSION = '2.79' 
 BUILD_DIR_BLENDER = 'blender' #
