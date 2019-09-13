@@ -209,22 +209,24 @@ def create_bundle(opts):
     # clear target directory
     blender_dir = os.path.join(opts.work_dir, BUILD_DIR_BLENDER)
     
-    if os.path.exists(blender_dir):  # FIXME: create clean_dir function
-        log("Cleaning '" + blender_dir)
-        shutil.rmtree(blender_dir)
-    
-    # A) prepare blender directory with new python    
-    log("Checking for pre-built blender with python at '" + prebuilt_archive + "'.") 
-    if os.path.exists(prebuilt_archive):
-        unpack_prebuilt_blender_w_python(opts, prebuilt_archive)
-    else:
-        create_blender_w_python_from_scratch(opts, blender_dir, prebuilt_archive)
+    PREPARE_BLENDER_AND_PYTHON = False
+    if PREPARE_BLENDER_AND_PYTHON:
+        if os.path.exists(blender_dir):  # FIXME: create clean_dir function
+            log("Cleaning '" + blender_dir)
+            shutil.rmtree(blender_dir)
+        
+        # A) prepare blender directory with new python    
+        log("Checking for pre-built blender with python at '" + prebuilt_archive + "'.") 
+        if os.path.exists(prebuilt_archive):
+            unpack_prebuilt_blender_w_python(opts, prebuilt_archive)
+        else:
+            create_blender_w_python_from_scratch(opts, blender_dir, prebuilt_archive)
     
     # B) copy cellblender
     cellblender_dir = os.path.join(blender_dir, INSTALL_SUBDIR_CELLBLENDER)
     log("Installing cellblender to '" + cellblender_dir + "'.")
     shutil.copytree(
-        os.path.join(os.path.join(opts.work_dir), BUILD_DIR_CELLBLENDER),
+        os.path.join(os.path.join(opts.work_dir), BUILD_DIR_CELLBLENDER, REPO_NAME_CELLBLENDER),
         cellblender_dir,
         symlinks=True
     )

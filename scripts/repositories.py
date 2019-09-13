@@ -59,13 +59,6 @@ def check_git_version():
 def clone(name, opts, base_url):
     log("Repository '" + name + "' does not exist, cloning it...")
     run_git_w_ec_check(['clone', base_url + name], opts.top_dir)
-    
-    # init and update submnodules if they are present
-    # will be removed once we get rid of submodules
-    repo_dir = os.path.join(opts.top_dir, name)
-    if (os.path.exists(os.path.join(repo_dir, '.gitmodules'))):
-        run_git_w_ec_check(['submodule', 'init'], repo_dir)
-        run_git_w_ec_check(['submodule', 'update'], repo_dir)
 
 
 def fetch(name, opts):
@@ -83,6 +76,12 @@ def checkout(name, opts, branch):
     if not full_name in branches: # FIXME: improve check, we are just checking a substring
         fatal_error("Remote branch '" + branch + "' does not exit in repo '" + name + "'.")
     
+    # init and update submnodules if they are present
+    # will be removed once we get rid of submodules
+    if (os.path.exists(os.path.join(repo_dir, '.gitmodules'))):
+        run_git_w_ec_check(['submodule', 'init'], repo_dir)
+        run_git_w_ec_check(['submodule', 'update'], repo_dir)
+        
     # then we need to check that the branch is clean before we switch
     status = run_git_w_ascii_output(['status'], repo_dir)
     print(status)
