@@ -22,7 +22,6 @@ import os
 import sys
 import subprocess
 import argparse
-from conda_build._link import THIS_DIR
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(THIS_DIR, 'scripts'))
