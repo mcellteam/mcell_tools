@@ -76,17 +76,11 @@ def checkout(name, opts, branch):
     if not full_name in branches: # FIXME: improve check, we are just checking a substring
         fatal_error("Remote branch '" + branch + "' does not exit in repo '" + name + "'.")
     
-    # init and update submnodules if they are present
-    # will be removed once we get rid of submodules
-    if (os.path.exists(os.path.join(repo_dir, '.gitmodules'))):
-        run_git_w_ec_check(['submodule', 'init'], repo_dir)
-        run_git_w_ec_check(['submodule', 'update'], repo_dir)
-        
     # then we need to check that the branch is clean before we switch
     status = run_git_w_ascii_output(['status'], repo_dir)
     print(status)
-    if not 'nothing to commit, working directory clean' in status:
-        if not opts.ignore_dirty and not name in REPOSITORIES_ALLOWED_TO_BE_DIRTY:
+    if 'working directory clean' not in status and 'working tree clean' not in status:
+        if not opts.ignore_dirty and name not in REPOSITORIES_ALLOWED_TO_BE_DIRTY:
             fatal_error("Repository '" + name + "' is not clean. "
                         "Either clean it manually or if you are sure that there are "
                         "no changes that need to be kept run this script with '-c'.")
@@ -95,6 +89,12 @@ def checkout(name, opts, branch):
     
     # finally we can switch
     run_git_w_ec_check(['checkout', branch], repo_dir)
+
+    # init and update submnodules if they are present
+    # will be removed once we get rid of submodules
+    if (os.path.exists(os.path.join(repo_dir, '.gitmodules'))):
+        run_git_w_ec_check(['submodule', 'init'], repo_dir)
+        run_git_w_ec_check(['submodule', 'update'], repo_dir)
 
 
 def update(name, opts):

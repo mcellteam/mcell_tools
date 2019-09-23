@@ -22,6 +22,7 @@ import os
 import sys
 import subprocess
 import argparse
+from conda_build._link import THIS_DIR
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(THIS_DIR, 'scripts'))
@@ -33,10 +34,6 @@ import bundle
 
 from utils import log, fatal_error, get_cwd_no_link
 from build_settings import *
-
-sys.path.append(os.path.join(THIS_DIR, '..', 'mcell_tests'))
-import run_tests
-
 
 class Options:
     def __init__(self):
@@ -122,8 +119,13 @@ def check_prerequisites():
     
     
 def test_all(install_dirs):    
-    # running test within the same python instance
-    run_tests.run_tests(install_dirs)
+    # running testting as a new process
+    tests_path = os.path.join(THIS_DIR, '..', REPO_NAME_MCELL_TESTS)
+    test_cmd = [
+        PYTHON_SYSTEM_EXECUTABLE, 
+        os.path.join(tests_path, RUN_TESTS_SCRIPT)
+    ]
+    run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path)
 
 
 if __name__ == "__main__":

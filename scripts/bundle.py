@@ -112,7 +112,7 @@ def build_python(opts, python_dir, blender_python_subdir):
 def install_python_packages(opts, blender_python_subdir):
     for m in MODULES_TO_INSTALL:
         # Running ./pip3 install MeshPy fails with missing include, we need to run pip through python
-        cmd = [PYTHON_EXECUTABLE, '-m', 'pip', 'install', m]
+        cmd = [PYTHON_BLENDER_EXECUTABLE, '-m', 'pip', 'install', m]
         ec = run(cmd, cwd=os.path.join(blender_python_subdir, 'bin'), timeout_sec=BUILD_TIMEOUT*4, shell=True)
         check_ec(ec, cmd)   
 

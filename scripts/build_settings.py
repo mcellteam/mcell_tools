@@ -32,7 +32,8 @@ WORK_DIR_NAME = 'work'
 
 BUILD_OPTS_USE_LTO = False  # higher performnce but slower build
 
-BUILD_TIMEOUT = 600 # in seconds
+BUILD_TIMEOUT = 60*10 # in seconds
+TEST_ALL_TIMEOUT = 60*60# 1 hour
 
 REPO_NAME_MCELL = 'mcell'
 REPO_NAME_CELLBLENDER = 'cellblender'
@@ -61,7 +62,10 @@ BUILD_SUBDIR_BIN_PYTHON_DIR = 'bin/python3.5'
 BUILD_DIR_PYTHON = 'python'
 BUILD_SUBDIR_PYTHON = 'Python-3.5.3'
 
-PYTHON_EXECUTABLE = './python3.5'
+PYTHON_SYSTEM_EXECUTABLE = 'python'
+PYTHON_BLENDER_EXECUTABLE = './python3.5'
+
+RUN_TESTS_SCRIPT = 'run_tests.py'
 
 # might not be a correct path on Windows
 MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/data/mcell_build_infrastructure_data'
