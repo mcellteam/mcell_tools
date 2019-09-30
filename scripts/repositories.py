@@ -25,6 +25,11 @@ from build_settings import *
 
 BASE_URL = 'https://github.com/mcellteam/'
 REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, REPO_NAME_MCELL_TESTS] # ..., 'nfsimCInterface'  ]
+FORKED_REPOSITORIES = [REPO_NAME_NFSIM, REPO_NAME_NFSIMCINTERFACE]
+REPOSITORIES += FORKED_REPOSITORIES 
+
+FORKED_REPOSITORY_BRANCH_PREFIX = 'mcell_'
+
 
 MIN_GIT_VERSION= 'git version 1.9' 
 ORIGIN = 'origin'
@@ -42,7 +47,8 @@ def run_git_w_ascii_output(args, cwd):
 
 def run_git_w_ec_check(args, cwd):
     cmd = ['git']
-    cmd += args 
+    cmd += args
+    #print(str(cmd)) 
     ec = run(cmd, cwd)
     check_ec(ec, cmd) 
 
@@ -90,12 +96,6 @@ def checkout(name, opts, branch):
     # finally we can switch
     run_git_w_ec_check(['checkout', branch], repo_dir)
 
-    # init and update submnodules if they are present
-    # will be removed once we get rid of submodules
-    if (os.path.exists(os.path.join(repo_dir, '.gitmodules'))):
-        run_git_w_ec_check(['submodule', 'init'], repo_dir)
-        run_git_w_ec_check(['submodule', 'update'], repo_dir)
-
 
 def update(name, opts):
     log("Updating repository '" + name + "'.")
@@ -120,16 +120,41 @@ def get_or_update_repository(name, opts, base_url, branch):
         update(name, opts)
 
 
-def get_or_update(opts):
-    check_git_version()
-    
+def pull_repository(name, opts, base_url, branch):
+    run_git_w_ec_check(['pull'], os.path.join(opts.top_dir, name))
+
+
+def push_repository(name, opts, base_url, branch):
+    run_git_w_ec_check(['push'], os.path.join(opts.top_dir, name))
+
+
+def run_on_all_repositories(opts, function):
     for name in REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
-        get_or_update_repository(name, opts, BASE_URL, opts.branch)
+        
+        branch_name = opts.branch
+        if name in FORKED_REPOSITORIES:
+            branch_name = FORKED_REPOSITORY_BRANCH_PREFIX + branch_name
+        
+        function(name, opts, BASE_URL, branch_name)
     
-    # for gamer, we alwaya use the master branch
+    # for gamer, we always use the master branch
     # TODO: we might need to be making release branches, but let's stay with this solution for now
-    get_or_update_repository(REPO_NAME_GAMER, opts, GAMER_BASE_URL, GAMER_BRANCH) 
+    function(REPO_NAME_GAMER, opts, GAMER_BASE_URL, GAMER_BRANCH) 
+
+
+def get_or_update(opts):
+    check_git_version()
+    run_on_all_repositories(opts, get_or_update_repository)
     
+
+def pull(opts):
+    check_git_version()
+    run_on_all_repositories(opts, pull_repository)
+
+
+def push(opts):
+    check_git_version()
+    run_on_all_repositories(opts, push_repository)
     
     

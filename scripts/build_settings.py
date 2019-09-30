@@ -24,6 +24,30 @@ import os
 import platform
 from utils import *
 
+
+class Options:
+    def __init__(self):
+        self.update = False
+        self.clean = False
+        self.ignore_dirty = False
+        self.debug = False
+        
+        self.do_repos = False
+        self.do_build = False
+        self.do_bundle = False
+        self.do_test = False
+        
+        self.branch = DEFAULT_BRANCH
+        
+        # using os.getcwd() + '..' does not work with links as expected
+        self.top_dir = os.path.dirname(get_cwd_no_link())
+        self.work_dir = os.path.join(self.top_dir, REPO_NAME_MCELL_TOOLS, WORK_DIR_NAME)
+
+    def __repr__(self):
+        attrs = vars(self)
+        return ", ".join("%s: %s" % item for item in attrs.items())
+            
+            
 #DEFAULT_BRANCH='development'
 # FIXME: use the branch of the mcell_tools repo?
 DEFAULT_BRANCH='testing_infrastructure'
@@ -39,6 +63,8 @@ REPO_NAME_MCELL = 'mcell'
 REPO_NAME_CELLBLENDER = 'cellblender'
 REPO_NAME_MCELL_TESTS = 'mcell_tests'
 REPO_NAME_MCELL_TOOLS = 'mcell_tools'
+REPO_NAME_NFSIM = 'nfsim'
+REPO_NAME_NFSIMCINTERFACE = 'nfsimCInterface'
 REPO_NAME_GAMER = 'gamer'
 
 BUILD_DIR_MCELL = 'build_mcell'

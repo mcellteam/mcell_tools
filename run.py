@@ -34,29 +34,6 @@ import bundle
 from utils import log, fatal_error, get_cwd_no_link
 from build_settings import *
 
-class Options:
-    def __init__(self):
-        self.update = False
-        self.clean = False
-        self.ignore_dirty = False
-        self.debug = False
-        
-        self.do_repos = False
-        self.do_build = False
-        self.do_bundle = False
-        self.do_test = False
-        
-        self.branch = DEFAULT_BRANCH
-        
-        # using os.getcwd() + '..' does not work with links as expected
-        self.top_dir = os.path.dirname(get_cwd_no_link())
-        self.work_dir = os.path.join(self.top_dir, REPO_NAME_MCELL_TOOLS, WORK_DIR_NAME)
-
-    def __repr__(self):
-        attrs = vars(self)
-        return ", ".join("%s: %s" % item for item in attrs.items())
-            
-
 def create_argparse():
     parser = argparse.ArgumentParser(description='MCell & CellBlender build tool')
     # NOTE: maybe add verbosity level? - for now, all information is printed out 
