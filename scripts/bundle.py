@@ -30,6 +30,7 @@ from build_settings import *
 AUTOMATICALLY_ARCHIVE_BLENDER_W_PYTHON = True
 
 MODULES_TO_INSTALL = [
+    'pybind11',
     'requests',
     'numpy',
     'scipy',
@@ -187,18 +188,25 @@ def archive_resulting_bundle(opts, blender_dir):
 # called from run.py when testing is enabled
 # returns directory that points to locations where cellblender and 
 # mcell are installed
-def extract_resulting_bundle(opts, bundle_archive_path):    
+def extract_resulting_bundle(opts, bundle_archive_path):
+    
+    install_dir = os.path.join(opts.work_dir, TEST_BUNDLE_DIR)
+                 
+    if os.path.exists(install_dir):  
+        log("Cleaning '" + install_dir)
+        shutil.rmtree(install_dir)
+    os.makedirs(install_dir)
+            
     log("Unpacking resulting archive for testing '" + bundle_archive_path + "'.")
     # TODO: better versioning, e.g. from argument
-    cmd = ['tar', '-xzf', bundle_archive, TEST_BUNDLE_DIR]
-    # must be run from work_dir to avoid having full paths in the archive
-    ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
+    cmd = ['tar', '-xzf', bundle_archive_path]
+    
+    ec = run(cmd, cwd=install_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
     
     install_dirs = {}
-    # TODO
-    #install_dirs[REPO_NAME_CELLBLENDER] = 
-    #install_dirs[REPO_NAME_MCELL] = 
+    install_dirs[REPO_NAME_CELLBLENDER] = os.path.join(install_dir, INSTALL_SUBDIR_CELLBLENDER)  
+    install_dirs[REPO_NAME_MCELL] = os.path.join(install_dir, INSTALL_SUBDIR_MCELL)
     
     return install_dirs
   

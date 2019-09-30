@@ -41,6 +41,8 @@ def create_argparse():
     parser.add_argument('-c', '--clean', action='store_true', help='clean data from previous build')
     parser.add_argument('-i', '--ignore-dirty', action='store_true', help='ignore dirty repositories')
     parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')
+    
+    parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
 
     parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
 
@@ -101,6 +103,12 @@ def test_all(install_dirs):
         PYTHON_SYSTEM_EXECUTABLE, 
         os.path.join(tests_path, RUN_TESTS_SCRIPT)
     ]
+    if REPO_NAME_MCELL in install_dirs:
+        test_cmd += [ '-m', install_dirs[REPO_NAME_MCELL] ]
+
+    if REPO_NAME_CELLBLENDER in install_dirs:
+        test_cmd += [ '-b', install_dirs[REPO_NAME_MCELL] ]
+        
     run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path)
 
 
@@ -120,18 +128,19 @@ if __name__ == "__main__":
     # 2) build
     # returns dictionary  repo name -> where it was built
     if opts.do_build:
+        # keyas are REPO_NAME_MCELL and REPO_NAME_CELLBLENDER
         install_dirs = build.build_all(opts)
     else:
         # testing will use defaults
         install_dirs = {}
     
-    # 3_ create bundle
+    # 3) create bundle
     # overwrite install_dirs with new values
     if opts.do_bundle:
         bundle_archive = bundle.create_bundle(opts)
         # also extract it right away if testing is needed
         if opts.do_test:
-            install_dirs = bundle.extract_resulting_bundle(bundle_archive)
+            install_dirs = bundle.extract_resulting_bundle(opts, bundle_archive)
     
     # 4) test
     if opts.do_test:

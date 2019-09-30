@@ -22,8 +22,11 @@ This module contains diverse constants used in the checkout and build process.
 
 import os
 import platform
+import socket
 from utils import *
 
+
+DEFAULT_DNS_FOR_SSH_CLONE = [ 'salk.edu' ] 
 
 class Options:
     def __init__(self):
@@ -38,6 +41,13 @@ class Options:
         self.do_test = False
         
         self.branch = DEFAULT_BRANCH
+        
+        # for developers it might be useful to clone the repositories as ssh
+        self.ssh_for_clone = False  
+        fqdn = socket.getfqdn()
+        for dns in DEFAULT_DNS_FOR_SSH_CLONE:
+            if dns in fqdn:
+                self.ssh_for_clone = True         
         
         # using os.getcwd() + '..' does not work with links as expected
         self.top_dir = os.path.dirname(get_cwd_no_link())
@@ -110,5 +120,5 @@ INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'm
 BUNDLE_NAME = 'Blender-2.79-CellBlender.' + platform.system()
 BUNDLE_EXT = 'tar.gz'
 
-TEST_BUNDLE_DIR = 'bundle_unpacked'
+TEST_BUNDLE_DIR = 'bundle_install'
 
