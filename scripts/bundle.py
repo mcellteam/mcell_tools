@@ -53,8 +53,10 @@ def unpack_blender(opts, blender_dir):
     ec = run(cmd)
     check_ec(ec, cmd)
 
-    log("Renaming blender subdir from '" + BUILD_SUBDIR_BLENDER_OS_BASED + "' to '" + BUILD_SUBDIR_BLENDER)
-    os.rename(BUILD_SUBDIR_BLENDER_OS_BASED, BUILD_SUBDIR_BLENDER)
+    log("Renaming blender subdir from '" + BUILD_SUBDIR_BLENDER_OS_BASED + "' to '" + BUILD_SUBDIR_BLENDER + "'.")
+    os.rename(
+        os.path.join(blender_dir, BUILD_SUBDIR_BLENDER_OS_BASED), 
+        os.path.join(blender_dir, BUILD_SUBDIR_BLENDER))
 
 
 def unpack_python(opts, python_dir):
@@ -209,18 +211,16 @@ def create_bundle(opts):
     # clear target directory
     blender_dir = os.path.join(opts.work_dir, BUILD_DIR_BLENDER)
     
-    PREPARE_BLENDER_AND_PYTHON = False
-    if PREPARE_BLENDER_AND_PYTHON:
-        if os.path.exists(blender_dir):  # FIXME: create clean_dir function
-            log("Cleaning '" + blender_dir)
-            shutil.rmtree(blender_dir)
-        
-        # A) prepare blender directory with new python    
-        log("Checking for pre-built blender with python at '" + prebuilt_archive + "'.") 
-        if os.path.exists(prebuilt_archive):
-            unpack_prebuilt_blender_w_python(opts, prebuilt_archive)
-        else:
-            create_blender_w_python_from_scratch(opts, blender_dir, prebuilt_archive)
+    if os.path.exists(blender_dir):  
+        log("Cleaning '" + blender_dir)
+        shutil.rmtree(blender_dir)
+    
+    # A) prepare blender directory with new python    
+    log("Checking for pre-built blender with python at '" + prebuilt_archive + "'.") 
+    if os.path.exists(prebuilt_archive):
+        unpack_prebuilt_blender_w_python(opts, prebuilt_archive)
+    else:
+        create_blender_w_python_from_scratch(opts, blender_dir, prebuilt_archive)
     
     # B) copy cellblender
     cellblender_dir = os.path.join(blender_dir, INSTALL_SUBDIR_CELLBLENDER)
