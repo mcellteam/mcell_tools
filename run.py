@@ -91,12 +91,16 @@ def process_opts():
 def check_prerequisites():
     if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 5):
         # this is what cellblender was using, not sure, maybe just version 3.* suffices 
-        fatal_error("Error: Required Python version is at least 3.5")
+        fatal_error("Required Python version is at least 3.5")
     
     # bzip2
     
     
-def test_all(install_dirs):    
+def test_all(opts, install_dirs):    
+    # check if there is an extracted bundle already
+    if not install_dirs:
+        install_dirs = bundle.get_extracted_bundle_install_dirs(opts)
+
     # running testting as a new process
     tests_path = os.path.join(THIS_DIR, '..', REPO_NAME_MCELL_TESTS)
     test_cmd = [
@@ -107,9 +111,12 @@ def test_all(install_dirs):
         test_cmd += [ '-m', install_dirs[REPO_NAME_MCELL] ]
 
     if REPO_NAME_CELLBLENDER in install_dirs:
-        test_cmd += [ '-b', install_dirs[REPO_NAME_MCELL] ]
+        test_cmd += [ '-b', install_dirs[REPO_NAME_CELLBLENDER] ]
         
-    run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path)
+    # for some reason the script dos not terminate without the shell=True
+    ec = run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path, shell=True)
+    if ec != 0:
+        fatal_error("Testing failed")
 
 
 if __name__ == "__main__":
@@ -144,7 +151,7 @@ if __name__ == "__main__":
     
     # 4) test
     if opts.do_test:
-        test_all(install_dirs)
+        test_all(opts, install_dirs)
     
     log("--- All tasks finished successfully ---")
     

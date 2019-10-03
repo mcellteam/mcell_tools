@@ -183,14 +183,24 @@ def archive_resulting_bundle(opts, blender_dir):
     check_ec(ec, cmd)  
     bundle_archive_path = os.path.join(blender_dir, bundle_archive)
     return bundle_archive_path
-    
+
+
+def get_install_dir(opts):
+    return os.path.join(opts.work_dir, TEST_BUNDLE_DIR)
+
+
+def get_extracted_bundle_install_dirs(opts):    
+    install_dir = get_install_dir(opts) 
+    install_dirs = {}
+    install_dirs[REPO_NAME_CELLBLENDER] = os.path.join(install_dir, INSTALL_SUBDIR_CELLBLENDER)  
+    install_dirs[REPO_NAME_MCELL] = os.path.join(install_dir, INSTALL_SUBDIR_MCELL)
+    return install_dirs 
     
 # called from run.py when testing is enabled
 # returns directory that points to locations where cellblender and 
 # mcell are installed
-def extract_resulting_bundle(opts, bundle_archive_path):
-    
-    install_dir = os.path.join(opts.work_dir, TEST_BUNDLE_DIR)
+def extract_resulting_bundle(opts, bundle_archive_path):    
+    install_dir = get_install_dir(opts)
                  
     if os.path.exists(install_dir):  
         log("Cleaning '" + install_dir)
@@ -204,11 +214,7 @@ def extract_resulting_bundle(opts, bundle_archive_path):
     ec = run(cmd, cwd=install_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
     
-    install_dirs = {}
-    install_dirs[REPO_NAME_CELLBLENDER] = os.path.join(install_dir, INSTALL_SUBDIR_CELLBLENDER)  
-    install_dirs[REPO_NAME_MCELL] = os.path.join(install_dir, INSTALL_SUBDIR_MCELL)
-    
-    return install_dirs
+    return get_extracted_bundle_install_dirs(opts)
   
 # main entry point  
 def create_bundle(opts): 
