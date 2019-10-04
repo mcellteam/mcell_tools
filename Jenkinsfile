@@ -1,9 +1,13 @@
 pipeline {
     agent any
     stages {
+        stage('info') {
+            steps {
+                sh 'pwd'
+            }
+        }
         stage('build') {
             steps {
-                pwd
                 sh 'python run.py -qwe'
             }
         }
