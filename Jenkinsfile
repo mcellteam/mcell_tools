@@ -3,12 +3,13 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                python 'run.py -qwe'
+                pwd
+                sh 'python run.py -qwe'
             }
         }
         stage('test') {
             steps {
-                python 'run.py -r'
+                sh 'python run.py -r'
             }
         }
     }
