@@ -1,20 +1,21 @@
 pipeline {
-    agent any
-    stages {
-        stage('info') {
-            steps {
-                sh 'pwd'
-            }
+  agent any
+  stages {
+    stage('build') {
+      steps {
+        script {
+          python run.py -qwe
         }
-        stage('build') {
-            steps {
-                sh 'python run.py -qwe'
-            }
-        }
-        stage('test') {
-            steps {
-                sh 'python run.py -r'
-            }
-        }
+
+      }
     }
+    stage('test') {
+      steps {
+        script {
+          python run.py -r
+        }
+
+      }
+    }
+  }
 }
