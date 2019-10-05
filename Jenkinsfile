@@ -1,17 +1,11 @@
 node {
     stage('info') {
-        steps {
-            sh 'pwd'
-        }
+        sh 'pwd'
     }
     stage('build') {
-        steps {
-            sh 'python run.py -qwe'
-        }
+        sh 'python run.py -qwe'
     }
     stage('test') {
-        steps {
-            sh 'python run.py -r'
-        }
+        sh 'python run.py -r'
     }
 }
