@@ -3,7 +3,7 @@ node {
         sh 'pwd'
     }
     stage('clean') {
-	sh 'rm -r work'
+        sh 'python run.py -c'
     }
     stage('build') {
         sh 'python run.py -qwe'

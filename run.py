@@ -128,6 +128,16 @@ if __name__ == "__main__":
 
     log("Top directory: " + opts.top_dir)
 
+    # clean
+    if opts.clean:
+        if os.path.exists(opts.work_dir):
+            log("Cleaning '" + opts.work_dir + "'")
+            shutil.rmtree(opts.work_dir)
+        else:
+            log("Nothing to clean in '" + opts.work_dir + "'")
+        sys.exit(0)
+ 
+
     # 1) get all the sources, update them optionally
     if opts.do_repos:
         repositories.get_or_update(opts)
