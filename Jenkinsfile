@@ -1,20 +1,17 @@
-pipeline {
-    agent any
-    stages {
-        stage('info') {
-            steps {
-                sh 'pwd'
-            }
+node {
+    stage('info') {
+        steps {
+            sh 'pwd'
         }
-        stage('build') {
-            steps {
-                sh 'python run.py -qwe'
-            }
+    }
+    stage('build') {
+        steps {
+            sh 'python run.py -qwe'
         }
-        stage('test') {
-            steps {
-                sh 'python run.py -r'
-            }
+    }
+    stage('test') {
+        steps {
+            sh 'python run.py -r'
         }
     }
 }
