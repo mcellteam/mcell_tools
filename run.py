@@ -146,8 +146,7 @@ if __name__ == "__main__":
     if opts.do_bundle:
         bundle_archive = bundle.create_bundle(opts)
         # also extract it right away if testing is needed
-        if opts.do_test:
-            install_dirs = bundle.extract_resulting_bundle(opts, bundle_archive)
+        install_dirs = bundle.extract_resulting_bundle(opts, bundle_archive)
     
     # 4) test
     if opts.do_test:
