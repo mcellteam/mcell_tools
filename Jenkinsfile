@@ -1,6 +1,9 @@
 node {
     stage('info') {
-        sh 'pwd'
+      steps {      
+        echo "Workspace location: ${env.WORKSPACE}"    
+        sh 'ls -l'
+      }
     }
     stage('clean') {
         sh 'python run.py -c'
