@@ -36,7 +36,7 @@ from build_settings import *
 from utils import fatal_error
 
 def print_help():
-    print("Usage: mcell_git [clone|checkout|pull|push])")
+    print("Usage: mcell_git [clone|checkout|pull|push|reset-hard])")
 
 
 if __name__ == "__main__":
@@ -66,6 +66,12 @@ if __name__ == "__main__":
             fatal_error("Command push does not have any extra arguments")
         print("Pushing all repositories")
         repositories.push(opts)
+
+    elif a1 == 'reset-hard':
+        if argc > 2:
+            fatal_error("Command reset-hard does not have any extra arguments")
+        print("Reseting all repositories")
+        repositories.reset_hard(opts)
     
     else:
         print("Error: unknown command '" + a1 + "'")

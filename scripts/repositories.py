@@ -128,6 +128,10 @@ def push_repository(name, opts, base_url, branch):
     run_git_w_ec_check(['push'], os.path.join(opts.top_dir, name))
 
 
+def reset_hard_repository(name, opts, base_url, branch):
+    run_git_w_ec_check(['reset', '--hard'], os.path.join(opts.top_dir, name))
+
+
 def run_on_all_repositories(opts, function):
     for name in REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
@@ -156,5 +160,9 @@ def pull(opts):
 def push(opts):
     check_git_version()
     run_on_all_repositories(opts, push_repository)
+    
+def reset_hard(opts):
+    check_git_version()
+    run_on_all_repositories(opts, reset_hard_repository)
     
     
