@@ -20,6 +20,7 @@ http://www.gnu.org/licenses/gpl-2.0.html
 
 import os
 import multiprocessing
+import platform
 from utils import *
 from build_settings import *
 
@@ -33,13 +34,23 @@ def get_cmake_build_type_arg(opts):
     return '-DCMAKE_BUILD_TYPE=' + build_type
 
 
+def is_default_compiler_supported_by_mcell() -> bool:
+    if platform.system() == 'Linux':
+        cmd = ['gcc', '--version']
+        res = run_with_ascii_output(cmd, cwd='.')
+        if '8.3.0' in res:
+            return False
+        else:
+            # TODO: some error check? maybe we will fix this issue 
+            return True
+    else:
+        # for other OSes let's assume that everything is fine
+        return True
+
+
 def build_mcell(opts):
 
     mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
-    if opts.clean:
-        # TODO
-        log("Dry clean of " + mcell_build_dir)
-    
     
     log("Running mcell build...")
     
@@ -57,7 +68,16 @@ def build_mcell(opts):
         cmd_cmake.append('-DUSE_LTO=ON')
         
     # run cmake
-    ec = run(cmd_cmake, mcell_build_dir)
+    
+    # issue (TODO - insert this into the issue tracking system)
+    # using gcc-8.3.0 leads to a segfault in nfSim
+    if is_default_compiler_supported_by_mcell():
+        ec = run(cmd_cmake, mcell_build_dir)
+    else:
+        log("Not using default gcc 8.3.0 due to unresolved issue, fallback to gcc 7")
+        cmd_cmake.insert(0, "CC=gcc-7")
+        cmd_cmake.insert(0, "CXX=g++-7")    
+        ec = run(cmd_cmake, mcell_build_dir, shell=True)
     check_ec(ec, cmd_cmake)
     
     # setup make build arguments

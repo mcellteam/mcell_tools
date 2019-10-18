@@ -71,6 +71,13 @@ def fetch(name, opts):
     run_git_w_ec_check(['fetch'], os.path.join(opts.top_dir, name))
 
 
+def get_default_branch(name):
+    if name in FORKED_REPOSITORIES:
+        return FORKED_REPOSITORY_BRANCH_PREFIX + DEFAULT_BRANCH 
+    else:
+        return DEFAULT_BRANCH
+
+
 def checkout(name, opts, branch):
     log("Checking out branch '" + branch + "'")
 
@@ -80,7 +87,8 @@ def checkout(name, opts, branch):
     branches = run_git_w_ascii_output(['branch', '-r'], repo_dir)
     full_name = ORIGIN + '/' + branch 
     if not full_name in branches: # FIXME: improve check, we are just checking a substring
-        fatal_error("Remote branch '" + branch + "' does not exit in repo '" + name + "'.")
+        branch = get_default_branch(name)
+        warning("Remote branch '" + branch + "' does not exit in repo '" + name + "', defaulting to '" + branch + "'.")
     
     # then we need to check that the branch is clean before we switch
     status = run_git_w_ascii_output(['status'], repo_dir)
