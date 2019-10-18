@@ -74,6 +74,9 @@ def process_opts():
         
     if args.branch:
         opts.branch = args.branch
+        
+    if args.release:
+        opts.release_version = args.release        
                 
     opts.do_repos = args.do_repos
     opts.do_build = args.do_build
@@ -86,6 +89,8 @@ def process_opts():
         opts.do_build = True
         opts.do_bundle = True
         opts.do_test = True
+
+    opts.set_result_bundle_archive_path()
 
     return opts
     
@@ -159,13 +164,22 @@ if __name__ == "__main__":
     # 3) create bundle
     # overwrite install_dirs with new values
     if opts.do_bundle:
-        bundle_archive = bundle.create_bundle(opts)
+        bundle.create_bundle(opts)
         # also extract it right away if testing is needed
-        install_dirs = bundle.extract_resulting_bundle(opts, bundle_archive)
+        install_dirs = bundle.extract_resulting_bundle(opts)
     
     # 4) test
     if opts.do_test:
         test_all(opts, install_dirs)
+        
+    # 5) store the release 
+    if opts.release_version != INTERNAL_RELEASE_NO_VERSION:
+        if os.path.exists(MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR):
+            log("Copying release '" + opts.result_bundle_archive_path + "'  to '" + MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR + "'.")
+            shutil.copy(opts.result_bundle_archive_path, MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR)
+        else:
+            fatal_error("Could not find directory '" + MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR + 
+                        "', release was not stored but can be found as '" + opts.result_bundle_archive_path + "'.")
     
     log("--- All tasks finished successfully ---")
     

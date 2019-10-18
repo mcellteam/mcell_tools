@@ -23,6 +23,7 @@ This module contains diverse constants used in the checkout and build process.
 import os
 import platform
 import socket
+import datetime
 from utils import *
 
 
@@ -42,7 +43,11 @@ class Options:
         
         self.branch = DEFAULT_BRANCH
         
-        self.release_version = 'development'
+        self.release_version = INTERNAL_RELEASE_NO_VERSION
+        
+        # set by set_result_bundle_archive_name, 
+        # needs release_version
+        self.result_bundle_archive_path = None
         
         # for developers it might be useful to clone the repositories as ssh
         self.ssh_for_clone = False  
@@ -59,7 +64,24 @@ class Options:
         attrs = vars(self)
         return ", ".join("%s: %s" % item for item in attrs.items())
             
+    def set_result_bundle_archive_path(self):
+        now = datetime.datetime.now()
+        
+        if platform.system() == 'Linux':
+            info = platform.platform().split('-')
+            if len(info) > 2:
+                os_name = info[-2] + '-' + info[-1]
+            else:  
+                os_name = platform.platform()
+        else:
+            os_name = platform.system()
+        
+        archive_name = \
+            BUILD_SUBDIR_BLENDER + '-' + self.release_version + '-' + \
+            os_name + '-' + now.strftime("%Y%m%d") + '.' + BUNDLE_EXT
             
+        self.result_bundle_archive_path = os.path.join(self.work_dir, BUILD_DIR_BLENDER, archive_name)
+
 #DEFAULT_BRANCH='development'
 # FIXME: use the branch of the mcell_tools repo?
 DEFAULT_BRANCH='testing_infrastructure'
@@ -70,6 +92,8 @@ BUILD_OPTS_USE_LTO = False  # higher performnce but slower build
 
 BUILD_TIMEOUT = 60*10 # in seconds
 TEST_ALL_TIMEOUT = 60*60# 1 hour
+
+INTERNAL_RELEASE_NO_VERSION = 'internal'
 
 REPO_NAME_MCELL = 'mcell'
 REPO_NAME_CELLBLENDER = 'cellblender'
@@ -110,6 +134,7 @@ RUN_TESTS_SCRIPT = 'run_tests.py'
 
 # might not be a correct path on Windows
 MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/data/mcell_build_infrastructure_data'
+MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'releases')
 BLENDER_ARCHIVE_DIR = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'blender')
 BLENDER_ARCHIVE_LINUX_PATH = os.path.join(BLENDER_ARCHIVE_DIR, BUILD_SUBDIR_BLENDER_OS_BASED + '.tar.bz2')
 

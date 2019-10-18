@@ -149,11 +149,11 @@ def reset_hard_repository(name, opts, base_url, branch):
 def run_on_all_repositories(opts, function):
     for name in BASE_REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
-        function(name, opts, BASE_URL, opts.branch_name)    
+        function(name, opts, BASE_URL, opts.branch)    
 
     for name in FORKED_REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
-        branch_name = FORKED_REPOSITORY_BRANCH_PREFIX + opts.branch_name
+        branch_name = FORKED_REPOSITORY_BRANCH_PREFIX + opts.branch
         function(name, opts, BASE_URL, branch_name)
     
     # for gamer, we always use the master branch
@@ -182,6 +182,9 @@ def reset_hard(opts):
 
     
 def create_version_file(opts):
+    if not os.path.exists(opts.work_dir):
+        os.makedirs(opts.work_dir)
+    
     version_file = os.path.join(opts.work_dir, RELEASE_INFO_FILE)
     with open(version_file, "w") as f:
         f.write("CellBlender release: " + opts.release_version + "\n")

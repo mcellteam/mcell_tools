@@ -21,7 +21,7 @@ import shutil
 import sys
 import platform
 import multiprocessing
-import datetime
+from typing import List, Dict
 
 from utils import *
 from build_settings import *
@@ -43,7 +43,7 @@ MODULES_TO_INSTALL = [
 ]
 
 
-def unpack_blender(opts, blender_dir):
+def unpack_blender(opts, blender_dir) -> None:
     if platform.system() == 'Linux':
         archive_path = BLENDER_ARCHIVE_LINUX_PATH
     else:
@@ -60,7 +60,7 @@ def unpack_blender(opts, blender_dir):
         os.path.join(blender_dir, BUILD_SUBDIR_BLENDER))
 
 
-def unpack_python(opts, python_dir):
+def unpack_python(opts, python_dir) -> None:
     archive_path = PYTHON_ARCHIVE_PATH
 
     # clear target directory
@@ -75,12 +75,12 @@ def unpack_python(opts, python_dir):
     check_ec(ec, cmd)
 
 
-def print_python_gcc_message(python_subdir): 
+def print_python_gcc_message(python_subdir) -> None: 
     log("Python build might fail with gcc 4.9.2, see https://stackoverflow.com/questions/46279671/compile-python-3-6-2-on-debian-jessie-segfaults-on-sharedmods")
     log("Try to run 'make' and 'make install' in '" + python_subdir + "' manually.") 
 
 
-def build_python(opts, python_dir, blender_python_subdir):
+def build_python(opts, python_dir, blender_python_subdir) -> None:
     #archive_path = PYTHON_ARCHIVE_PATH
     
     # TODO: consider having pre-built python, however, different Linux OSes...
@@ -112,7 +112,7 @@ def build_python(opts, python_dir, blender_python_subdir):
     check_ec(ec, cmd_make_install)
 
 
-def install_python_packages(opts, blender_python_subdir):
+def install_python_packages(opts, blender_python_subdir) -> None:
     for m in MODULES_TO_INSTALL:
         # Running ./pip3 install MeshPy fails with missing include, we need to run pip through python
         cmd = [PYTHON_BLENDER_EXECUTABLE, '-m', 'pip', 'install', m]
@@ -120,7 +120,7 @@ def install_python_packages(opts, blender_python_subdir):
         check_ec(ec, cmd)   
 
 
-def archive_blender_w_python(opts, blender_dir, prebuilt_archive):
+def archive_blender_w_python(opts, blender_dir, prebuilt_archive) -> None:
     # check if the target is accessible
     dir = os.path.dirname(prebuilt_archive)
     if not os.path.exists(dir): 
@@ -133,7 +133,7 @@ def archive_blender_w_python(opts, blender_dir, prebuilt_archive):
     check_ec(ec, cmd)   
     
 
-def create_blender_w_python_from_scratch(opts, blender_dir, prebuilt_archive):
+def create_blender_w_python_from_scratch(opts, blender_dir, prebuilt_archive) -> None:
     
     if not os.path.exists(blender_dir):
         os.makedirs(blender_dir)
@@ -160,7 +160,7 @@ def create_blender_w_python_from_scratch(opts, blender_dir, prebuilt_archive):
     archive_blender_w_python(opts, blender_dir, prebuilt_archive)
 
 
-def unpack_prebuilt_blender_w_python(opts, prebuilt_archive):
+def unpack_prebuilt_blender_w_python(opts, prebuilt_archive) -> None:
     log("Using pre-built variant of blender with python...")
 
     # simply extract the prebuilt archive, 
@@ -170,26 +170,19 @@ def unpack_prebuilt_blender_w_python(opts, prebuilt_archive):
     check_ec(ec, cmd)
 
 
-def archive_resulting_bundle(opts, blender_dir):
-    
-    now = datetime.datetime.now()
-    
-    bundle_archive = BUNDLE_NAME + '.' + now.strftime("%Y%m%d") + '.' + BUNDLE_EXT
-    log("Creating resulting archive '" + bundle_archive + "'.")
+def archive_resulting_bundle(opts, blender_dir) -> None:
+    log("Creating resulting archive '" + opts.result_bundle_archive_path + "'.")
     # TODO: better versioning, e.g. from argument
-    cmd = ['tar', '-zcf', bundle_archive, BUILD_SUBDIR_BLENDER]
+    cmd = ['tar', '-zcf', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
     # must be run from work_dir to avoid having full paths in the archive
     ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
-    bundle_archive_path = os.path.join(blender_dir, bundle_archive)
-    return bundle_archive_path
 
-
-def get_install_dir(opts):
+def get_install_dir(opts) -> str:
     return os.path.join(opts.work_dir, TEST_BUNDLE_DIR)
 
 
-def get_extracted_bundle_install_dirs(opts):    
+def get_extracted_bundle_install_dirs(opts) -> List[str]:    
     install_dir = get_install_dir(opts) 
     install_dirs = {}
     install_dirs[REPO_NAME_CELLBLENDER] = os.path.join(install_dir, INSTALL_SUBDIR_CELLBLENDER)  
@@ -199,7 +192,8 @@ def get_extracted_bundle_install_dirs(opts):
 # called from run.py when testing is enabled
 # returns directory that points to locations where cellblender and 
 # mcell are installed
-def extract_resulting_bundle(opts, bundle_archive_path):    
+def extract_resulting_bundle(opts) -> List[str]:
+        
     install_dir = get_install_dir(opts)
                  
     if os.path.exists(install_dir):  
@@ -207,9 +201,9 @@ def extract_resulting_bundle(opts, bundle_archive_path):
         shutil.rmtree(install_dir)
     os.makedirs(install_dir)
             
-    log("Unpacking resulting archive for testing '" + bundle_archive_path + "'.")
+    log("Unpacking resulting archive for testing '" + opts.result_bundle_archive_path + "'.")
     # TODO: better versioning, e.g. from argument
-    cmd = ['tar', '-xzf', bundle_archive_path]
+    cmd = ['tar', '-xzf', opts.result_bundle_archive_path]
     
     ec = run(cmd, cwd=install_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
@@ -217,7 +211,7 @@ def extract_resulting_bundle(opts, bundle_archive_path):
     return get_extracted_bundle_install_dirs(opts)
   
 # main entry point  
-def create_bundle(opts): 
+def create_bundle(opts) -> None: 
     # is there a pre-built version? - building Python takes long time 
     versions_info = BUILD_SUBDIR_BLENDER_OS_BASED + '-' + BUILD_SUBDIR_PYTHON + '-' + platform.system() + '-' + platform.release()
     prebuilt_archive = os.path.join(PREBUILT_BLENDER_W_PYTHON_DIR, versions_info) + '.tar.bz2'
@@ -234,6 +228,8 @@ def create_bundle(opts):
     if os.path.exists(prebuilt_archive):
         unpack_prebuilt_blender_w_python(opts, prebuilt_archive)
     else:
+        # FIXME: move this to a separate script, python build is quite unreliable 
+        # and so far I had to run it several times to finish...
         create_blender_w_python_from_scratch(opts, blender_dir, prebuilt_archive)
     
     # B) copy cellblender
@@ -268,8 +264,5 @@ def create_bundle(opts):
     )
     
     # make a package with current date
-    bundle_archive = archive_resulting_bundle(opts, blender_dir)
-     
-    # terminates with sys.exit(1) if there was an error
-    return bundle_archive
+    archive_resulting_bundle(opts, blender_dir)
     
