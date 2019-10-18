@@ -42,6 +42,8 @@ class Options:
         
         self.branch = DEFAULT_BRANCH
         
+        self.release_version = 'development'
+        
         # for developers it might be useful to clone the repositories as ssh
         self.ssh_for_clone = False  
         fqdn = socket.getfqdn()
@@ -86,6 +88,8 @@ INSTALL_DIR_GAMER = 'install_gamer'
 BLENDER_VERSION = '2.79' 
 BUILD_DIR_BLENDER = 'blender' #
 BUILD_SUBDIR_BLENDER = 'Blender-' + BLENDER_VERSION + '-CellBlender' # name of directory in the resulting arguve
+
+RELEASE_INFO_FILE = 'cellblender_bundle_release_info.txt'
 
 if platform.system() == 'Linux':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'

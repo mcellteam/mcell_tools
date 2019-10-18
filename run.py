@@ -42,14 +42,16 @@ def create_argparse():
     parser.add_argument('-i', '--ignore-dirty', action='store_true', help='ignore dirty repositories')
     parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')
     
-    parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
+    #not supported yet: parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
+
+    parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
 
     parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
 
-    parser.add_argument('-q', '--do-repos', action='store_true', help='get repositories (done by default when none of "qwer" args are set)')
-    parser.add_argument('-w', '--do-build', action='store_true', help='run build (done by default when none of "qwer" args are set)')
-    parser.add_argument('-e', '--do-bundle', action='store_true', help='build bundle (done by default when none of "qwer" args are set)')
-    parser.add_argument('-r', '--do-test', action='store_true', help='run tests (done by default when none of "qwer" args are set)')
+    parser.add_argument('-1', '--do-repos', action='store_true', help='get repositories (done by default when none of "qwer" args are set)')
+    parser.add_argument('-2', '--do-build', action='store_true', help='run build (done by default when none of "qwer" args are set)')
+    parser.add_argument('-3', '--do-bundle', action='store_true', help='build bundle (done by default when none of "qwer" args are set)')
+    parser.add_argument('-4', '--do-test', action='store_true', help='run tests (done by default when none of "qwer" args are set)')
     return parser
 
 
@@ -138,13 +140,16 @@ if __name__ == "__main__":
         sys.exit(0)
  
 
-    # 1) get all the sources, update them optionally
+    # 1) get all the sources
     if opts.do_repos:
         repositories.get_or_update(opts)
     
     # 2) build
     # returns dictionary  repo name -> where it was built
     if opts.do_build:
+        # generate version file 
+        repositories.create_version_file(opts)
+        
         # keyas are REPO_NAME_MCELL and REPO_NAME_CELLBLENDER
         install_dirs = build.build_all(opts)
     else:

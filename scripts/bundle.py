@@ -259,6 +259,13 @@ def create_bundle(opts):
     # E) bionetgen
     # TODO - not sure what to include
     
+    # add a version file
+    blender_subdir = os.path.join(blender_dir, BUILD_SUBDIR_BLENDER)
+    log("Copying version file to '" + blender_subdir + "'.")
+    shutil.copy(
+        os.path.join(opts.work_dir, RELEASE_INFO_FILE),
+        blender_subdir
+    )
     
     # make a package with current date
     bundle_archive = archive_resulting_bundle(opts, blender_dir)

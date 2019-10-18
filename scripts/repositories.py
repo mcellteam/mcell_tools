@@ -20,16 +20,23 @@ http://www.gnu.org/licenses/gpl-2.0.html
 # really work on Windows and MacOS, therefore a simple wrapper functions were created instead 
 
 import os
+import time
+import datetime
+
 from utils import *
 from build_settings import *
 
 BASE_URL = 'https://github.com/mcellteam/'
-REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS] # ..., 'nfsimCInterface'  ]
+BASE_REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS] # ..., 'nfsimCInterface'  ]
 FORKED_REPOSITORIES = [REPO_NAME_NFSIM, REPO_NAME_NFSIMCINTERFACE, REPO_NAME_BIONETGEN]
-REPOSITORIES += FORKED_REPOSITORIES 
+
+ALL_REPOSITORIES = BASE_REPOSITORIES + FORKED_REPOSITORIES + [REPO_NAME_GAMER]
+ 
+
+REPOSITORIES_ALLOWED_TO_BE_DIRTY = [REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS, REPO_NAME_GAMER, REPO_NAME_BIONETGEN]
+
 
 FORKED_REPOSITORY_BRANCH_PREFIX = 'mcell_'
-
 
 MIN_GIT_VERSION= 'git version 1.9' 
 ORIGIN = 'origin'
@@ -37,7 +44,6 @@ ORIGIN = 'origin'
 GAMER_BASE_URL = 'https://github.com/ctlee/'
 GAMER_BRANCH = 'master'
 
-REPOSITORIES_ALLOWED_TO_BE_DIRTY = [REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS, REPO_NAME_GAMER, REPO_NAME_BIONETGEN]
 
 def run_git_w_ascii_output(args, cwd):
     cmd = ['git']
@@ -141,13 +147,13 @@ def reset_hard_repository(name, opts, base_url, branch):
 
 
 def run_on_all_repositories(opts, function):
-    for name in REPOSITORIES:
+    for name in BASE_REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
-        
-        branch_name = opts.branch
-        if name in FORKED_REPOSITORIES:
-            branch_name = FORKED_REPOSITORY_BRANCH_PREFIX + branch_name
-        
+        function(name, opts, BASE_URL, opts.branch_name)    
+
+    for name in FORKED_REPOSITORIES:
+        log("--- Preparing repository '" + name + "' ---")
+        branch_name = FORKED_REPOSITORY_BRANCH_PREFIX + opts.branch_name
         function(name, opts, BASE_URL, branch_name)
     
     # for gamer, we always use the master branch
@@ -168,9 +174,30 @@ def pull(opts):
 def push(opts):
     check_git_version()
     run_on_all_repositories(opts, push_repository)
+
     
 def reset_hard(opts):
     check_git_version()
     run_on_all_repositories(opts, reset_hard_repository)
+
     
+def create_version_file(opts):
+    version_file = os.path.join(opts.work_dir, RELEASE_INFO_FILE)
+    with open(version_file, "w") as f:
+        f.write("CellBlender release: " + opts.release_version + "\n")
+        now = datetime.datetime.now()
+        f.write("Built on " + now.strftime("%Y-%m-%d %H:%M") + " " + str(time.tzname) + "\n")
+        f.write("OS: " + platform.platform() + "\n")
+        
+        cmd = ['gcc', '--version']
+        res = run_with_ascii_output(cmd, cwd='.')
+        if cmd:
+            f.write("GCC: " + res.split('\n')[0] + "\n")
+        
+        f.write("\n")
+        
+        for repo_name in ALL_REPOSITORIES:
+            branch = run_git_w_ascii_output(['describe', '--all'], cwd=os.path.join(opts.top_dir, repo_name))
+            commit = run_git_w_ascii_output(['log', '-1', '--pretty="%H"'], cwd=os.path.join(opts.top_dir, repo_name))
+            f.write(repo_name + ": " + commit + " (" + branch + ")\n")
     
