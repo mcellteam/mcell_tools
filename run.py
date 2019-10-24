@@ -37,7 +37,7 @@ from build_settings import *
 def create_argparse():
     parser = argparse.ArgumentParser(description='MCell & CellBlender build tool')
     # NOTE: maybe add verbosity level? - for now, all information is printed out 
-    parser.add_argument('-u', '--update', action='store_true', help='update repositories is they are alread checked out')
+    parser.add_argument('-u', '--update', action='store_true', help='update repositories is they are already checked out')
     parser.add_argument('-c', '--clean', action='store_true', help='clean data from previous build')
     parser.add_argument('-i', '--ignore-dirty', action='store_true', help='ignore dirty repositories')
     parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')

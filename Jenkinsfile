@@ -21,7 +21,7 @@ pipeline {
         }
         stage('build') {
             steps {
-              sh 'cd mcell_tools; python run.py --do-repos --do-build --do-bundle'
+              sh 'cd mcell_tools; python run.py --update --do-repos --do-build --do-bundle'
             }
         }
         stage('test') {
