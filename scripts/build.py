@@ -133,10 +133,21 @@ def build_gamer(opts):
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_GAMER))
     cmd_cmake.append(get_cmake_build_type_arg(opts))
     cmd_cmake.append('-DCMAKE_INSTALL_PREFIX:PATH=' + gamer_install_dir)
+    
+    c_flags = ''
+    cxx_flags = ''
+    if 'CYGWIN' in platform.system():
+        flags='-D\'M_PI=3.14159265358979323846\' -D\'M_PI_2=(M_PI/2.0)\' '
+        c_flags = c_flags + flags
+        cxx_flags = cxx_flags + flags
         
     # library casc requires __has_cpp_attribute c++17 - disable it
-    # maybe we can check gcc versio nan enable it but let's keep it simple for now
-    cmd_cmake.append('-DCMAKE_CXX_FLAGS=-D\'__has_cpp_attribute(x)=0\'')
+    # maybe we can check gcc version and enable it but let's keep it simple for now
+    cxx_flags = cxx_flags + '-D\'__has_cpp_attribute(x)=0\''
+
+    # no need to add extra "..." - already handled the way how cmake is run (not as shell)
+    cmd_cmake.append('-DCMAKE_C_FLAGS=' + c_flags)
+    cmd_cmake.append('-DCMAKE_CXX_FLAGS=' + cxx_flags) 
         
     # run cmake
     ec = run(cmd_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)

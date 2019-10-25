@@ -210,6 +210,14 @@ def extract_resulting_bundle(opts) -> List[str]:
     
     return get_extracted_bundle_install_dirs(opts)
   
+  
+def copy_cygwin_dlls(mcell_dir):
+    dlls_path = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, CYGWIN_DLLS)
+    files = [f for f in os.listdir(dlls_path) if os.path.isfile(os.path.join(dlls_path, f))]
+    for f in files:
+        shutil.copy(f, mcell_dir)
+    
+  
 # main entry point  
 def create_bundle(opts) -> None: 
     # is there a pre-built version? - building Python takes long time 
@@ -245,9 +253,11 @@ def create_bundle(opts) -> None:
     mcell_dir = os.path.join(blender_dir, INSTALL_SUBDIR_MCELL)
     log("Installing mcell to '" + mcell_dir + "'.")
     shutil.copytree(
-        os.path.join(os.path.join(opts.work_dir), BUILD_DIR_MCELL),
+        os.path.join(opts.work_dir, BUILD_DIR_MCELL),
         mcell_dir
     )
+    if 'CYGWIN' in platform.system():
+        copy_cygwin_dlls(mcell_dir)
     
     # D) gamer
     # TODO - not sure what to include

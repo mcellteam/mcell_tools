@@ -117,9 +117,16 @@ RELEASE_INFO_FILE = 'cellblender_bundle_release_info.txt'
 
 if platform.system() == 'Linux':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
+    BLENDER_ARCHIVE = 'blender-2.79b-linux-glibc219-x86_64.tar.gz'
+    MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/data/mcell_build_infrastructure_data'
+elif 'CYGWIN' in platform.system():
+    BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-windows64'
+    BLENDER_ARCHIVE = 'blender-2.79b-windows64.zip'
+    MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cygdrive/z/'
 else:
     fatal_error("Operating system '" + platform.system() + "' is not supported in this build system yet.")
- 
+
+CYGWIN_DLLS = 'cygwin_dlls'
 
 BUILD_SUBDIR_PYTHON_UNDER_BLENDER = os.path.join(BLENDER_VERSION, 'python/')
 BUILD_SUBDIR_BIN_PYTHON_DIR = 'bin/python3.5'
@@ -132,8 +139,6 @@ PYTHON_BLENDER_EXECUTABLE = './python3.5'
 
 RUN_TESTS_SCRIPT = 'run_tests.py'
 
-# might not be a correct path on Windows
-MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/data/mcell_build_infrastructure_data'
 MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'releases')
 BLENDER_ARCHIVE_DIR = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'blender')
 BLENDER_ARCHIVE_LINUX_PATH = os.path.join(BLENDER_ARCHIVE_DIR, BUILD_SUBDIR_BLENDER_OS_BASED + '.tar.bz2')

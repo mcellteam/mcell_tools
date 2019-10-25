@@ -26,7 +26,7 @@ import argparse
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(THIS_DIR, 'scripts'))
 
-# TODO: check whether scripts. notation works
+# TODO: simplify calls to os.path.join? 
 import repositories
 import build
 import bundle
