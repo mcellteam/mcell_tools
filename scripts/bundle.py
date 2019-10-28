@@ -215,7 +215,9 @@ def copy_cygwin_dlls(mcell_dir):
     dlls_path = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, CYGWIN_DLLS)
     files = [f for f in os.listdir(dlls_path) if os.path.isfile(os.path.join(dlls_path, f))]
     for f in files:
-        shutil.copy(f, mcell_dir)
+        dll = os.path.join(dlls_path, f)
+        log("Copying '" + dll + "' to '" + mcell_dir + "'.");         
+        shutil.copy(dll, mcell_dir)
     
   
 # main entry point  
