@@ -29,59 +29,6 @@ from utils import *
 
 DEFAULT_DNS_FOR_SSH_CLONE = [ 'salk.edu' ] 
 
-class Options:
-    def __init__(self):
-        self.update = False
-        self.clean = False
-        self.ignore_dirty = False
-        self.debug = False
-        
-        self.do_repos = False
-        self.do_build = False
-        self.do_bundle = False
-        self.do_test = False
-        
-        self.branch = DEFAULT_BRANCH
-        
-        self.release_version = INTERNAL_RELEASE_NO_VERSION
-        
-        # set by set_result_bundle_archive_name, 
-        # needs release_version
-        self.result_bundle_archive_path = None
-        
-        # for developers it might be useful to clone the repositories as ssh
-        self.ssh_for_clone = False  
-        fqdn = socket.getfqdn()
-        for dns in DEFAULT_DNS_FOR_SSH_CLONE:
-            if dns in fqdn:
-                self.ssh_for_clone = True         
-        
-        # using os.getcwd() + '..' does not work with links as expected
-        self.top_dir = os.path.dirname(get_cwd_no_link())
-        self.work_dir = os.path.join(self.top_dir, REPO_NAME_MCELL_TOOLS, WORK_DIR_NAME)
-
-    def __repr__(self):
-        attrs = vars(self)
-        return ", ".join("%s: %s" % item for item in attrs.items())
-            
-    def set_result_bundle_archive_path(self):
-        now = datetime.datetime.now()
-        
-        if platform.system() == 'Linux':
-            info = platform.platform().split('-')
-            if len(info) > 2:
-                os_name = info[-2] + '-' + info[-1]
-            else:  
-                os_name = platform.platform()
-        else:
-            os_name = platform.system()
-        
-        archive_name = \
-            BUILD_SUBDIR_BLENDER + '-' + self.release_version + '-' + \
-            os_name + '-' + now.strftime("%Y%m%d") + '.' + BUNDLE_EXT
-            
-        self.result_bundle_archive_path = os.path.join(self.work_dir, BUILD_DIR_BLENDER, archive_name)
-
 #DEFAULT_BRANCH='development'
 # FIXME: use the branch of the mcell_tools repo?
 DEFAULT_BRANCH='testing_infrastructure'
@@ -90,7 +37,7 @@ WORK_DIR_NAME = 'work'
 
 BUILD_OPTS_USE_LTO = False  # higher performnce but slower build
 
-BUILD_TIMEOUT = 60*10 # in seconds
+BUILD_TIMEOUT = 60*30 # in seconds, Windows build can be slow
 TEST_ALL_TIMEOUT = 60*60# 1 hour
 
 INTERNAL_RELEASE_NO_VERSION = 'internal'
@@ -118,7 +65,7 @@ RELEASE_INFO_FILE = 'cellblender_bundle_release_info.txt'
 if platform.system() == 'Linux':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
     BLENDER_ARCHIVE = 'blender-2.79b-linux-glibc219-x86_64.tar.gz'
-    MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/data/mcell_build_infrastructure_data'
+    MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/mcelldata/mcell_build_infrastructure_data'
 elif platform.system() == 'Darwin':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
     BLENDER_ARCHIVE = 'blender-2.79b-linux-glibc219-x86_64.tar.gz'
@@ -152,6 +99,7 @@ PYTHON_ARCHIVE_PATH = os.path.join(PYTHON_ARCHIVE_DIR, BUILD_SUBDIR_PYTHON + '.t
 
 
 PREBUILT_BLENDER_W_PYTHON_DIR = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'prebuilt_blender_w_python')
+PREBUILT_BLENDER_W_PYTHON_EXT = 'tar.gz'
 
 INSTALL_SUBDIR_CELLBLENDER = os.path.join(BUILD_SUBDIR_BLENDER, BLENDER_VERSION, 'scripts', 'addons', 'cellblender')
 INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')

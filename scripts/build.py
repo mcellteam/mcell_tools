@@ -48,6 +48,20 @@ def is_default_compiler_supported_by_mcell() -> bool:
         return True
 
 
+def copy_cygwin_dlls(mcell_dir):
+    dlls_path = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, CYGWIN_DLLS)
+    files = [f for f in os.listdir(dlls_path) if os.path.isfile(os.path.join(dlls_path, f))]
+    for f in files:
+        dll = os.path.join(dlls_path, f)
+        log("Copying '" + dll + "' to '" + mcell_dir + "'.");         
+        shutil.copy(dll, mcell_dir)
+        
+        # cygwin also requires these libraries to be "executable"
+        cmd_chmod = ['chmod', 'a+x', os.path.join(mcell_dir, '*.dll')]
+        ec = run(cmd_chmod, shell=True)
+        check_ec(ec, cmd_chmod)
+    
+
 def build_mcell(opts):
 
     mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
@@ -87,6 +101,9 @@ def build_mcell(opts):
     # run make 
     ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, cmd_make)
+    
+    if 'CYGWIN' in platform.system():
+        copy_cygwin_dlls(mcell_build_dir)
     
     return mcell_build_dir
         
