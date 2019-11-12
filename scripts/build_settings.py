@@ -66,6 +66,10 @@ if platform.system() == 'Linux':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
     BLENDER_ARCHIVE = 'blender-2.79b-linux-glibc219-x86_64.tar.gz'
     MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/mcelldata/mcell_build_infrastructure_data'
+elif platform.system() == 'Darwin':
+    BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
+    BLENDER_ARCHIVE = 'blender-2.79b-Darwin-18.6.0-x86_64-i386-64bit.tar'
+    MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/Volumes/mcell/mcell_build_infrastructure_data/'        
 elif 'CYGWIN' in platform.system():
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-windows64'
     BLENDER_ARCHIVE = 'blender-2.79b-windows64.zip'
@@ -81,7 +85,7 @@ BUILD_SUBDIR_BIN_PYTHON_DIR = 'bin/python3.5'
 BUILD_DIR_PYTHON = 'python'
 BUILD_SUBDIR_PYTHON = 'Python-3.5.3'
 
-PYTHON_SYSTEM_EXECUTABLE = 'python'
+PYTHON_SYSTEM_EXECUTABLE = 'python3'
 PYTHON_BLENDER_EXECUTABLE = './python3.5'
 
 RUN_TESTS_SCRIPT = 'run_tests.py'
