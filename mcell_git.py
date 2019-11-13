@@ -33,6 +33,7 @@ sys.path.append(os.path.join(THIS_DIR, 'scripts'))
 
 import repositories
 from build_settings import *
+from options import *
 from utils import fatal_error
 
 def print_help():
