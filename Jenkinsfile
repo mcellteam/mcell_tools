@@ -16,17 +16,17 @@ pipeline {
         }
         stage("clean") {
             steps {
-              sh "cd mcell_tools; python run.py --clean"
+              sh "cd mcell_tools; python3 run.py --clean"
             }
         }
         stage("build") {
             steps {
-              sh "cd mcell_tools; python run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle"
+              sh "cd mcell_tools; python3 run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle"
             }
         }
         stage("test") {
             steps {
-              sh "cd mcell_tools; python run.py --do-test"
+              sh "cd mcell_tools; python3 run.py --do-test"
             }
         }
     }
