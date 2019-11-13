@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label { '${env.NODE_LABEL}' } }
     
     stages {
         stage('checkout') {
@@ -21,7 +21,7 @@ pipeline {
         }
         stage('build') {
             steps {
-              sh 'cd mcell_tools; python run.py --update --do-repos --do-build --do-bundle'
+              sh 'cd mcell_tools; python run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle'
             }
         }
         stage('test') {
@@ -32,10 +32,10 @@ pipeline {
     }
     post {  
       success {  
-        mail subject: "PASSED: MCell test nr. ${env.BUILD_NUMBER} - ${env.NODE_NAME}", body: "Build: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL of build: ${env.BUILD_URL}", charset: 'UTF-8', from: '', mimeType: 'text/html', to: "mcelltester@gmail.com";  
+        mail subject: "PASSED: MCell test nr. ${env.BUILD_NUMBER} - ${env.NODE_NAME} - ${env.TESTED_BRANCH}", body: "Build: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL of build: ${env.BUILD_URL} <br> Branch: ${env.TESTED_BRANCH}", charset: 'UTF-8', from: '', mimeType: 'text/html', to: "mcelltester@gmail.com";  
       }  
       failure {  
-        mail subject: "FAILED: MCell test nr. ${env.BUILD_NUMBER} - ${env.NODE_NAME}", body: "Build: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL of build: ${env.BUILD_URL}", charset: 'UTF-8', from: '', mimeType: 'text/html', to: "mcelltester@gmail.com";  
+        mail subject: "FAILED: MCell test nr. ${env.BUILD_NUMBER} - ${env.NODE_NAME} - ${env.TESTED_BRANCH}", body: "Build: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL of build: ${env.BUILD_URL} <br> Branch: ${env.TESTED_BRANCH}", charset: 'UTF-8', from: '', mimeType: 'text/html', to: "mcelltester@gmail.com";  
       }  
     }
 }

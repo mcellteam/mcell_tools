@@ -1,9 +1,0 @@
-test:debian8:
-  script: "python3 run.py -u -1234"
-
-test:debian9:
-  script: "python3 run.py -u -1234"
-  
-test:debian10:
-  script: "python3 run.py -u -1234"
- 
