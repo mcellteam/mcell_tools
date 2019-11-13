@@ -22,6 +22,7 @@ class Options:
         self.branch = DEFAULT_BRANCH
         
         self.release_version = INTERNAL_RELEASE_NO_VERSION
+        self.store_build = False 
         
         # set by set_result_bundle_archive_name, 
         # needs release_version
@@ -78,6 +79,7 @@ class Options:
         #not supported yet: parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
     
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
+        parser.add_argument('-s', '--store-build', action='store_true', help='store build in mcelldata directory')
     
         parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
         
@@ -111,7 +113,9 @@ class Options:
             
         if args.release:
             self.release_version = args.release        
-                    
+        if args.store_build:
+            self.store_build = True 
+                        
         self.do_repos = args.do_repos
         self.do_build = args.do_build
         self.do_bundle = args.do_bundle

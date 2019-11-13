@@ -122,7 +122,7 @@ def main():
         test_all(opts, install_dirs)
         
     # 5) store the release 
-    if opts.release_version != INTERNAL_RELEASE_NO_VERSION:
+    if opts.store_build or opts.release_version != INTERNAL_RELEASE_NO_VERSION:
         if os.path.exists(MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR):
             log("Copying release '" + opts.result_bundle_archive_path + "'  to '" + MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR + "'.")
             shutil.copy(opts.result_bundle_archive_path, MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR)
