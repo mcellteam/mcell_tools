@@ -101,11 +101,17 @@ PYTHON_ARCHIVE_PATH = os.path.join(PYTHON_ARCHIVE_DIR, BUILD_SUBDIR_PYTHON + '.t
 PREBUILT_BLENDER_W_PYTHON_DIR = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'prebuilt_blender_w_python')
 PREBUILT_BLENDER_W_PYTHON_EXT = 'tar.gz'
 
-INSTALL_SUBDIR_CELLBLENDER = os.path.join(BUILD_SUBDIR_BLENDER, BLENDER_VERSION, 'scripts', 'addons', 'cellblender')
-INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
+if platform.system() == 'Darwin':
+    INSTALL_SUBDIR_CELLBLENDER = os.path.join(BUILD_SUBDIR_BLENDER, 'blender.app', 'Contents', 'Resources', BLENDER_VERSION, 'scripts', 'addons', 'cellblender')
+    INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
+else:
+    INSTALL_SUBDIR_CELLBLENDER = os.path.join(BUILD_SUBDIR_BLENDER, BLENDER_VERSION, 'scripts', 'addons', 'cellblender')
+    INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
+
 
 BUNDLE_NAME = 'Blender-2.79-CellBlender.' + platform.system()
 BUNDLE_EXT = 'tar.gz'
 
 TEST_BUNDLE_DIR = 'bundle_install'
+
 
