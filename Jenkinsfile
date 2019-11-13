@@ -16,17 +16,17 @@ pipeline {
         }
         stage("clean") {
             steps {
-              sh "export $PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --clean"
+              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --clean"
             }
         }
         stage("build") {
             steps {
-              sh "export $PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle --store-build"
+              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle --store-build"
             }
         }
         stage("test") {
             steps {
-              sh "export $PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test"
+              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test"
             }
         }
     }
