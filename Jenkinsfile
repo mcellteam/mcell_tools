@@ -21,12 +21,12 @@ pipeline {
         }
         stage("build") {
             steps {
-              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle --store-build"
+              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle "
             }
         }
         stage("test") {
             steps {
-              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test"
+              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test --store-build"
             }
         }
     }
