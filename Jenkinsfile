@@ -2,31 +2,31 @@ pipeline {
     agent { label "${env.NODE_LABEL}" }
     
     stages {
-        stage('checkout') {
+        stage("checkout") {
             steps {
-              sh 'git clone https://github.com/mcellteam/mcell_tools.git || exit 0'
-              sh 'cd mcell_tools || exit 1; git checkout testing_infrastructure || exit 1; git pull || exit 1'
+              sh "git clone https://github.com/mcellteam/mcell_tools.git || exit 0"
+              sh "cd mcell_tools || exit 1; git checkout testing_infrastructure || exit 1; git pull || exit 1"
             }
         }
-        stage('info') {
+        stage("info") {
             steps {
               echo "Workspace location: ${env.WORKSPACE}"    
-              sh 'ls -l mcell_tools'
+              sh "ls -l mcell_tools"
             }
         }
-        stage('clean') {
+        stage("clean") {
             steps {
-              sh 'cd mcell_tools; python run.py --clean'
+              sh "cd mcell_tools; python run.py --clean"
             }
         }
-        stage('build') {
+        stage("build") {
             steps {
-              sh 'cd mcell_tools; python run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle'
+              sh "cd mcell_tools; python run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle"
             }
         }
-        stage('test') {
+        stage("test") {
             steps {
-              sh 'cd mcell_tools; python run.py --do-test'
+              sh "cd mcell_tools; python run.py --do-test"
             }
         }
     }
