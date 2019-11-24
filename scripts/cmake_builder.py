@@ -79,6 +79,9 @@ def download_and_build_cmake(work_dir):
     build_dir = os.path.join(work_dir, CMAKE_LOCAL_BUILD_DIR)
     install_dir = os.path.join(work_dir, CMAKE_LOCAL_INSTALL_DIR)
     
+    if not os.path.exists(work_dir):
+        os.mkdir(work_dir)
+    
     # 1) download
     ec = run(['wget', CMAKE_SRC_URL], cwd=work_dir)
     if ec != 0:
