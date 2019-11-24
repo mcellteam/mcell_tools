@@ -46,7 +46,7 @@ class Options:
         self.work_dir = os.path.join(self.top_dir, REPO_NAME_MCELL_TOOLS, WORK_DIR_NAME)
         
         # might be overridden in case when the buid system builds its own cmake
-        self.cmake_path = CMAKE_SYSTEM_EXECUTABLE
+        self.cmake_executable = CMAKE_SYSTEM_EXECUTABLE
 
     def __repr__(self):
         attrs = vars(self)
@@ -136,6 +136,6 @@ class Options:
         if not (self.do_repos or self.do_build or self.do_bundle or self.do_test):
             self.do_repos = True
             self.do_build = True
-            self.do_bundle = True
-            self.do_test = True
+            #self.do_bundle = True
+            #self.do_test = True
     

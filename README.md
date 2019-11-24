@@ -1,12 +1,20 @@
 # mcell_tools
 
-This repository will contain all tools to clone repositories build a whole bundle.
-The idea is to be able to clone just this repo, then run a single script 
-that will clone or update all the required repositories, build everything that is necessary, and assemble a blender bundle.
-The resulting bundle will then be used in testing that the tools in this repo also run.
+This repository contains all tools to clone repositories build a whole bundle and test it.
 
-Ideally, the only thing the testing system should do it to clone this repo,
-execute the run.py script and then collect results to be presented. 
- 
-This repo does not need any other repository to be cloned.
- 
+Required system packages are:
+
+```
+  apt install git cmake build-essential bison flex swig python3 python3-dev libboost-dev zip
+```
+
+To checkout all the repositories and build mcell along with other tools, run the following commands:
+
+```
+  mkdir mcell
+  git clone https://github.com/mcellteam/mcell_tools.git
+  cd mcell_tools
+  python3 run.py # optional argument -b BRANCH_NAME selects branch, testing_infrastructre is the default branch
+```
+  
+The resulting build directory of mcell is then located in work/build_mcell. 

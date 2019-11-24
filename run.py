@@ -44,7 +44,7 @@ def check_prerequisites(opts):
         
         
     # also check cmake (although it is not needed for all task types)
-    opts.cmake_path = cmake_builder.build_cmake_if_version_is_insufficient(opts.work_dir)
+    opts.cmake_executable = cmake_builder.build_cmake_if_version_is_insufficient(opts.work_dir)
     
     
 def test_all(opts, install_dirs):    
@@ -73,11 +73,8 @@ def test_all(opts, install_dirs):
 def main():
     opts = Options()
     opts.process_opts()
+    check_prerequisites(opts)
     print(opts)
-    
-    check_prerequisites()
-
-    return
 
     log("Top directory: " + opts.top_dir)
 

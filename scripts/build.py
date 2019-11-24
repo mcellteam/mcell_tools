@@ -73,7 +73,7 @@ def build_mcell(opts):
         os.makedirs(mcell_build_dir)
     
     # setup cmake build arguments
-    cmd_cmake = ['cmake']
+    cmd_cmake = [opts.cmake_executable]
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_MCELL))
 
     cmd_cmake.append(get_cmake_build_type_arg(opts))
@@ -146,7 +146,7 @@ def build_gamer(opts):
         os.makedirs(gamer_build_dir)
     
     # setup cmake build arguments
-    cmd_cmake = ['cmake']
+    cmd_cmake = [opts.cmake_executable]
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_GAMER))
     cmd_cmake.append(get_cmake_build_type_arg(opts))
     cmd_cmake.append('-DCMAKE_INSTALL_PREFIX:PATH=' + gamer_install_dir)
