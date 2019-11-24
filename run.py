@@ -30,16 +30,21 @@ sys.path.append(os.path.join(THIS_DIR, 'scripts'))
 import repositories
 import build
 import bundle
+import cmake_builder
 
 from utils import log, fatal_error, get_cwd_no_link
 from build_settings import *
 from options import Options
 
 
-def check_prerequisites():
+def check_prerequisites(opts):
     if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 5):
         # this is what cellblender was using, not sure, maybe just version 3.* suffices 
         fatal_error("Required Python version is at least 3.5")
+        
+        
+    # also check cmake (although it is not needed for all task types)
+    opts.cmake_path = cmake_builder.build_cmake_if_version_is_insufficient(opts.work_dir)
     
     
 def test_all(opts, install_dirs):    
@@ -71,6 +76,8 @@ def main():
     print(opts)
     
     check_prerequisites()
+
+    return
 
     log("Top directory: " + opts.top_dir)
 

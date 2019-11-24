@@ -44,6 +44,9 @@ class Options:
         # using os.getcwd() + '..' does not work with links as expected
         self.top_dir = os.path.dirname(get_cwd_no_link())
         self.work_dir = os.path.join(self.top_dir, REPO_NAME_MCELL_TOOLS, WORK_DIR_NAME)
+        
+        # might be overridden in case when the buid system builds its own cmake
+        self.cmake_path = CMAKE_SYSTEM_EXECUTABLE
 
     def __repr__(self):
         attrs = vars(self)
