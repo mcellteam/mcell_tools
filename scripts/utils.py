@@ -25,6 +25,7 @@ import os
 import sys
 import subprocess
 import shutil
+import platform
 from threading import Timer
 from subprocess import Popen, PIPE
           
@@ -32,8 +33,13 @@ from subprocess import Popen, PIPE
 def get_cwd_no_link():
     # get current working directory even though we are in a symlinked directory
     # the shell argument must be set to True in this case
-    cwd = Popen(['pwd'], stdout=PIPE, shell=True).communicate()[0].strip()
-    return cwd.decode('ascii')
+    if 'Windows' in platform.system():
+        res = os.getcwd()
+    else:
+        cwd = Popen(['pwd'], stdout=PIPE, shell=True).communicate()[0].strip()
+        res = cwd.decode('ascii')
+     
+    return res
           
 
 def kill_proc(proc, f, timeout_is_fatal):

@@ -48,20 +48,6 @@ def is_default_compiler_supported_by_mcell() -> bool:
         return True
 
 
-def copy_cygwin_dlls(mcell_dir):
-    dlls_path = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, CYGWIN_DLLS)
-    files = [f for f in os.listdir(dlls_path) if os.path.isfile(os.path.join(dlls_path, f))]
-    for f in files:
-        dll = os.path.join(dlls_path, f)
-        log("Copying '" + dll + "' to '" + mcell_dir + "'.");         
-        shutil.copy(dll, mcell_dir)
-        
-        # cygwin also requires these libraries to be "executable"
-        cmd_chmod = ['chmod', 'a+x', os.path.join(mcell_dir, '*.dll')]
-        ec = run(cmd_chmod, shell=True)
-        check_ec(ec, cmd_chmod)
-    
-
 def build_mcell(opts):
 
     mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
@@ -102,9 +88,6 @@ def build_mcell(opts):
     ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, cmd_make)
     
-    if 'CYGWIN' in platform.system():
-        copy_cygwin_dlls(mcell_build_dir)
-    
     return mcell_build_dir
         
 
@@ -119,9 +102,15 @@ def build_cellblender(opts):
     if not os.path.exists(cellblender_build_dir):
         os.makedirs(cellblender_build_dir)
         
-            # setup make build arguments
+    # setup make build arguments
+    # the cellblender installation directory must use unix-style separators
+    if 'Windows' in platform.system():
+        cellblender_build_dir_unix = cellblender_build_dir.replace('\\', '/')
+    else:
+        cellblender_build_dir_unix = cellblender_build_dir
+    
     cmd_make = ['make', '-f', 'makefile', 'install', 
-         'INSTALL_DIR=' +  cellblender_build_dir ]
+         'INSTALL_DIR=' +  cellblender_build_dir_unix ]
     
     # run make (in-source build)
     ec = run(cmd_make, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
@@ -153,10 +142,10 @@ def build_gamer(opts):
     
     c_flags = ''
     cxx_flags = ''
-    if 'CYGWIN' in platform.system():
-        flags='-D\'M_PI=3.14159265358979323846\' -D\'M_PI_2=(M_PI/2.0)\' '
-        c_flags = c_flags + flags
-        cxx_flags = cxx_flags + flags
+    #if 'CYGWIN' in platform.system():
+    #    flags='-D\'M_PI=3.14159265358979323846\' -D\'M_PI_2=(M_PI/2.0)\' '
+    #    c_flags = c_flags + flags
+    #    cxx_flags = cxx_flags + flags
         
     # library casc requires __has_cpp_attribute c++17 - disable it
     # maybe we can check gcc version and enable it but let's keep it simple for now
@@ -189,8 +178,10 @@ def build_all(opts):
     # in-source build for now, should be fixed but it can work like this
     build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
     
-    
-    build_gamer(opts)
+    if 'Windows' in platform.system():
+        log('Gamer build on Windows is not supported yet')
+    else:
+        build_gamer(opts)
     
     return build_dirs
     

@@ -46,7 +46,7 @@ def unpack_blender(opts, blender_dir) -> None:
         fatal_error("Operating system '" + platform.system() + "' is not supported in this build system yet.")
     
     log("Unpacking blender ...")
-    cmd = ['tar', '-xjf', archive_path, '-C', blender_dir ]
+    cmd = TAR_BASE_CMD + ['-xjf', archive_path, '-C', blender_dir ]
     ec = run(cmd)
     check_ec(ec, cmd)
 
@@ -66,7 +66,7 @@ def unpack_python(opts, python_dir) -> None:
     os.makedirs(python_dir)
     
     log("Unpacking python sources ...")
-    cmd = ['tar', '-xf', archive_path, '-C', python_dir ]
+    cmd = TAR_BASE_CMD + ['-xf', archive_path, '-C', python_dir ]
     ec = run(cmd)
     check_ec(ec, cmd)
 
@@ -123,7 +123,7 @@ def archive_blender_w_python(opts, blender_dir, prebuilt_archive) -> None:
         warning("Blender archive path '" + dir + "' not found, no archivation of blender with python will be done")
         return
     
-    cmd = ['tar', '-jcf', prebuilt_archive, BUILD_DIR_BLENDER]
+    cmd = TAR_BASE_CMD + ['-jcf', prebuilt_archive, BUILD_DIR_BLENDER]
     # must be run from work_dir to avoid having full paths in the archive
     ec = run(cmd, cwd=opts.work_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)   

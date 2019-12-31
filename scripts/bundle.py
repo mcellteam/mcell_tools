@@ -32,7 +32,7 @@ def unpack_prebuilt_blender_w_python(opts, prebuilt_archive) -> None:
 
     # simply extract the prebuilt archive, 
     # the archive already has atop directory called 'blender' 
-    cmd = ['tar', '-xf', prebuilt_archive, '-C', opts.work_dir ]
+    cmd = TAR_BASE_CMD + ['-xf', prebuilt_archive, '-C', opts.work_dir ]
     ec = run(cmd, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)
 
@@ -40,7 +40,7 @@ def unpack_prebuilt_blender_w_python(opts, prebuilt_archive) -> None:
 def archive_resulting_bundle(opts, blender_dir) -> None:
     log("Creating resulting archive '" + opts.result_bundle_archive_path + "'.")
     # TODO: better versioning, e.g. from argument
-    cmd = ['tar', '-zcf', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
+    cmd = TAR_BASE_CMD + ['-zcf', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
     # must be run from work_dir to avoid having full paths in the archive
     ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
@@ -71,7 +71,8 @@ def extract_resulting_bundle(opts) -> List[str]:
             
     log("Unpacking resulting archive for testing '" + opts.result_bundle_archive_path + "'.")
     # TODO: better versioning, e.g. from argument
-    cmd = ['tar', '-xzf', opts.result_bundle_archive_path]
+    # TODO: make a function for tar calls
+    cmd = TAR_BASE_CMD + ['-xzf', opts.result_bundle_archive_path]
     
     ec = run(cmd, cwd=install_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  

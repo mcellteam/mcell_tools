@@ -70,14 +70,12 @@ elif platform.system() == 'Darwin':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
     BLENDER_ARCHIVE = 'blender-2.79b-Darwin-18.6.0-x86_64-i386-64bit.tar'
     MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/Volumes/mcell/mcell_build_infrastructure_data/'        
-elif 'CYGWIN' in platform.system():
+elif 'Windows' in platform.system():
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-windows64'
     BLENDER_ARCHIVE = 'blender-2.79b-windows64.zip'
-    MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cygdrive/z/'
+    MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = 'Z:\\'
 else:
     fatal_error("Operating system '" + platform.system() + "' is not supported in this build system yet.")
-
-CYGWIN_DLLS = 'cygwin_dlls'
 
 BUILD_SUBDIR_PYTHON_UNDER_BLENDER = os.path.join(BLENDER_VERSION, 'python/')
 BUILD_SUBDIR_BIN_PYTHON_DIR = 'bin/python3.5'
@@ -87,6 +85,14 @@ BUILD_SUBDIR_PYTHON = 'Python-3.5.3'
 
 PYTHON_SYSTEM_EXECUTABLE = 'python3'
 PYTHON_BLENDER_EXECUTABLE = './python3.5'
+
+if 'Windows' in platform.system():
+    # tar interprets colons (:) in file names as meaning it is a file on another machine.
+    # TODO: fix this, we really do not want to have an absolute path here but even putting the path into $PATH
+    #   somehow did not help 
+    TAR_BASE_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/tar', '--force-local']
+else:
+    TAR_BASE_CMD = ['tar']
 
 CMAKE_SYSTEM_EXECUTABLE = 'cmake'
 CMAKE_MIN_MAJOR = 3
