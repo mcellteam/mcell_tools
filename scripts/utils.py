@@ -26,6 +26,7 @@ import sys
 import subprocess
 import shutil
 import platform
+import multiprocessing
 from threading import Timer
 from subprocess import Popen, PIPE
           
@@ -137,3 +138,10 @@ def check_ec(ec, cmd):
         cmd_str = str.join(" ", cmd)
         fatal_error("Error: command '" + cmd_str + "' failed, terminating.")
         
+        
+def get_nr_cores():
+    cpu_count = multiprocessing.cpu_count()
+    if cpu_count > 1:
+        return int(cpu_count/2)
+    else:
+        return 1

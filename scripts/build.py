@@ -19,7 +19,6 @@ http://www.gnu.org/licenses/gpl-2.0.html
 """
 
 import os
-import multiprocessing
 import platform
 from utils import *
 from build_settings import *
@@ -43,6 +42,13 @@ def is_default_compiler_supported_by_mcell() -> bool:
         else:
             # TODO: some error check? maybe we will fix this issue 
             return True
+    if platform.system() == 'Linux':
+        cmd = ['gcc', '--version']
+        res = run_with_ascii_output(cmd, cwd='.')
+        # just a warning for now
+        if res > '8':
+            log('Warning: NFsim does not seem to work with gcc version higher or equal to 8...')
+        return True
     else:
         # for other OSes let's assume that everything is fine
         return True
@@ -60,6 +66,7 @@ def build_mcell(opts):
     
     # setup cmake build arguments
     cmd_cmake = [opts.cmake_executable]
+    cmd_cmake += CMAKE_EXTRA_ARGS
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_MCELL))
 
     cmd_cmake.append(get_cmake_build_type_arg(opts))
@@ -82,7 +89,7 @@ def build_mcell(opts):
     
     # setup make build arguments
     cmd_make = ['make']
-    cmd_make.append('-j' + str(int(multiprocessing.cpu_count()/2))) 
+    cmd_make.append('-j' + str(get_nr_cores())) 
     
     # run make 
     ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
@@ -136,6 +143,7 @@ def build_gamer(opts):
     
     # setup cmake build arguments
     cmd_cmake = [opts.cmake_executable]
+    cmd_cmake += CMAKE_EXTRA_ARGS
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_GAMER))
     cmd_cmake.append(get_cmake_build_type_arg(opts))
     cmd_cmake.append('-DCMAKE_INSTALL_PREFIX:PATH=' + gamer_install_dir)
@@ -161,7 +169,7 @@ def build_gamer(opts):
     
     # setup make build arguments
     cmd_make = ['make', 'install']
-    cmd_make.append('-j' + str(int(multiprocessing.cpu_count()/2))) 
+    cmd_make.append('-j' + str(get_nr_cores())) 
     
     # run make 
     ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)

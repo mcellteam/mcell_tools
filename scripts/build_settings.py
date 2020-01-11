@@ -99,6 +99,13 @@ CMAKE_MIN_MAJOR = 3
 CMAKE_MIN_MINOR = 14
 CMAKE_MIN_PATCH = 0
 
+if 'Windows' in platform.system():
+    # cmake on Windows tries to use Visual Studio by default 
+    CMAKE_EXTRA_ARGS = [ '-G', 'Unix Makefiles' ]
+else:
+    # keep default elsewhere
+    CMAKE_EXTRA_ARGS = []
+
 RUN_TESTS_SCRIPT = 'run_tests.py'
 
 MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'releases')
