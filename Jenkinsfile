@@ -16,18 +16,24 @@ pipeline {
         }
         stage("clean") {
             steps {
-              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --clean"
+              sh '''#!/bin/bash
+                    sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --clean
+                 '''
             }
         }
         stage("build") {
             steps {
               // /usr/local/opt/bison/bin is required for MacOs because an older version is the default there 
-              sh "export PATH=/usr/local/opt/bison/bin:$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle "
+              sh '''#!/bin/bash
+                    export PATH=/usr/local/opt/bison/bin:$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle
+                 '''
             }
         }
         stage("test") {
             steps {
-              sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test --store-build"
+              sh '''#!/bin/bash
+                    export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test --store-build
+                 '''
             }
         }
     }
