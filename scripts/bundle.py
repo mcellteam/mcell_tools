@@ -119,9 +119,9 @@ def create_bundle(opts) -> None:
     
     # D) other dependencies that might be needed
     if platform.system() == 'Darwin':
-        shutil.copytree(
-            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_libs', 'darwin'),
-            os.path.join(mcell_dir, 'lib')
+        shutil.copyfile(
+            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_libs', 'darwin', 'libintl.8.dylib'),
+            os.path.join(mcell_dir, 'lib', 'libintl.8.dylib')
         )
             
     # D) gamer
