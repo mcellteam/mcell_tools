@@ -1,27 +1,27 @@
 parallel a: {
   node('debian8') {
-    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "debian8"]], propagate: true, wait: true
+    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "debian8"], [$class: 'StringParameterValue', name: 'EXTRA_BUILD_ARGS', value: ""]], propagate: true, wait: true
   }
 }, 
 
 b: {
   node('debian9') { 
-    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "debian9"]], propagate: true, wait: true
+    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "debian9"], [$class: 'StringParameterValue', name: 'EXTRA_BUILD_ARGS', value: ""]], propagate: true, wait: true
   }
 }, 
 c: {
   node('debian10') {
-    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "debian10"]], propagate: true, wait: true
+    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "debian10"], [$class: 'StringParameterValue', name: 'EXTRA_BUILD_ARGS', value: ""]], propagate: true, wait: true
   }
 },
 d: {
   node('macos_mojave') {
-    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "macos_mojave"]], propagate: true, wait: true
+    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "macos_mojave"], [$class: 'StringParameterValue', name: 'EXTRA_BUILD_ARGS', value: ""]], propagate: true, wait: true
   }
 },
 e: {
   node('windows') {
-    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "windows"]], propagate: true, wait: true
+    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "windows"], [$class: 'StringParameterValue', name: 'EXTRA_BUILD_ARGS', value: ""]], propagate: true, wait: true
   }
 },
 failFast: false

@@ -26,7 +26,7 @@ pipeline {
             steps {
               // /usr/local/opt/bison/bin is required for MacOs because an older version is the default there 
               sh '''#!/bin/bash -xe
-                    export PATH=/usr/local/opt/bison/bin:$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${TESTED_BRANCH} --update --do-repos --do-build --do-bundle
+                    export PATH=/usr/local/opt/bison/bin:$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${TESTED_BRANCH} --update --do-repos --do-build --do-bundle ${EXTRA_BUILD_ARGS}
                  '''
             }
         }
