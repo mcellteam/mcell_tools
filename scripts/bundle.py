@@ -116,6 +116,14 @@ def create_bundle(opts) -> None:
         mcell_dir
     )
     
+    
+    # D) other dependencies that might be needed
+    if platform.system() == 'Darwin':
+        shutil.copytree(
+            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_libs', 'darwin'),
+            os.path.join(mcell_dir, 'lib')
+        )
+            
     # D) gamer
     # NOTE: Gamer 2.0 requires blender 2.80, for now we are using Gamer 1.x that is already present in the 
     # prebuilt blender + python package
