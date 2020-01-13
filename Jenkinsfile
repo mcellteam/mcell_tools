@@ -16,22 +16,23 @@ pipeline {
         }
         stage("clean") {
             steps {
-              sh '''#!/bin/bash
-                    sh "export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --clean
+              // need to call bash like this because Windows has parentheses .. (x86) in PATH and sh does not handle it
+              sh '''#!/bin/bash -xe
+                    export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --clean
                  '''
             }
         }
         stage("build") {
             steps {
               // /usr/local/opt/bison/bin is required for MacOs because an older version is the default there 
-              sh '''#!/bin/bash
-                    export PATH=/usr/local/opt/bison/bin:$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${env.TESTED_BRANCH} --update --do-repos --do-build --do-bundle
+              sh '''#!/bin/bash -xe
+                    export PATH=/usr/local/opt/bison/bin:$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --branch ${TESTED_BRANCH} --update --do-repos --do-build --do-bundle
                  '''
             }
         }
         stage("test") {
             steps {
-              sh '''#!/bin/bash
+              sh '''#!/bin/bash -xe
                     export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test --store-build
                  '''
             }
