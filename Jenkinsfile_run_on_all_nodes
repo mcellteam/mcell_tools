@@ -19,4 +19,9 @@ d: {
     build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "macos_mojave"]], propagate: true, wait: true
   }
 },
+e: {
+  node('windows') {
+    build job: "mcell_build_test", parameters: [[$class: 'StringParameterValue', name: 'TESTED_BRANCH', value: "${env.TESTED_BRANCH}"], [$class: 'StringParameterValue', name: 'NODE_LABEL', value: "windows"]], propagate: true, wait: true
+  }
+},
 failFast: false
