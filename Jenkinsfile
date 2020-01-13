@@ -33,7 +33,7 @@ pipeline {
         stage("test") {
             steps {
               sh '''#!/bin/bash -xe
-                    export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test --store-build
+                    export PATH=$PATH:/usr/local/bin; cd mcell_tools; python3 run.py --do-test --store-build ${EXTRA_BUILD_ARGS}
                  '''
             }
         }
