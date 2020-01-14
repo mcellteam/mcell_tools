@@ -84,29 +84,25 @@ BUILD_DIR_PYTHON = 'python'
 BUILD_SUBDIR_PYTHON = 'Python-3.5.3'
 
 PYTHON_SYSTEM_EXECUTABLE = 'python3'
-PYTHON_BLENDER_EXECUTABLE = './python3.5'
 
 if 'Windows' in platform.system():
     # tar interprets colons (:) in file names as meaning it is a file on another machine.
     # TODO: fix this, we really do not want to have an absolute path here but even putting the path into $PATH
     #   somehow did not help 
     TAR_BASE_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/tar', '--force-local']
+    PYTHON_BLENDER_EXECUTABLE = 'python.exe'
+    # cmake on Windows tries to use Visual Studio generator by default 
+    CMAKE_EXTRA_ARGS = [ '-G', 'Unix Makefiles' ]
 else:
     TAR_BASE_CMD = ['tar']
+    PYTHON_BLENDER_EXECUTABLE = 'python3.5'
+    # keep default generator for cmake 
+    CMAKE_EXTRA_ARGS = []
 
 CMAKE_SYSTEM_EXECUTABLE = 'cmake'
 CMAKE_MIN_MAJOR = 3
 CMAKE_MIN_MINOR = 14
 CMAKE_MIN_PATCH = 0
-
-if 'Windows' in platform.system():
-    # cmake on Windows tries to use Visual Studio by default 
-    CMAKE_EXTRA_ARGS = [ '-G', 'Unix Makefiles' ]
-    EXE_EXT = '.exe'
-else:
-    # keep default elsewhere
-    CMAKE_EXTRA_ARGS = []
-    EXE_EXT = ''
 
 RUN_TESTS_SCRIPT = 'run_tests.py'
 
