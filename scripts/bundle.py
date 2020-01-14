@@ -55,7 +55,10 @@ def get_extracted_bundle_install_dirs(opts) -> List[str]:
     install_dirs = {}
     install_dirs[REPO_NAME_CELLBLENDER] = os.path.join(install_dir, INSTALL_SUBDIR_CELLBLENDER)  
     install_dirs[REPO_NAME_MCELL] = os.path.join(install_dir, INSTALL_SUBDIR_MCELL)
-    install_dirs[PYTHON_BLENDER_EXECUTABLE] = os.path.join(install_dir, INSTALL_SUBDIR_PYTHON_BIN)
+    # TODO: cannot run python on MacOS without being installed under Applciations, 
+    # need to fix this
+    if platform.system() != 'Darwin':
+        install_dirs[PYTHON_BLENDER_EXECUTABLE] = os.path.join(install_dir, INSTALL_SUBDIR_PYTHON_BIN)
     return install_dirs 
     
 # called from run.py when testing is enabled
