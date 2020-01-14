@@ -102,9 +102,11 @@ CMAKE_MIN_PATCH = 0
 if 'Windows' in platform.system():
     # cmake on Windows tries to use Visual Studio by default 
     CMAKE_EXTRA_ARGS = [ '-G', 'Unix Makefiles' ]
+    EXE_EXT = '.exe'
 else:
     # keep default elsewhere
     CMAKE_EXTRA_ARGS = []
+    EXE_EXT = ''
 
 RUN_TESTS_SCRIPT = 'run_tests.py'
 
@@ -120,11 +122,14 @@ PREBUILT_BLENDER_W_PYTHON_DIR = os.path.join(MCELL_BUILD_INFRASTRUCTURE_DATA_DIR
 PREBUILT_BLENDER_W_PYTHON_EXT = 'tar.gz'
 
 if platform.system() == 'Darwin':
-    INSTALL_SUBDIR_CELLBLENDER = os.path.join(BUILD_SUBDIR_BLENDER, 'blender.app', 'Contents', 'Resources', BLENDER_VERSION, 'scripts', 'addons', 'cellblender')
-    INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
+    INSTALL_VERSION_SUBDIR_BLENDER = os.path.join(BUILD_SUBDIR_BLENDER, 'blender.app', 'Contents', 'Resources', BLENDER_VERSION)
 else:
-    INSTALL_SUBDIR_CELLBLENDER = os.path.join(BUILD_SUBDIR_BLENDER, BLENDER_VERSION, 'scripts', 'addons', 'cellblender')
-    INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
+    INSTALL_VERSION_SUBDIR_BLENDER = os.path.join(BUILD_SUBDIR_BLENDER, BLENDER_VERSION)
+
+
+INSTALL_SUBDIR_PYTHON_BIN = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, BUILD_DIR_PYTHON, BUILD_SUBDIR_BIN_PYTHON_DIR)                    
+INSTALL_SUBDIR_CELLBLENDER = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, 'scripts', 'addons', 'cellblender')
+INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
 
 
 BUNDLE_NAME = 'Blender-2.79-CellBlender.' + platform.system()

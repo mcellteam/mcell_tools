@@ -63,6 +63,9 @@ def test_all(opts, install_dirs):
 
     if REPO_NAME_CELLBLENDER in install_dirs:
         test_cmd += [ '-b', install_dirs[REPO_NAME_CELLBLENDER] ]
+
+    if PYTHON_BLENDER_EXECUTABLE in install_dirs:
+        test_cmd += [ '-t', install_dirs[PYTHON_BLENDER_EXECUTABLE] ]
         
     # for some reason the script dos not terminate without the shell=True
     ec = run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path, shell=True)
