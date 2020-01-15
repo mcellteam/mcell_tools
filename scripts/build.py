@@ -118,9 +118,10 @@ def build_cellblender(opts):
         cellblender_build_dir_unix = cellblender_build_dir
         cmd_mklink = [ 'ln', '-s', '.',  'cellblender' ]
 
-    # first make a cellblender link directory becaue make creates it only sometimes 
-    ec_mklink = run(cmd_mklink, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec_mklink, cmd_mklink)
+    # first make a cellblender link directory becaue make creates it only sometimes
+    if not os.path.exists(os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), 'cellblender'): 
+        ec_mklink = run(cmd_mklink, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
+        check_ec(ec_mklink, cmd_mklink)
     
     cmd_make = ['make', 'all', '-f', 'makefile', 'install', 
          'INSTALL_DIR=' +  cellblender_build_dir_unix ]
