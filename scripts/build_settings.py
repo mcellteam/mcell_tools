@@ -31,7 +31,7 @@ DEFAULT_DNS_FOR_SSH_CLONE = [ 'salk.edu' ]
 
 #DEFAULT_BRANCH='development'
 # FIXME: use the branch of the mcell_tools repo?
-DEFAULT_BRANCH='testing_infrastructure'
+DEFAULT_BRANCH='master'
 
 WORK_DIR_NAME = 'work'
 
