@@ -113,10 +113,16 @@ def build_cellblender(opts):
     # the cellblender installation directory must use unix-style separators
     if 'Windows' in platform.system():
         cellblender_build_dir_unix = cellblender_build_dir.replace('\\', '/')
+        cmd_mklink = [ 'mklink', '/J', 'cellblender',  '.' ]
     else:
         cellblender_build_dir_unix = cellblender_build_dir
+        cmd_mklink = [ 'ln', '-s', '.',  'cellblender' ]
+
+    # first make a cellblender link directory becaue make creates it only sometimes 
+    ec_mklink = run(cmd_mklink, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec_mklink, cmd_make)
     
-    cmd_make = ['make', '-f', 'makefile', 'install', 
+    cmd_make = ['make', 'all', '-f', 'makefile', 'install', 
          'INSTALL_DIR=' +  cellblender_build_dir_unix ]
     
     # run make (in-source build)
