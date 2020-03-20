@@ -130,7 +130,7 @@ def build_cellblender(opts):
     ec = run(cmd_make, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, cmd_make)
     
-    return cellblender_build_dir
+    return os.path.join(cellblender_build_dir, REPO_NAME_CELLBLENDER)
 
 
 def build_gamer(opts):
