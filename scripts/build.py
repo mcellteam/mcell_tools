@@ -185,8 +185,45 @@ def build_gamer(opts):
     return gamer_install_dir
         
 
+def build_vtk(opts):
+
+    vtk_build_dir = os.path.join(opts.work_dir, BUILD_DIR_VTK)
+    
+    log("Running mcell build...")
+    
+    # create working directory
+    if not os.path.exists(vtk_build_dir):
+        os.makedirs(vtk_build_dir)
+    
+    # setup cmake build arguments
+    cmd_cmake = [opts.cmake_executable]
+    cmd_cmake += CMAKE_EXTRA_ARGS
+    cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_VTK))
+
+    # always built as release
+    cmd_cmake.append('-DCMAKE_BUILD_TYPE=Release')
+
+    # other VTK options
+    cmd_cmake.append('-DBUILD_TESTING=OFF')
+    cmd_cmake.append('-DBUILD_SHARED_LIBS=OFF')
+
+    # run cmake
+    ec = run(cmd_cmake, vtk_build_dir)
+    check_ec(ec, cmd_cmake)
+    
+    # setup make build arguments
+    cmd_make = ['make']
+    cmd_make.append('-j' + str(get_nr_cores())) 
+    cmd_make.append('-k') # do not stop on errors 
+    
+    # run make, will fail 
+    ec = run(cmd_make, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
+    
+    
 def build_all(opts):
     build_dirs = {}
+    
+    build_vtk(opts)
     
     build_dirs[REPO_NAME_MCELL] = build_mcell(opts)
     

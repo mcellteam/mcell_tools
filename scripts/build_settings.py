@@ -29,9 +29,9 @@ from utils import *
 
 DEFAULT_DNS_FOR_SSH_CLONE = [ 'salk.edu' ] 
 
-#DEFAULT_BRANCH='development'
-# FIXME: use the branch of the mcell_tools repo?
 DEFAULT_BRANCH='master'
+DEFAULT_BRANCH_MCELL4='mcell4_dev'
+BRANCH_PREFIX_MCELL4='mcell4'
 
 WORK_DIR_NAME = 'work'
 
@@ -50,10 +50,13 @@ REPO_NAME_NFSIM = 'nfsim'
 REPO_NAME_NFSIMCINTERFACE = 'nfsimCInterface'
 REPO_NAME_BIONETGEN = 'bionetgen'
 REPO_NAME_GAMER = 'gamer'
+REPO_NAME_VTK = 'VTK'
 
 BUILD_DIR_MCELL = 'build_mcell'
 BUILD_DIR_CELLBLENDER = 'build_cellblender' # this in fact an install dir for now
 BUILD_DIR_GAMER = 'build_gamer'
+BUILD_DIR_VTK = 'build_vtk'
+
 INSTALL_DIR_GAMER = 'install_gamer'
 
 BLENDER_VERSION = '2.79' 

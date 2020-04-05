@@ -27,7 +27,8 @@ from utils import *
 from build_settings import *
 
 BASE_URL = 'https://github.com/mcellteam/'
-BASE_REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS] # ..., 'nfsimCInterface'  ]
+# note: VTK is a forked repository buyt the branch name is unique because it is used for mcell4 only that uses mcell4 prefix
+BASE_REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS, REPO_NAME_VTK] # ..., 'nfsimCInterface'  ]
 FORKED_REPOSITORIES = [REPO_NAME_NFSIM, REPO_NAME_NFSIMCINTERFACE, REPO_NAME_BIONETGEN]
 
 ALL_REPOSITORIES = BASE_REPOSITORIES + FORKED_REPOSITORIES + [REPO_NAME_GAMER]
@@ -77,8 +78,11 @@ def fetch(name, opts):
     run_git_w_ec_check(['fetch'], os.path.join(opts.top_dir, name))
 
 
-def get_default_branch(name):
-    if name in FORKED_REPOSITORIES:
+def get_default_branch(name, branch):
+    print("!!! get_default_branch " + name + " - " + branch)
+    if branch.startswith(BRANCH_PREFIX_MCELL4):
+        return DEFAULT_BRANCH_MCELL4
+    elif name in FORKED_REPOSITORIES:
         return FORKED_REPOSITORY_BRANCH_PREFIX + DEFAULT_BRANCH 
     else:
         return DEFAULT_BRANCH
@@ -93,8 +97,9 @@ def checkout(name, opts, branch):
     branches = run_git_w_ascii_output(['branch', '-r'], repo_dir)
     full_name = ORIGIN + '/' + branch 
     if not full_name in branches: # FIXME: improve check, we are just checking a substring
-        branch = get_default_branch(name)
-        warning("Remote branch '" + branch + "' does not exit in repo '" + name + "', defaulting to '" + branch + "'.")
+        orig_branch = branch
+        branch = get_default_branch(name, branch)
+        warning("Remote branch '" + orig_branch + "' does not exit in repo '" + name + "', defaulting to '" + branch + "'.")
     
     # then we need to check that the branch is clean before we switch
     status = run_git_w_ascii_output(['status'], repo_dir)
@@ -153,7 +158,13 @@ def run_on_all_repositories(opts, function):
 
     for name in FORKED_REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
-        branch_name = FORKED_REPOSITORY_BRANCH_PREFIX + opts.branch
+        
+        if not opts.branch.startswith(BRANCH_PREFIX_MCELL4):
+            # use mcell_ prefix
+            branch_name = FORKED_REPOSITORY_BRANCH_PREFIX + opts.branch
+        else:
+            branch_name = opts.branch
+            
         function(name, opts, BASE_URL, branch_name)
     
     # for gamer, we always use the master branch
