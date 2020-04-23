@@ -46,6 +46,30 @@ def archive_resulting_bundle(opts, blender_dir) -> None:
     check_ec(ec, cmd)  
 
 
+def unpack_gamer(opts, blender_dir):
+    # not sure which version will be make, expecting that there will be just one .zip file
+    # in the build_gamer dir
+    build_gamer_dir = os.join(opts.work_dir, BUILD_DIR_GAMER)
+    blendgamer_zip = ''
+    
+    for file in os.listdir():
+        if file.startswith('blendgamer') and file.endswith(".zip"):
+            if blendgamer_zip:
+                fatal_error('Found multiple blendgamer zip files in ' + build_gamer_dir + '.')
+            blendgamer_zip = file
+            
+    if not blendgamer_zip:
+        fatal_error('Did not find blendgamer zip file in ' + build_gamer_dir + '.')
+        
+    addons_dir = os.path.join(blender_dir, INSTALL_SUBDIR_ADDONS)
+    
+    # unpack it 
+    cmd = UNZIP_CMD + [blendgamer_zip, '-d', addons_dir]
+    # must be run from work_dir to avoid having full paths in the archive
+    ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
+    check_ec(ec, cmd)  
+    
+
 def get_install_dir(opts) -> str:
     return os.path.join(opts.work_dir, TEST_BUNDLE_DIR)
 
@@ -129,11 +153,10 @@ def create_bundle(opts) -> None:
         )
             
     # D) gamer
-    # NOTE: Gamer 2.0 requires blender 2.80, for now we are using Gamer 1.x that is already present in the 
-    # prebuilt blender + python package
+    unpack_gamer(opts, blender_dir)
     
     # E) bionetgen
-    # NOTE: mcell build already copies all the needed tools, probably all that we need for now
+    # NOTE: mcell build already copies all the needed tools, probably that's all we need for now
     
     # add a version file
     blender_subdir = os.path.join(blender_dir, BUILD_SUBDIR_BLENDER)
