@@ -14,6 +14,7 @@ class Options:
         self.ignore_dirty = False
         self.debug = False
         self.ssh = False
+        self.use_private_repos = False
         
         self.do_repos = False
         self.do_build = False
@@ -80,6 +81,7 @@ class Options:
         parser.add_argument('-i', '--ignore-dirty', action='store_true', help='ignore dirty repositories (not supported yet)')
         parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')
         parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
+        parser.add_argument('-z', '--use-private-repos', action='store_true', help='use mcell private repositories')
     
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
         parser.add_argument('-t', '--store-build', action='store_true', help='store build in mcelldata directory')
@@ -113,6 +115,9 @@ class Options:
             self.ignore_dirty = True
         if args.debug:
             self.debug = True
+
+        if args.use_private_repos:
+            self.use_private_repos = True
             
         if args.branch:
             self.branch = args.branch
