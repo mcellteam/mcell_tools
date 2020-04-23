@@ -154,6 +154,7 @@ def build_gamer(opts):
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_GAMER))
     cmd_cmake.append(get_cmake_build_type_arg(opts))
     cmd_cmake.append('-DCMAKE_INSTALL_PREFIX:PATH=' + gamer_install_dir)
+    cmd_cmake.append('-DBUILD_PYGAMER=ON')
     cmd_cmake.append('-DBUILD_BLENDGAMER=ON')
     cmd_cmake.append('-DBLENDER_VERSION=2.79')
     
