@@ -49,10 +49,10 @@ def archive_resulting_bundle(opts, blender_dir) -> None:
 def unpack_gamer(opts, blender_dir):
     # not sure which version will be make, expecting that there will be just one .zip file
     # in the build_gamer dir
-    build_gamer_dir = os.join(opts.work_dir, BUILD_DIR_GAMER)
+    build_gamer_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
     blendgamer_zip = ''
     
-    for file in os.listdir():
+    for file in os.listdir(build_gamer_dir):
         if file.startswith('blendgamer') and file.endswith(".zip"):
             if blendgamer_zip:
                 fatal_error('Found multiple blendgamer zip files in ' + build_gamer_dir + '.')
@@ -66,7 +66,7 @@ def unpack_gamer(opts, blender_dir):
     # unpack it 
     cmd = UNZIP_CMD + [blendgamer_zip, '-d', addons_dir]
     # must be run from work_dir to avoid having full paths in the archive
-    ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
+    ec = run(cmd, cwd=build_gamer_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
     
 
