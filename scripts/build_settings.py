@@ -90,12 +90,14 @@ if 'Windows' in platform.system():
     # TODO: fix this, we really do not want to have an absolute path here but even putting the path into $PATH
     #   somehow did not help 
     TAR_BASE_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/tar', '--force-local']
+    UNZIP_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/unzip']
     PYTHON_BLENDER_EXECUTABLE = 'python.exe'
     # cmake on Windows tries to use Visual Studio generator by default 
     CMAKE_EXTRA_ARGS = [ '-G', 'Unix Makefiles' ]
 else:
     TAR_BASE_CMD = ['tar']
     PYTHON_BLENDER_EXECUTABLE = 'python3.5'
+    UNZIP_CMD = ['unzip']
     # keep default generator for cmake 
     CMAKE_EXTRA_ARGS = []
 
@@ -124,7 +126,9 @@ else:
 
 
 INSTALL_SUBDIR_PYTHON_BIN = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, BUILD_DIR_PYTHON, 'bin', PYTHON_BLENDER_EXECUTABLE)                    
-INSTALL_SUBDIR_CELLBLENDER = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, 'scripts', 'addons', 'cellblender')
+
+INSTALL_SUBDIR_ADDONS = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, 'scripts', 'addons')
+INSTALL_SUBDIR_CELLBLENDER = os.path.join(INSTALL_SUBDIR_ADDONS, 'cellblender')
 INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
 
 

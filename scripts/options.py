@@ -13,6 +13,7 @@ class Options:
         self.clean = False
         self.ignore_dirty = False
         self.debug = False
+        self.ssh = False
         
         self.do_repos = False
         self.do_build = False
@@ -78,11 +79,10 @@ class Options:
         parser.add_argument('-c', '--clean', action='store_true', help='clean data from previous build')
         parser.add_argument('-i', '--ignore-dirty', action='store_true', help='ignore dirty repositories (not supported yet)')
         parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')
-        
-        #not supported yet: parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
+        parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
     
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
-        parser.add_argument('-s', '--store-build', action='store_true', help='store build in mcelldata directory')
+        parser.add_argument('-t', '--store-build', action='store_true', help='store build in mcelldata directory')
     
         parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
         
@@ -92,6 +92,7 @@ class Options:
         parser.add_argument('-4', '--do-test', action='store_true', help='run tests (done by default when none of "qwer" args are set)')
         
         parser.add_argument('-p', '--print-platform-info', action='store_true', help='print platform-dependent names of packages')
+        
         
         return parser
 
@@ -104,6 +105,8 @@ class Options:
         
         if args.update:
             self.update = True
+        if args.ssh:
+            self.ssh = True
         if args.clean:
             self.clean = True
         if args.ignore_dirty:
