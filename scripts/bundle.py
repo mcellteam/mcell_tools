@@ -153,7 +153,8 @@ def create_bundle(opts) -> None:
         )
             
     # D) gamer
-    unpack_gamer(opts, blender_dir)
+    if not opts.do_not_build_gamer:
+        unpack_gamer(opts, blender_dir)
     
     # E) bionetgen
     # NOTE: mcell build already copies all the needed tools, probably that's all we need for now

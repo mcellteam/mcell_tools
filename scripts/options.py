@@ -16,6 +16,8 @@ class Options:
         self.ssh = False
         self.use_private_repos = False
         
+        self.do_not_build_gamer = False
+        
         self.do_repos = False
         self.do_build = False
         self.do_bundle = False
@@ -82,6 +84,7 @@ class Options:
         parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')
         parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
         parser.add_argument('-z', '--use-private-repos', action='store_true', help='use mcell private repositories')
+        parser.add_argument('-g', '--do-not-build-gamer', action='store_true', help='do not build gamer')
     
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
         parser.add_argument('-t', '--store-build', action='store_true', help='store build in mcelldata directory')
@@ -115,6 +118,9 @@ class Options:
             self.ignore_dirty = True
         if args.debug:
             self.debug = True
+
+        if args.do_not_build_gamer:
+            self.do_not_build_gamer = True
 
         if args.use_private_repos:
             self.use_private_repos = True

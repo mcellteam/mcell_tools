@@ -59,7 +59,11 @@ def print_file(file_name):
 def run_with_ascii_output(cmd, cwd):
     # does not return exit code, neither provides timeout
     return Popen(cmd, cwd=cwd, stdout=PIPE).communicate()[0].strip().decode('ascii')
+
     
+def run_with_ascii_output_err(cmd, cwd):
+    # does not return exit code, neither provides timeout
+    return Popen(cmd, cwd=cwd, stderr=PIPE).communicate()[1].strip().decode('ascii')
 
 
 def execute(cmd, cwd, timeout_sec, timeout_is_fatal, outfile, shell=False):

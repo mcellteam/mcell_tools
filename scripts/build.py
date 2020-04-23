@@ -144,6 +144,12 @@ def build_gamer(opts):
     
     log("Running gamer build...")
     
+    res = run_with_ascii_output_err(['python', '--version'], cwd=opts.work_dir)
+    if not res.startswith('Python 3.5'):
+        fatal_error('Build of gamer requires python 3.5.x to be present in the system as the default python executable. '
+                    'To disable its build, use option --do-not-build-gamer. '
+                    'To install python 3.5 use "conda create -n py35; conda install python=3.5" after conda was installed. ')
+    
     # create working directory
     if not os.path.exists(gamer_build_dir):
         os.makedirs(gamer_build_dir)
@@ -196,10 +202,11 @@ def build_all(opts):
     # in-source build for now, should be fixed but it can work like this
     build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
     
-    if 'Windows' in platform.system():
-        log('Gamer build on Windows is not supported yet')
-    else:
-        build_gamer(opts)
+    if not opts.do_not_build_gamer:
+        if 'Windows' in platform.system():
+            log('Gamer build on Windows is not supported yet')
+        else:
+            build_gamer(opts)
     
     return build_dirs
     
