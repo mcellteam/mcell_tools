@@ -133,67 +133,6 @@ def build_cellblender(opts):
     return os.path.join(cellblender_build_dir, REPO_NAME_CELLBLENDER)
 
 
-def build_gamer(opts):
-    gamer_build_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
-    gamer_install_dir = os.path.join(opts.work_dir, INSTALL_DIR_GAMER)
-    if opts.clean:
-        # TODO
-        log("Dry clean of " + gamer_build_dir)
-        log("Dry clean of " + gamer_install_dir)
-    
-    
-    log("Running gamer build...")
-    
-    res = run_with_ascii_output_err(['python', '--version'], cwd=opts.work_dir)
-    if not res.startswith('Python 3.5'):
-        fatal_error('Build of gamer requires python 3.5.x to be present in the system as the default python executable. '
-                    'To disable its build, use option --do-not-build-gamer. '
-                    'To install python 3.5 use "conda create -n py35; conda install python=3.5" after conda was installed. ')
-    
-    # create working directory
-    if not os.path.exists(gamer_build_dir):
-        os.makedirs(gamer_build_dir)
-    
-    # setup cmake build arguments
-    cmd_cmake = [opts.cmake_executable]
-    cmd_cmake += CMAKE_EXTRA_ARGS
-    cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_GAMER))
-    cmd_cmake.append(get_cmake_build_type_arg(opts))
-    cmd_cmake.append('-DCMAKE_INSTALL_PREFIX:PATH=' + gamer_install_dir)
-    cmd_cmake.append('-DBUILD_PYGAMER=ON')
-    cmd_cmake.append('-DBUILD_BLENDGAMER=ON')
-    cmd_cmake.append('-DBLENDER_VERSION=2.79')
-    
-    c_flags = ''
-    cxx_flags = ''
-    #if 'CYGWIN' in platform.system():
-    #    flags='-D\'M_PI=3.14159265358979323846\' -D\'M_PI_2=(M_PI/2.0)\' '
-    #    c_flags = c_flags + flags
-    #    cxx_flags = cxx_flags + flags
-        
-    # library casc requires __has_cpp_attribute c++17 - disable it
-    # maybe we can check gcc version and enable it but let's keep it simple for now
-    cxx_flags = cxx_flags + '-D\'__has_cpp_attribute(x)=0\''
-
-    # no need to add extra "..." - already handled the way how cmake is run (not as shell)
-    cmd_cmake.append('-DCMAKE_C_FLAGS=' + c_flags)
-    cmd_cmake.append('-DCMAKE_CXX_FLAGS=' + cxx_flags) 
-        
-    # run cmake
-    ec = run(cmd_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_cmake)
-    
-    # setup make build arguments
-    cmd_make = ['make', 'install']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    
-    # run make 
-    ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_make)
-    
-    return gamer_install_dir
-        
-
 def build_all(opts):
     build_dirs = {}
     
@@ -201,12 +140,6 @@ def build_all(opts):
     
     # in-source build for now, should be fixed but it can work like this
     build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
-    
-    if not opts.do_not_build_gamer:
-        if 'Windows' in platform.system():
-            log('Gamer build on Windows is not supported yet')
-        else:
-            build_gamer(opts)
     
     return build_dirs
     

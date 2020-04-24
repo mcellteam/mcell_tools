@@ -46,7 +46,7 @@ def archive_resulting_bundle(opts, blender_dir) -> None:
     check_ec(ec, cmd)  
 
 
-def unpack_gamer(opts, blender_dir):
+def unpack_blendgamer(opts, blender_dir):
     # not sure which version will be make, expecting that there will be just one .zip file
     # in the build_gamer dir
     build_gamer_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
@@ -107,6 +107,28 @@ def extract_resulting_bundle(opts) -> List[str]:
     
     return get_extracted_bundle_install_dirs(opts)
   
+
+def build_gamer(opts, blender_dir):
+    log("Running gamer build...")
+
+    cmake_blendgamer_script = os.path.join(opts.top_dir, 'scripts', 'build_blendgamer.sh')
+    gamer_build_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
+    
+    cmd = ['bash', cmake_blendgamer_script, '--', blender_dir, gamer_build_dir]
+    
+    # run cmake
+    ec = run(cmd_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_cmake)
+    
+    # setup make build arguments
+    cmd_make = ['make']
+    cmd_make.append('-j' + str(get_nr_cores())) 
+    
+    # run make 
+    ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_make)
+    
+    return gamer_install_dir
   
 # main entry point  
 def create_bundle(opts) -> None: 
@@ -154,7 +176,12 @@ def create_bundle(opts) -> None:
             
     # D) gamer
     if not opts.do_not_build_gamer:
-        unpack_gamer(opts, blender_dir)
+        if 'Windows' in platform.system():
+            log('Gamer build on Windows is not supported yet')
+        else:
+            # gamer must be built at this phase because we need blender executable
+            build_gamer(opts, blender_dir)
+            unpack_blendgamer(opts, blender_dir)
     
     # E) bionetgen
     # NOTE: mcell build already copies all the needed tools, probably that's all we need for now
