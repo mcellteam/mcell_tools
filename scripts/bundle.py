@@ -111,14 +111,17 @@ def extract_resulting_bundle(opts) -> List[str]:
 def build_gamer(opts, blender_dir):
     log("Running gamer build...")
 
-    cmake_blendgamer_script = os.path.join(opts.top_dir, 'scripts', 'build_blendgamer.sh')
+    cmake_blendgamer_script = os.path.join(opts.top_dir, 'mcell_tools', 'scripts', 'cmake_blendgamer.sh')
     gamer_build_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
     
-    cmd = ['bash', cmake_blendgamer_script, '--', blender_dir, gamer_build_dir]
+    if not os.path.exists(gamer_build_dir):  
+        os.makedirs(gamer_build_dir)
+    
+    cmd_bash_cmake = ['bash', cmake_blendgamer_script, blender_dir, gamer_build_dir]
     
     # run cmake
-    ec = run(cmd_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_cmake)
+    ec = run(cmd_bash_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_bash_cmake)
     
     # setup make build arguments
     cmd_make = ['make']
@@ -127,12 +130,10 @@ def build_gamer(opts, blender_dir):
     # run make 
     ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, cmd_make)
-    
-    return gamer_install_dir
+
   
 # main entry point  
-def create_bundle(opts) -> None: 
-    # is there a pre-built version? - building Python takes long time 
+def create_bundle(opts) -> None:
 
     # clear target directory
     blender_dir = os.path.join(opts.work_dir, BUILD_DIR_BLENDER)

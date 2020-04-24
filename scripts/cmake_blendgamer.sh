@@ -3,6 +3,7 @@
 BLENDER_DIR=$1
 GAMER_BUILD_DIR=$2
 
+echo "Executing $0 in `pwd`"
 echo "BLENDER_DIR: $BLENDER_DIR"
 echo "GAMER_BUILD_DIR: $GAMER_BUILD_DIR"
 
@@ -21,6 +22,6 @@ export PATH=$BLENDER_DIR:$PATH
 # override -DPYBIND11_PYTHON_VERSION=3.5 is needed for MacOS because even with 
 # the default python being the one from conda, pybind11 uses the system libs   
 # TODO: add -DCMAKE_CXX_FLAGS=-D\'__has_cpp_attribute(x)=0\'
-cmake .. -DBUILD_BLENDGAMER=ON -DCMAKE_BUILD_TYPE=Release -DPYBIND11_PYTHON_VERSION=3.5
+cmake ../../../gamer -DBUILD_BLENDGAMER=ON -DCMAKE_BUILD_TYPE=Release -DPYBIND11_PYTHON_VERSION=3.5 || exit 1
 
  
