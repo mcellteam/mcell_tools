@@ -31,7 +31,7 @@ BASE_URL_SSH = 'git@github.com:mcellteam/'
 PRIVATE_BASE_URL_SSH = 'git@gitlab.snl.salk.edu:mcellteam/'
 GIT_SUFFIX = '.git'
 BASE_REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS] # ..., 'nfsimCInterface'  ]
-FORKED_REPOSITORIES = [REPO_NAME_NFSIM, REPO_NAME_NFSIMCINTERFACE, REPO_NAME_BIONETGEN]
+FORKED_REPOSITORIES = [REPO_NAME_NFSIM, REPO_NAME_NFSIMCINTERFACE, REPO_NAME_BIONETGEN, REPO_NAME_GAMER]
 
 ALL_REPOSITORIES = BASE_REPOSITORIES + FORKED_REPOSITORIES + [REPO_NAME_GAMER]
  
@@ -167,9 +167,6 @@ def run_on_all_repositories(opts, function):
     if opts.use_private_repos:
         function(REPO_NAME_MCELL_TEST_PRIVATE, opts, PRIVATE_BASE_URL_SSH, opts.branch) 
     
-    # for gamer, we always use the master branch
-    # TODO: we might need to be making release branches, but let's stay with this solution for now
-    function(REPO_NAME_GAMER, opts, GAMER_BASE_URL, GAMER_BRANCH) 
 
 
 def get_or_update(opts):
