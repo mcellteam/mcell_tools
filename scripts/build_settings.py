@@ -44,6 +44,9 @@ INTERNAL_RELEASE_NO_VERSION = 'internal'
 
 REPO_NAME_MCELL = 'mcell'
 REPO_NAME_CELLBLENDER = 'cellblender'
+REPO_NAME_NEUROPIL_TOOLS = 'neuropil_tools'
+REPO_NAME_MESH_TOOLS = 'mesh_tools'
+
 REPO_NAME_MCELL_TESTS = 'mcell_tests'
 REPO_NAME_MCELL_TOOLS = 'mcell_tools'
 REPO_NAME_NFSIM = 'nfsim'
