@@ -32,9 +32,6 @@ class Options:
         # needs release_version
         self.result_bundle_archive_path = None
         
-        versions_info = BUILD_SUBDIR_BLENDER_OS_BASED + '-' + BUILD_SUBDIR_PYTHON + '-' + platform.system() + '-' + platform.release()
-        self.prebuilt_blender_w_python_archive = os.path.join(PREBUILT_BLENDER_W_PYTHON_DIR, versions_info) + '.' + PREBUILT_BLENDER_W_PYTHON_EXT
-        
         # for developers it might be useful to clone the repositories as ssh
         self.ssh_for_clone = False  
         fqdn = socket.getfqdn()
@@ -51,6 +48,27 @@ class Options:
         
         # might be overridden in case when the buid system builds its own cmake
         self.cmake_executable = CMAKE_SYSTEM_EXECUTABLE
+        
+        self.mcell_build_infrastructure_dir = DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR
+        self.prebuilt_blender_w_python_archive = ''
+        self.mcell_build_infrastructure_releases_dir = ''
+        self.mcell_build_infrastructure_builds_dir = ''
+        self.set_mcell_infrastructure_dirs()
+
+
+    def set_mcell_infrastructure_dirs(self):
+        assert self.mcell_build_infrastructure_dir
+        
+        versions_info = BUILD_SUBDIR_BLENDER_OS_BASED + '-' + BUILD_SUBDIR_PYTHON + '-' + platform.system() + '-' + platform.release()
+        self.prebuilt_blender_w_python_archive = \
+            os.path.join(self.mcell_build_infrastructure_dir, 'prebuilt_blender_w_python', versions_info) + '.' + PREBUILT_BLENDER_W_PYTHON_EXT
+            
+        
+        self.mcell_build_infrastructure_releases_dir = \
+            os.path.join(DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'releases')
+        self.mcell_build_infrastructure_builds_dir = \
+            os.path.join(DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'builds')
+            
 
     def __repr__(self):
         attrs = vars(self)
@@ -86,6 +104,7 @@ class Options:
         parser.add_argument('-z', '--use-private-repos', action='store_true', help='use mcell private repositories')
         parser.add_argument('-g', '--do-not-build-gamer', action='store_true', help='do not build gamer')
     
+        parser.add_argument('-m', '--mcell-infrastructure-dir', type=str, help='path to mcell_build_infrastructure_data directory')
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
         parser.add_argument('-t', '--store-build', action='store_true', help='store build in mcelldata directory')
     
@@ -128,6 +147,10 @@ class Options:
         if args.branch:
             self.branch = args.branch
             
+        if args.mcell_infrastructure_dir:
+            self.mcell_build_infrastructure_dir = args.mcell_infrastructure_dir
+            self.set_mcell_infrastructure_dirs()
+    
         if args.release:
             self.release_version = args.release        
         if args.store_build:
