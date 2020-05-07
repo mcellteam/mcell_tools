@@ -70,14 +70,17 @@ if platform.system() == 'Linux':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
     BLENDER_ARCHIVE = 'blender-2.79b-linux-glibc219-x86_64.tar.gz'
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/mcelldata/mcell_build_infrastructure_data'
+    EXE_EXT=""
 elif platform.system() == 'Darwin':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
     BLENDER_ARCHIVE = 'blender-2.79b-Darwin-18.6.0-x86_64-i386-64bit.tar'
-    DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/Volumes/mcell/mcell_build_infrastructure_data/'        
+    DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/Volumes/mcell/mcell_build_infrastructure_data/'
+    EXE_EXT=""        
 elif 'Windows' in platform.system():
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-windows64'
     BLENDER_ARCHIVE = 'blender-2.79b-windows64.zip'
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = 'Z:\\'
+    EXE_EXT=".exe"
 else:
     fatal_error("Operating system '" + platform.system() + "' is not supported in this build system yet.")
 
@@ -128,6 +131,7 @@ INSTALL_SUBDIR_PYTHON_BIN = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, BUILD_D
 INSTALL_SUBDIR_ADDONS = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, 'scripts', 'addons')
 INSTALL_SUBDIR_CELLBLENDER = os.path.join(INSTALL_SUBDIR_ADDONS, 'cellblender')
 INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
+INSTALL_SUBDIR_NEUROPIL_TOOLS = os.path.join(INSTALL_SUBDIR_ADDONS, 'neuropil_tools')
 
 
 BUNDLE_NAME = 'Blender-2.79-CellBlender.' + platform.system()

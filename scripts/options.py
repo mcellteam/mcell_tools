@@ -65,9 +65,9 @@ class Options:
             
         
         self.mcell_build_infrastructure_releases_dir = \
-            os.path.join(DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'releases')
+            os.path.join(self.mcell_build_infrastructure_dir, 'releases')
         self.mcell_build_infrastructure_builds_dir = \
-            os.path.join(DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'builds')
+            os.path.join(self.mcell_build_infrastructure_dir, 'builds')
             
 
     def __repr__(self):

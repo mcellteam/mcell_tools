@@ -46,6 +46,30 @@ def archive_resulting_bundle(opts, blender_dir) -> None:
     check_ec(ec, cmd)  
 
 
+def build_gamer(opts, blender_dir):
+    log("Running gamer build...")
+
+    cmake_blendgamer_script = os.path.join(opts.top_dir, 'mcell_tools', 'scripts', 'cmake_blendgamer.sh')
+    gamer_build_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
+    
+    if not os.path.exists(gamer_build_dir):  
+        os.makedirs(gamer_build_dir)
+    
+    cmd_bash_cmake = ['bash', cmake_blendgamer_script, blender_dir, gamer_build_dir]
+    
+    # run cmake
+    ec = run(cmd_bash_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_bash_cmake)
+    
+    # setup make build arguments
+    cmd_make = ['make']
+    cmd_make.append('-j' + str(get_nr_cores())) 
+    
+    # run make 
+    ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_make)
+
+
 def unpack_blendgamer(opts, blender_dir):
     # not sure which version will be make, expecting that there will be just one .zip file
     # in the build_gamer dir
@@ -68,6 +92,28 @@ def unpack_blendgamer(opts, blender_dir):
     # must be run from work_dir to avoid having full paths in the archive
     ec = run(cmd, cwd=build_gamer_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
+    
+
+def install_neuropil_tools(opts, neuropil_tools_dir):
+    if os.path.exists(neuropil_tools_dir):  
+        log("Cleaning '" + neuropil_tools_dir)
+        shutil.rmtree(neuropil_tools_dir)
+    os.makedirs(neuropil_tools_dir)
+    
+    log("Installing mesh_tools to '" + neuropil_tools_dir + "'.")
+    # first install binaries and scripts from mesh_tools
+    cmd_make_install = ['make', '-f', 'makefile_neuropil_tools', 'install', 'INSTALL_DIR='+os.path.join(neuropil_tools_dir, 'bin'), 'EXE='+EXE_EXT]
+    ec = run(cmd_make_install, os.path.join(opts.top_dir, REPO_NAME_MESH_TOOLS), timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_make_install)
+    
+    # then copy all *.py files from neuropil_tools
+    log("Installing neuropil_tools to '" + neuropil_tools_dir + "'.")
+    neuropil_tools_repo_dir = os.path.join(opts.top_dir, REPO_NAME_NEUROPIL_TOOLS)
+    for basename in os.listdir(neuropil_tools_repo_dir):
+        if basename.endswith('.py'):
+            pathname = os.path.join(neuropil_tools_repo_dir, basename)
+            if os.path.isfile(pathname):
+                shutil.copy2(pathname, neuropil_tools_dir)
     
 
 def get_install_dir(opts) -> str:
@@ -107,30 +153,6 @@ def extract_resulting_bundle(opts) -> List[str]:
     
     return get_extracted_bundle_install_dirs(opts)
   
-
-def build_gamer(opts, blender_dir):
-    log("Running gamer build...")
-
-    cmake_blendgamer_script = os.path.join(opts.top_dir, 'mcell_tools', 'scripts', 'cmake_blendgamer.sh')
-    gamer_build_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
-    
-    if not os.path.exists(gamer_build_dir):  
-        os.makedirs(gamer_build_dir)
-    
-    cmd_bash_cmake = ['bash', cmake_blendgamer_script, blender_dir, gamer_build_dir]
-    
-    # run cmake
-    ec = run(cmd_bash_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_bash_cmake)
-    
-    # setup make build arguments
-    cmd_make = ['make']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    
-    # run make 
-    ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_make)
-
   
 # main entry point  
 def create_bundle(opts) -> None:
@@ -167,15 +189,18 @@ def create_bundle(opts) -> None:
         mcell_dir
     )
     
-    
-    # D) other dependencies that might be needed
+    # neuropil_tools and mesh_tools 
+    neuropil_tools_dir = os.path.join(blender_dir, INSTALL_SUBDIR_NEUROPIL_TOOLS)
+    install_neuropil_tools(opts, neuropil_tools_dir)
+        
+    # other dependencies that might be needed
     if platform.system() == 'Darwin':
         shutil.copyfile(
             os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_libs', 'darwin', 'libintl.8.dylib'),
             os.path.join(mcell_dir, 'lib', 'libintl.8.dylib')
         )
             
-    # D) gamer
+    # gamer
     if not opts.do_not_build_gamer:
         if 'Windows' in platform.system():
             log('Gamer build on Windows is not supported yet')

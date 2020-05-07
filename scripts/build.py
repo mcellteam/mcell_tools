@@ -133,6 +133,17 @@ def build_cellblender(opts):
     return os.path.join(cellblender_build_dir, REPO_NAME_CELLBLENDER)
 
 
+def build_mesh_tools(opts):
+    # must be built in source, we would need to rewrite all makefiles otherwise
+    mesh_tools_build_dir = os.path.join(opts.top_dir, REPO_NAME_MESH_TOOLS)
+    
+    cmd_make = ['make', '-f', 'makefile_neuropil_tools', 'all']
+    
+    # run make (in-source build)
+    ec = run(cmd_make, os.path.join(opts.top_dir, REPO_NAME_MESH_TOOLS), timeout_sec = BUILD_TIMEOUT)
+    check_ec(ec, cmd_make)
+    
+    
 def build_all(opts):
     build_dirs = {}
     
@@ -140,6 +151,8 @@ def build_all(opts):
     
     # in-source build for now, should be fixed but it can work like this
     build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
+    
+    build_mesh_tools(opts)
     
     return build_dirs
     
