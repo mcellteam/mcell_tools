@@ -15,8 +15,8 @@ fi
 # TODO: check that mcell_tools has the right branch 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	BUILD_INFRA_DIR=/home/ahusar/mcell/mcell_build_infrastructure_data/
-	if [ ! -d $BUILD_INFRA_DIR ]]; then
-		BUILD_INFRA_DIR=/mnt/hgfs/mcell_build_infrastructure_data/
+	if [ ! -d $BUILD_INFRA_DIR ]; then
+		BUILD_INFRA_DIR=/cnl/mcelldata/mcell_build_infrastructure_data/
 	fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	echo "TODO"
@@ -27,7 +27,7 @@ else
 	exit 1
 fi
 
-if [ ! -d $BUILD_INFRA_DIR ]]; then
+if [ ! -d $BUILD_INFRA_DIR ]; then
 	echo "Directory $BUILD_INFRA_DIR with build data was not found."
 	exit 1
 fi
