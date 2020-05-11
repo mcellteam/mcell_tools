@@ -7,10 +7,15 @@ echo "Executing $0 in `pwd`"
 echo "BLENDER_DIR: $BLENDER_DIR"
 echo "GAMER_BUILD_DIR: $GAMER_BUILD_DIR"
 
-# gamer needs Python 3.5 to be the main executable
-# we need to switch environment, so this is the reason why we do this build in a bash script 
-eval "$(conda shell.bash hook)"
-conda activate py35 || exit 1
+
+VER=`python3 --version`
+VER_SHORT=${VER%.*}
+if [ "$VER_SHORT" != "Python 3.5" ]; then
+  # gamer needs Python 3.5 to be the main executable
+  # we need to switch environment, so this is the reason why we do this build in a bash script 
+  eval "$(conda shell.bash hook)"
+  conda activate py35 || exit 1
+fi
 
 echo "The current python3 is:"
 echo `which python3`
