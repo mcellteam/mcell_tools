@@ -12,6 +12,17 @@ if [ "$BRANCH" == "" ]; then
    BRANCH="development"
 fi
 
+PVER=`python3 --version`
+PVER_SHORT=${PVER%.*}
+if [ "$PVER_SHORT" != "Python 3.5" ]; then
+  # gamer and other components need to be built with python3.5 libraries
+  # and they use the default python3 executable to determine the location 
+  # of the libraries  
+  echo "Switching to conda python 3.5"
+  eval "$(conda shell.bash hook)"
+  conda activate py35 || exit 1
+fi
+
 # TODO: check that mcell_tools has the right branch 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	BUILD_INFRA_DIR=/home/ahusar/mcell/mcell_build_infrastructure_data/
