@@ -202,12 +202,9 @@ def create_bundle(opts) -> None:
             
     # gamer
     if not opts.do_not_build_gamer:
-        if 'Windows' in platform.system():
-            log('Gamer build on Windows is not supported yet')
-        else:
-            # gamer must be built at this phase because we need blender executable
-            build_gamer(opts, blender_dir)
-            unpack_blendgamer(opts, blender_dir)
+        # gamer must be built at this phase because we need the blender executable
+        build_gamer(opts, blender_dir)
+        unpack_blendgamer(opts, blender_dir)
     
     # E) bionetgen
     # NOTE: mcell build already copies all the needed tools, probably that's all we need for now
