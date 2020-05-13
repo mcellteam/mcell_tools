@@ -26,15 +26,19 @@ from typing import List, Dict
 from utils import *
 from build_settings import *
 
-
-def unpack_prebuilt_blender_w_python(opts, prebuilt_archive) -> None:
-    log("Using pre-built variant of blender with python...")
-
-    # simply extract the prebuilt archive, 
-    # the archive already has atop directory called 'blender' 
-    cmd = TAR_BASE_CMD + ['-xf', prebuilt_archive, '-C', opts.work_dir ]
-    ec = run(cmd, timeout_sec=BUILD_TIMEOUT)
-    check_ec(ec, cmd)
+def copy_prebuilt_blender_w_python(opts) -> None:
+    log("Checking for pre-built blender with python at '" + opts.prebuilt_blender_w_python_base + "'.") 
+    if not os.path.exists(opts.prebuilt_blender_w_python_base):
+        fatal_error("Could not find prebuilt blender + python package " + opts.prebuilt_blender_w_python_base)
+        
+    recursive_overwrite(opts.prebuilt_blender_w_python_base, opts.work_dir) 
+        
+    # Linux build also needs an override directory
+    if platform.system() == 'Linux':
+        if not os.path.exists(opts.prebuilt_blender_w_python_override):
+            fatal_error("Could not find prebuilt blender + python package " + opts.prebuilt_blender_w_python_override)
+            
+        recursive_overwrite(opts.prebuilt_blender_w_python_override, opts.work_dir) 
 
 
 def archive_resulting_bundle(opts, blender_dir) -> None:
@@ -165,19 +169,7 @@ def create_bundle(opts) -> None:
         shutil.rmtree(blender_dir)
     
     # A) prepare blender directory with new python
-    prebuilt_archive = opts.prebuilt_blender_w_python_archive    
-    log("Checking for pre-built blender with python at '" + prebuilt_archive + "'.") 
-    if os.path.exists(prebuilt_archive):
-        unpack_prebuilt_blender_w_python(opts, prebuilt_archive)
-    else:
-        fatal_error("Could not find prebuilt blender + python package " + prebuilt_archive)
-    
-    # add runner script 
-    if platform.system() == 'Linux':
-        shutil.copyfile(
-            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_files', 'linux', 'my_blender'),
-            os.path.join(blender_dir, BUILD_SUBDIR_BLENDER, 'my_blender')
-        )
+    copy_prebuilt_blender_w_python(opts)
     
     # B) copy cellblender
     cellblender_dir = os.path.join(blender_dir, INSTALL_SUBDIR_CELLBLENDER)
@@ -200,13 +192,6 @@ def create_bundle(opts) -> None:
     neuropil_tools_dir = os.path.join(blender_dir, INSTALL_SUBDIR_NEUROPIL_TOOLS)
     install_neuropil_tools(opts, neuropil_tools_dir)
         
-    # other dependencies that might be needed
-    if platform.system() == 'Darwin':
-        shutil.copyfile(
-            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_files', 'darwin', 'libintl.8.dylib'),
-            os.path.join(mcell_dir, 'lib', 'libintl.8.dylib')
-        )
-            
     # gamer
     if not opts.do_not_build_gamer:
         # gamer must be built at this phase because we need the blender executable
@@ -215,6 +200,13 @@ def create_bundle(opts) -> None:
     
     # E) bionetgen
     # NOTE: mcell build already copies all the needed tools, probably that's all we need for now
+    
+    # other dependencies that might be needed and must be installed after plugins 
+    if platform.system() == 'Darwin':
+        shutil.copyfile(
+            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_files', 'darwin', 'libintl.8.dylib'),
+            os.path.join(mcell_dir, 'lib', 'libintl.8.dylib')
+        )
     
     # add a version file
     blender_subdir = os.path.join(blender_dir, BUILD_SUBDIR_BLENDER)
