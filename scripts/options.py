@@ -50,7 +50,7 @@ class Options:
         self.cmake_executable = CMAKE_SYSTEM_EXECUTABLE
         
         self.mcell_build_infrastructure_dir = DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR
-        self.prebuilt_blender_w_python_archive = ''
+        self.prebuilt_blender_w_python_base = ''
         self.mcell_build_infrastructure_releases_dir = ''
         self.mcell_build_infrastructure_builds_dir = ''
         self.set_mcell_infrastructure_dirs()
@@ -59,9 +59,19 @@ class Options:
     def set_mcell_infrastructure_dirs(self):
         assert self.mcell_build_infrastructure_dir
         
+        if platform.system() == 'Linux' or platform.system() == 'Darwin':
+            simpler_system = platform.system()
+        elif 'Windows' in platform.system():
+            simpler_system = 'Windows'
+        else:
+            assert False
+
+        self.prebuilt_blender_w_python_base = \
+            os.path.join(self.mcell_build_infrastructure_dir, 'prebuilt_blender_w_python', 'base', BUILD_DIR_BLENDER + '-' + BLENDER_FULL_VERSION + '-' + simpler_system) 
+
         versions_info = BUILD_SUBDIR_BLENDER_OS_BASED + '-' + BUILD_SUBDIR_PYTHON + '-' + platform.system() + '-' + platform.release()
-        self.prebuilt_blender_w_python_archive = \
-            os.path.join(self.mcell_build_infrastructure_dir, 'prebuilt_blender_w_python', versions_info) + '.' + PREBUILT_BLENDER_W_PYTHON_EXT
+        self.prebuilt_blender_w_python_override = \
+            os.path.join(self.mcell_build_infrastructure_dir, 'prebuilt_blender_w_python', 'overrides', versions_info) 
             
         
         self.mcell_build_infrastructure_releases_dir = \

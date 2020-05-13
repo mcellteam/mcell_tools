@@ -84,7 +84,8 @@ def main():
     #
     if opts.print_platform_info:
         print("Required blender + python archive name:")
-        print(opts.prebuilt_blender_w_python_archive)
+        print("Base: " + opts.prebuilt_blender_w_python_base)
+        print("Override: " + opts.prebuilt_blender_w_python_override)
         
         print("Resulting bundle name:")
         print(opts.result_bundle_archive_path)

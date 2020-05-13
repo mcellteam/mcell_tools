@@ -6,6 +6,7 @@ EXTRA_ARG=$3
 
 if [ "$VER" == "" ]; then
    echo "Error: version ID must be entered"
+   exit 1
 fi
 
 if [ "$BRANCH" == "" ]; then 

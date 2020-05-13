@@ -60,7 +60,8 @@ BUILD_DIR_CELLBLENDER = 'build_cellblender' # this in fact an install dir for no
 BUILD_DIR_GAMER = 'build_gamer'
 INSTALL_DIR_GAMER = 'install_gamer'
 
-BLENDER_VERSION = '2.79' 
+BLENDER_VERSION = '2.79'
+BLENDER_FULL_VERSION = '2.79b'  
 BUILD_DIR_BLENDER = 'blender' #
 BUILD_SUBDIR_BLENDER = 'Blender-' + BLENDER_VERSION + '-CellBlender' # name of directory in the resulting arguve
 
@@ -117,8 +118,6 @@ RUN_TESTS_SCRIPT = 'run_tests.py'
 
 # not really used
 BLENDER_ARCHIVE_PATH = os.path.join(DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR, 'blender', BUILD_SUBDIR_BLENDER_OS_BASED + '.tar.bz2')
-
-PREBUILT_BLENDER_W_PYTHON_EXT = 'tar.gz'
 
 if platform.system() == 'Darwin':
     INSTALL_VERSION_SUBDIR_BLENDER = os.path.join(BUILD_SUBDIR_BLENDER, 'blender.app', 'Contents', 'Resources', BLENDER_VERSION)
