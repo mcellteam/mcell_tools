@@ -9,12 +9,8 @@ echo "GAMER_BUILD_DIR: $GAMER_BUILD_DIR"
 
 
 VER=`python3 --version`
-VER_SHORT=${VER%.*}
-if [ "$VER_SHORT" != "Python 3.5" ]; then
-  # gamer needs Python 3.5 to be the main executable
-  # we need to switch environment, so this is the reason why we do this build in a bash script 
-  eval "$(conda shell.bash hook)"
-  conda activate py35 || exit 1
+if [[ $VER == *"Python 3.5"* ]]; then
+  echo "It's there!"
 fi
 
 echo "The current python3 is:"
@@ -24,9 +20,17 @@ python3 --version
 # and blender to be found in PATH
 export PATH=$BLENDER_DIR:$PATH
 
+# debian8 has only gcc-4.9 by default, pybind cannot be compiled with it 
+# (although gcc-4.9 supports C++14 and it should work in theory, maybe jusr gamer uses some woeird pybind11 version) 
+
+COMPILER_OVERRIDE=""
+UN=`uname -a`
+if [[ $VER == *"deb8u1"* ]]; then
+  COMPILER_OVERRIDE="-DCMAKE_C_COMPILER=/home/tester/tools/gcc-7.5.0/bin/gcc -DCMAKE_CXX_COMPILER=/home/tester/tools/gcc-7.5.0/bin/g++ "
+fi
+
 # override -DPYBIND11_PYTHON_VERSION=3.5 is needed for MacOS because even with 
 # the default python being the one from conda, pybind11 uses the system libs   
-# TODO: add -DCMAKE_CXX_FLAGS=-D\'__has_cpp_attribute(x)=0\'
-cmake ../../../gamer -DBUILD_BLENDGAMER=ON -DCMAKE_BUILD_TYPE=Release -DBLENDER_VERSION=2.79 -DPYBIND11_PYTHON_VERSION=3.5 || exit 1
+cmake ../../../gamer -DBUILD_BLENDGAMER=ON -DCMAKE_BUILD_TYPE=Release -DBLENDER_VERSION=2.79 -DPYBIND11_PYTHON_VERSION=3.5 $COMPILER_OVERRIDE || exit 1
 
  
