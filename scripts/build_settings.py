@@ -97,7 +97,7 @@ if 'Windows' in platform.system():
     # TODO: fix this, we really do not want to have an absolute path here but even putting the path into $PATH
     #   somehow did not help 
     TAR_BASE_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/tar', '--force-local']
-    UNZIP_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/unzip']
+    UNZIP_CMD = ['unzip']
     PYTHON_BLENDER_EXECUTABLE = 'python.exe'
     # cmake on Windows tries to use Visual Studio generator by default 
     CMAKE_EXTRA_ARGS = [ '-G', 'Unix Makefiles' ]

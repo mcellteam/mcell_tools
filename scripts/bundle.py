@@ -172,6 +172,13 @@ def create_bundle(opts) -> None:
     else:
         fatal_error("Could not find prebuilt blender + python package " + prebuilt_archive)
     
+    # add runner script 
+    if platform.system() == 'Linux':
+        shutil.copyfile(
+            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_files', 'linux', 'my_blender'),
+            os.path.join(blender_dir, BUILD_SUBDIR_BLENDER, 'my_blender')
+        )
+    
     # B) copy cellblender
     cellblender_dir = os.path.join(blender_dir, INSTALL_SUBDIR_CELLBLENDER)
     log("Installing cellblender to '" + cellblender_dir + "'.")
@@ -196,18 +203,15 @@ def create_bundle(opts) -> None:
     # other dependencies that might be needed
     if platform.system() == 'Darwin':
         shutil.copyfile(
-            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_libs', 'darwin', 'libintl.8.dylib'),
+            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_files', 'darwin', 'libintl.8.dylib'),
             os.path.join(mcell_dir, 'lib', 'libintl.8.dylib')
         )
             
     # gamer
     if not opts.do_not_build_gamer:
-        if 'Windows' in platform.system():
-            log('Gamer build on Windows is not supported yet')
-        else:
-            # gamer must be built at this phase because we need blender executable
-            build_gamer(opts, blender_dir)
-            unpack_blendgamer(opts, blender_dir)
+        # gamer must be built at this phase because we need the blender executable
+        build_gamer(opts, blender_dir)
+        unpack_blendgamer(opts, blender_dir)
     
     # E) bionetgen
     # NOTE: mcell build already copies all the needed tools, probably that's all we need for now
