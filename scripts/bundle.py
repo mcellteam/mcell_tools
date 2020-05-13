@@ -172,6 +172,13 @@ def create_bundle(opts) -> None:
     else:
         fatal_error("Could not find prebuilt blender + python package " + prebuilt_archive)
     
+    # add runner script 
+    if platform.system() == 'Linux':
+        shutil.copyfile(
+            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_files', 'linux', 'my_blender'),
+            os.path.join(blender_dir, BUILD_SUBDIR_BLENDER)
+        )
+    
     # B) copy cellblender
     cellblender_dir = os.path.join(blender_dir, INSTALL_SUBDIR_CELLBLENDER)
     log("Installing cellblender to '" + cellblender_dir + "'.")
@@ -196,7 +203,7 @@ def create_bundle(opts) -> None:
     # other dependencies that might be needed
     if platform.system() == 'Darwin':
         shutil.copyfile(
-            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_libs', 'darwin', 'libintl.8.dylib'),
+            os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_files', 'darwin', 'libintl.8.dylib'),
             os.path.join(mcell_dir, 'lib', 'libintl.8.dylib')
         )
             

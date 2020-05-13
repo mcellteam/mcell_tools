@@ -1,0 +1,9 @@
+#!/bin/bash
+# some tools ran by blender require specific libraries and it is not always possible to 
+# set the path to them using RPATH, therefore we must use this runner script on Linux
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+export $LD_LIBRARY_PATH=$DIR/2.79/python/lib/:$LD_LIBRARY_PATH
+
+./blender
