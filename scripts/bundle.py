@@ -176,7 +176,7 @@ def create_bundle(opts) -> None:
     if platform.system() == 'Linux':
         shutil.copyfile(
             os.path.join(opts.top_dir, REPO_NAME_MCELL_TOOLS, 'system_files', 'linux', 'my_blender'),
-            os.path.join(blender_dir, BUILD_SUBDIR_BLENDER)
+            os.path.join(blender_dir, BUILD_SUBDIR_BLENDER, 'my_blender')
         )
     
     # B) copy cellblender
