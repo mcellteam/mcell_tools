@@ -30,7 +30,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		BUILD_INFRA_DIR=/cnl/mcelldata/mcell_build_infrastructure_data/
 	fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-	echo "TODO"
+	BUILD_INFRA_DIR=/Volumes/mcell_build_infrastructure_data
 elif [[ "$OSTYPE" == "msys" ]]; then
 	BUILD_INFRA_DIR=z:\\
 else
