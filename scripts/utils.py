@@ -165,4 +165,4 @@ def recursive_overwrite(src, dest, ignore=None):
                                     os.path.join(dest, f), 
                                     ignore)
     else:
-        shutil.copyfile(src, dest)
+        shutil.copy(src, dest)
