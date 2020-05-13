@@ -27,7 +27,7 @@ from utils import *
 from build_settings import *
 
 def copy_prebuilt_blender_w_python(opts) -> None:
-    log("Checking for pre-built blender with python at '" + opts.prebuilt_blender_w_python_base + "'.") 
+    log("Copying pre-built blender with python from '" + opts.prebuilt_blender_w_python_base + "'.") 
     if not os.path.exists(opts.prebuilt_blender_w_python_base):
         fatal_error("Could not find prebuilt blender + python package " + opts.prebuilt_blender_w_python_base)
         
@@ -156,7 +156,7 @@ def extract_resulting_bundle(opts) -> List[str]:
     check_ec(ec, cmd)  
     
     return get_extracted_bundle_install_dirs(opts)
-  
+
   
 # main entry point  
 def create_bundle(opts) -> None:
@@ -185,7 +185,8 @@ def create_bundle(opts) -> None:
     log("Installing mcell to '" + mcell_dir + "'.")
     shutil.copytree(
         os.path.join(opts.work_dir, BUILD_DIR_MCELL),
-        mcell_dir
+        mcell_dir,
+        ignore=shutil.ignore_patterns('CMakeFiles', 'deps', '*.a')
     )
     
     # neuropil_tools and mesh_tools 
