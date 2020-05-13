@@ -25,7 +25,7 @@ export PATH=$BLENDER_DIR:$PATH
 
 COMPILER_OVERRIDE=""
 UN=`uname -a`
-if [[ $VER == *"deb8u1"* ]]; then
+if [[ $UN == *"deb8u1"* ]]; then
   COMPILER_OVERRIDE="-DCMAKE_C_COMPILER=/home/tester/tools/gcc-7.5.0/bin/gcc -DCMAKE_CXX_COMPILER=/home/tester/tools/gcc-7.5.0/bin/g++ "
 fi
 
