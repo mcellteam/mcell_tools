@@ -41,10 +41,28 @@ def copy_prebuilt_blender_w_python(opts) -> None:
         recursive_overwrite(opts.prebuilt_blender_w_python_override, opts.work_dir) 
 
 
+def sign_package_on_macos(blender_dir) -> None:
+    log("Signing MacOS package in '" + blender_dir + "'.")
+     
+    cmd = [
+        'codesign', '--verbose', '--deep', '--force', 
+        '--sign', '"3rd Party Mac Developer Application: Adam Husar (342MS8AP75)"',
+        os.path.join(blender_dir, BUILD_SUBDIR_BLENDER, 'blender.app')
+    ]
+    
+    # must be run from work_dir to avoid having full paths in the archive
+    ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
+    check_ec(ec, cmd)  
+    
+
 def archive_resulting_bundle(opts, blender_dir) -> None:
     log("Creating resulting archive '" + opts.result_bundle_archive_path + "'.")
-    # TODO: better versioning, e.g. from argument
-    cmd = TAR_BASE_CMD + ['-zcf', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
+    
+    if platform.system() == 'Linux':
+        cmd = TAR_BASE_CMD + ['-zcf', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
+    else:
+        cmd = ZIP_CMD + ['-r', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
+        
     # must be run from work_dir to avoid having full paths in the archive
     ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
@@ -145,9 +163,11 @@ def extract_resulting_bundle(opts) -> List[str]:
     os.makedirs(install_dir)
             
     log("Unpacking resulting archive for testing '" + opts.result_bundle_archive_path + "'.")
-    # TODO: better versioning, e.g. from argument
-    # TODO: make a function for tar calls
-    cmd = TAR_BASE_CMD + ['-xzf', opts.result_bundle_archive_path]
+    
+    if platform.system() == 'Linux':
+        cmd = TAR_BASE_CMD + ['-xzf', opts.result_bundle_archive_path]
+    else:
+        cmd = UNZIP_CMD + [opts.result_bundle_archive_path]
     
     ec = run(cmd, cwd=install_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
@@ -214,6 +234,10 @@ def create_bundle(opts) -> None:
         blender_subdir
     )
     
+    # sign on MacOS
+    if platform.system() == 'Darwin':
+        sign_package_on_macos(blender_dir)        
+        
     # make a package with current date
     archive_resulting_bundle(opts, blender_dir)
     

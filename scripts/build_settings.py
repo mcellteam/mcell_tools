@@ -72,16 +72,19 @@ if platform.system() == 'Linux':
     BLENDER_ARCHIVE = 'blender-2.79b-linux-glibc219-x86_64.tar.gz'
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/mcelldata/mcell_build_infrastructure_data'
     EXE_EXT=""
+    BUNDLE_EXT = 'tar.gz'
 elif platform.system() == 'Darwin':
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
     BLENDER_ARCHIVE = 'blender-2.79b-Darwin-18.6.0-x86_64-i386-64bit.tar'
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/Volumes/mcell/mcell_build_infrastructure_data/'
-    EXE_EXT=""        
+    EXE_EXT=""
+    BUNDLE_EXT = 'zip'        
 elif 'Windows' in platform.system():
     BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-windows64'
     BLENDER_ARCHIVE = 'blender-2.79b-windows64.zip'
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = 'Z:\\'
     EXE_EXT=".exe"
+    BUNDLE_EXT = 'zip'
 else:
     fatal_error("Operating system '" + platform.system() + "' is not supported in this build system yet.")
 
@@ -98,16 +101,17 @@ if 'Windows' in platform.system():
     # TODO: fix this, we really do not want to have an absolute path here but even putting the path into $PATH
     #   somehow did not help 
     TAR_BASE_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/tar', '--force-local']
-    UNZIP_CMD = ['unzip']
     PYTHON_BLENDER_EXECUTABLE = 'python.exe'
     # cmake on Windows tries to use Visual Studio generator by default 
     CMAKE_EXTRA_ARGS = [ '-G', 'Unix Makefiles' ]
 else:
     TAR_BASE_CMD = ['tar']
     PYTHON_BLENDER_EXECUTABLE = 'python3.5'
-    UNZIP_CMD = ['unzip']
     # keep default generator for cmake 
     CMAKE_EXTRA_ARGS = []
+
+ZIP_CMD = ['zip']
+UNZIP_CMD = ['unzip']
 
 CMAKE_SYSTEM_EXECUTABLE = 'cmake'
 CMAKE_MIN_MAJOR = 3
@@ -134,7 +138,6 @@ INSTALL_SUBDIR_NEUROPIL_TOOLS = os.path.join(INSTALL_SUBDIR_ADDONS, 'neuropil_to
 
 
 BUNDLE_NAME = 'Blender-2.79-CellBlender.' + platform.system()
-BUNDLE_EXT = 'tar.gz'
 
 TEST_BUNDLE_DIR = 'bundle_install'
 
