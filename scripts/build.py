@@ -133,107 +133,26 @@ def build_cellblender(opts):
     return os.path.join(cellblender_build_dir, REPO_NAME_CELLBLENDER)
 
 
-def build_gamer(opts):
-    gamer_build_dir = os.path.join(opts.work_dir, BUILD_DIR_GAMER)
-    gamer_install_dir = os.path.join(opts.work_dir, INSTALL_DIR_GAMER)
-    if opts.clean:
-        # TODO
-        log("Dry clean of " + gamer_build_dir)
-        log("Dry clean of " + gamer_install_dir)
+def build_mesh_tools(opts):
+    # must be built in source, we would need to rewrite all makefiles otherwise
+    mesh_tools_build_dir = os.path.join(opts.top_dir, REPO_NAME_MESH_TOOLS)
     
+    cmd_make = ['make', '-f', 'makefile_neuropil_tools', 'all']
     
-    log("Running gamer build...")
-    
-    # create working directory
-    if not os.path.exists(gamer_build_dir):
-        os.makedirs(gamer_build_dir)
-    
-    # setup cmake build arguments
-    cmd_cmake = [opts.cmake_executable]
-    cmd_cmake += CMAKE_EXTRA_ARGS
-    cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_GAMER))
-    cmd_cmake.append(get_cmake_build_type_arg(opts))
-    cmd_cmake.append('-DCMAKE_INSTALL_PREFIX:PATH=' + gamer_install_dir)
-    
-    c_flags = ''
-    cxx_flags = ''
-    #if 'CYGWIN' in platform.system():
-    #    flags='-D\'M_PI=3.14159265358979323846\' -D\'M_PI_2=(M_PI/2.0)\' '
-    #    c_flags = c_flags + flags
-    #    cxx_flags = cxx_flags + flags
-        
-    # library casc requires __has_cpp_attribute c++17 - disable it
-    # maybe we can check gcc version and enable it but let's keep it simple for now
-    cxx_flags = cxx_flags + '-D\'__has_cpp_attribute(x)=0\''
-
-    # no need to add extra "..." - already handled the way how cmake is run (not as shell)
-    cmd_cmake.append('-DCMAKE_C_FLAGS=' + c_flags)
-    cmd_cmake.append('-DCMAKE_CXX_FLAGS=' + cxx_flags) 
-        
-    # run cmake
-    ec = run(cmd_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_cmake)
-    
-    # setup make build arguments
-    cmd_make = ['make', 'install']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    
-    # run make 
-    ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+    # run make (in-source build)
+    ec = run(cmd_make, os.path.join(opts.top_dir, REPO_NAME_MESH_TOOLS), timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, cmd_make)
-    
-    return gamer_install_dir
-        
-
-def build_vtk(opts):
-
-    vtk_build_dir = os.path.join(opts.work_dir, BUILD_DIR_VTK)
-    
-    log("Running mcell build...")
-    
-    # create working directory
-    if not os.path.exists(vtk_build_dir):
-        os.makedirs(vtk_build_dir)
-    
-    # setup cmake build arguments
-    cmd_cmake = [opts.cmake_executable]
-    cmd_cmake += CMAKE_EXTRA_ARGS
-    cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_VTK))
-
-    # always built as release
-    cmd_cmake.append('-DCMAKE_BUILD_TYPE=Release')
-
-    # other VTK options
-    cmd_cmake.append('-DBUILD_TESTING=OFF')
-    cmd_cmake.append('-DBUILD_SHARED_LIBS=OFF')
-
-    # run cmake
-    ec = run(cmd_cmake, vtk_build_dir)
-    check_ec(ec, cmd_cmake)
-    
-    # setup make build arguments
-    cmd_make = ['make']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    cmd_make.append('-k') # do not stop on errors 
-    
-    # run make, will fail 
-    ec = run(cmd_make, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
     
     
 def build_all(opts):
     build_dirs = {}
-    
-    build_vtk(opts)
     
     build_dirs[REPO_NAME_MCELL] = build_mcell(opts)
     
     # in-source build for now, should be fixed but it can work like this
     build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
     
-    if 'Windows' in platform.system():
-        log('Gamer build on Windows is not supported yet')
-    else:
-        build_gamer(opts)
+    build_mesh_tools(opts)
     
     return build_dirs
     

@@ -13,6 +13,10 @@ class Options:
         self.clean = False
         self.ignore_dirty = False
         self.debug = False
+        self.ssh = False
+        self.use_private_repos = False
+        
+        self.do_not_build_gamer = False
         
         self.do_repos = False
         self.do_build = False
@@ -27,9 +31,6 @@ class Options:
         # set by set_result_bundle_archive_name, 
         # needs release_version
         self.result_bundle_archive_path = None
-        
-        versions_info = BUILD_SUBDIR_BLENDER_OS_BASED + '-' + BUILD_SUBDIR_PYTHON + '-' + platform.system() + '-' + platform.release()
-        self.prebuilt_blender_w_python_archive = os.path.join(PREBUILT_BLENDER_W_PYTHON_DIR, versions_info) + '.' + PREBUILT_BLENDER_W_PYTHON_EXT
         
         # for developers it might be useful to clone the repositories as ssh
         self.ssh_for_clone = False  
@@ -47,6 +48,37 @@ class Options:
         
         # might be overridden in case when the buid system builds its own cmake
         self.cmake_executable = CMAKE_SYSTEM_EXECUTABLE
+        
+        self.mcell_build_infrastructure_dir = DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR
+        self.prebuilt_blender_w_python_base = ''
+        self.mcell_build_infrastructure_releases_dir = ''
+        self.mcell_build_infrastructure_builds_dir = ''
+        self.set_mcell_infrastructure_dirs()
+
+
+    def set_mcell_infrastructure_dirs(self):
+        assert self.mcell_build_infrastructure_dir
+        
+        if platform.system() == 'Linux' or platform.system() == 'Darwin':
+            simpler_system = platform.system()
+        elif 'Windows' in platform.system():
+            simpler_system = 'Windows'
+        else:
+            assert False
+
+        self.prebuilt_blender_w_python_base = \
+            os.path.join(self.mcell_build_infrastructure_dir, 'prebuilt_blender_w_python', 'base', BUILD_DIR_BLENDER + '-' + BLENDER_FULL_VERSION + '-' + simpler_system) 
+
+        versions_info = BUILD_SUBDIR_BLENDER_OS_BASED + '-' + BUILD_SUBDIR_PYTHON + '-' + platform.system() + '-' + platform.release()
+        self.prebuilt_blender_w_python_override = \
+            os.path.join(self.mcell_build_infrastructure_dir, 'prebuilt_blender_w_python', 'overrides', versions_info) 
+            
+        
+        self.mcell_build_infrastructure_releases_dir = \
+            os.path.join(self.mcell_build_infrastructure_dir, 'releases')
+        self.mcell_build_infrastructure_builds_dir = \
+            os.path.join(self.mcell_build_infrastructure_dir, 'builds')
+            
 
     def __repr__(self):
         attrs = vars(self)
@@ -78,11 +110,13 @@ class Options:
         parser.add_argument('-c', '--clean', action='store_true', help='clean data from previous build')
         parser.add_argument('-i', '--ignore-dirty', action='store_true', help='ignore dirty repositories (not supported yet)')
         parser.add_argument('-d', '--debug', action='store_true', help='build debug variant of mcell')
-        
-        #not supported yet: parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
+        parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
+        parser.add_argument('-z', '--use-private-repos', action='store_true', help='use mcell private repositories')
+        parser.add_argument('-g', '--do-not-build-gamer', action='store_true', help='do not build gamer')
     
+        parser.add_argument('-m', '--mcell-infrastructure-dir', type=str, help='path to mcell_build_infrastructure_data directory')
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
-        parser.add_argument('-s', '--store-build', action='store_true', help='store build in mcelldata directory')
+        parser.add_argument('-t', '--store-build', action='store_true', help='store build in mcelldata directory')
     
         parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
         
@@ -92,6 +126,7 @@ class Options:
         parser.add_argument('-4', '--do-test', action='store_true', help='run tests (done by default when none of "qwer" args are set)')
         
         parser.add_argument('-p', '--print-platform-info', action='store_true', help='print platform-dependent names of packages')
+        
         
         return parser
 
@@ -104,16 +139,28 @@ class Options:
         
         if args.update:
             self.update = True
+        if args.ssh:
+            self.ssh = True
         if args.clean:
             self.clean = True
         if args.ignore_dirty:
             self.ignore_dirty = True
         if args.debug:
             self.debug = True
+
+        if args.do_not_build_gamer:
+            self.do_not_build_gamer = True
+
+        if args.use_private_repos:
+            self.use_private_repos = True
             
         if args.branch:
             self.branch = args.branch
             
+        if args.mcell_infrastructure_dir:
+            self.mcell_build_infrastructure_dir = args.mcell_infrastructure_dir
+            self.set_mcell_infrastructure_dirs()
+    
         if args.release:
             self.release_version = args.release        
         if args.store_build:

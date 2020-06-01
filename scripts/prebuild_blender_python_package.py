@@ -41,7 +41,7 @@ MODULES_TO_INSTALL = [
 
 def unpack_blender(opts, blender_dir) -> None:
     if platform.system() == 'Linux':
-        archive_path = BLENDER_ARCHIVE_LINUX_PATH
+        archive_path = BLENDER_ARCHIVE_PATH
     else:
         fatal_error("Operating system '" + platform.system() + "' is not supported in this build system yet.")
     

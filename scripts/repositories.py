@@ -27,9 +27,20 @@ from utils import *
 from build_settings import *
 
 BASE_URL = 'https://github.com/mcellteam/'
-# note: VTK is a forked repository buyt the branch name is unique because it is used for mcell4 only that uses mcell4 prefix
-BASE_REPOSITORIES = [REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS, REPO_NAME_VTK] # ..., 'nfsimCInterface'  ]
-FORKED_REPOSITORIES = [REPO_NAME_NFSIM, REPO_NAME_NFSIMCINTERFACE, REPO_NAME_BIONETGEN]
+
+BASE_URL_HTTPS = 'https://github.com/mcellteam/'
+BASE_URL_SSH = 'git@github.com:mcellteam/'
+PRIVATE_BASE_URL_SSH = 'git@gitlab.snl.salk.edu:mcellteam/'
+GIT_SUFFIX = '.git'
+BASE_REPOSITORIES = [
+    REPO_NAME_MCELL, REPO_NAME_CELLBLENDER, 
+    REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS, 
+    REPO_NAME_NEUROPIL_TOOLS, REPO_NAME_MESH_TOOLS,
+    REPO_NAME_VTK
+]
+
+FORKED_REPOSITORIES = [REPO_NAME_NFSIM, REPO_NAME_NFSIMCINTERFACE, REPO_NAME_BIONETGEN, REPO_NAME_GAMER]
+
 
 ALL_REPOSITORIES = BASE_REPOSITORIES + FORKED_REPOSITORIES + [REPO_NAME_GAMER]
  
@@ -71,7 +82,7 @@ def check_git_version():
 
 def clone(name, opts, base_url):
     log("Repository '" + name + "' does not exist, cloning it...")
-    run_git_w_ec_check(['clone', base_url + name], opts.top_dir)
+    run_git_w_ec_check(['clone', base_url + name + GIT_SUFFIX], opts.top_dir)
 
 
 def fetch(name, opts):
@@ -152,9 +163,14 @@ def reset_hard_repository(name, opts, base_url, branch):
 
 
 def run_on_all_repositories(opts, function):
+    if opts.ssh:
+        base_url_w_prefix = BASE_URL_SSH
+    else:
+        base_url_w_prefix = BASE_URL_HTTPS
+    
     for name in BASE_REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
-        function(name, opts, BASE_URL, opts.branch)    
+        function(name, opts, base_url_w_prefix, opts.branch)    
 
     for name in FORKED_REPOSITORIES:
         log("--- Preparing repository '" + name + "' ---")
@@ -165,11 +181,11 @@ def run_on_all_repositories(opts, function):
         else:
             branch_name = opts.branch
             
-        function(name, opts, BASE_URL, branch_name)
+        function(name, opts, base_url_w_prefix, branch_name)
     
-    # for gamer, we always use the master branch
-    # TODO: we might need to be making release branches, but let's stay with this solution for now
-    function(REPO_NAME_GAMER, opts, GAMER_BASE_URL, GAMER_BRANCH) 
+    if opts.use_private_repos:
+        function(REPO_NAME_MCELL_TEST_PRIVATE, opts, PRIVATE_BASE_URL_SSH, opts.branch) 
+    
 
 
 def get_or_update(opts):

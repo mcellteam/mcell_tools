@@ -84,7 +84,8 @@ def main():
     #
     if opts.print_platform_info:
         print("Required blender + python archive name:")
-        print(opts.prebuilt_blender_w_python_archive)
+        print("Base: " + opts.prebuilt_blender_w_python_base)
+        print("Override: " + opts.prebuilt_blender_w_python_override)
         
         print("Resulting bundle name:")
         print(opts.result_bundle_archive_path)
@@ -132,18 +133,18 @@ def main():
     if opts.store_build:
         if opts.release_version != INTERNAL_RELEASE_NO_VERSION:
             # release
-            if os.path.exists(MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR):
-                log("Copying release '" + opts.result_bundle_archive_path + "'  to '" + MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR + "'.")
-                shutil.copy(opts.result_bundle_archive_path, MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR)
+            if os.path.exists(opts.mcell_build_infrastructure_releases_dir):
+                log("Copying release '" + opts.result_bundle_archive_path + "'  to '" + opts.mcell_build_infrastructure_releases_dir + "'.")
+                shutil.copy(opts.result_bundle_archive_path, opts.mcell_build_infrastructure_releases_dir)
             else:
-                fatal_error("Could not find directory '" + MCELL_BUILD_INFRASTRUCTURE_RELEASES_DIR + 
+                fatal_error("Could not find directory '" + opts.mcell_build_infrastructure_releases_dir + 
                             "', release was not stored but can be found as '" + opts.result_bundle_archive_path + "'.")
         else:
-            if os.path.exists(MCELL_BUILD_INFRASTRUCTURE_BUILDS_DIR):
-                log("Copying release '" + opts.result_bundle_archive_path + "'  to '" + MCELL_BUILD_INFRASTRUCTURE_BUILDS_DIR + "'.")
-                shutil.copy(opts.result_bundle_archive_path, MCELL_BUILD_INFRASTRUCTURE_BUILDS_DIR)
+            if os.path.exists(opts.mcell_build_infrastructure_builds_dir):
+                log("Copying release '" + opts.result_bundle_archive_path + "'  to '" + opts.mcell_build_infrastructure_builds_dir + "'.")
+                shutil.copy(opts.result_bundle_archive_path, opts.mcell_build_infrastructure_builds_dir)
             else:
-                fatal_error("Could not find directory '" + MCELL_BUILD_INFRASTRUCTURE_BUILDS_DIR + 
+                fatal_error("Could not find directory '" + opts.mcell_build_infrastructure_builds_dir + 
                             "', release was not stored but can be found as '" + opts.result_bundle_archive_path + "'.")
     
     log("--- All tasks finished successfully ---")
