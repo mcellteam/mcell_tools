@@ -48,17 +48,17 @@ def sign_package_on_macos(blender_dir) -> None:
     
     # need to pack and unpack it first with tar gfor some reason otherwise codesign prints
     # "unsealed contents present in the bundle root"
-    tar_cmd = TAR_BASE_CMD + ['-zcf', 'tmp.tar.gz', blender279_dir]
+    tar_cmd = TAR_BASE_CMD + ['-zcf', 'tmp.tar.gz', BUILD_SUBDIR_BLENDER]
     ec = run(tar_cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
     shutil.rmtree(blender279_dir)
 
-    untar_cmd = TAR_BASE_CMD + ['-xzf', 'tmp.tar.gz', blender279_dir]
+    untar_cmd = TAR_BASE_CMD + ['-xzf', 'tmp.tar.gz']
     ec = run(untar_cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
 
     # then we can sign it     
     cmd = [
         'codesign', '--verbose', '--deep', '--force', 
-        '--sign', '3rd Party Mac Developer Application: Adam Husar (342MS8AP75)',
+        '--sign', '"3rd Party Mac Developer Application: Adam Husar (342MS8AP75)"',
         os.path.join(blender279_dir, 'blender.app')
     ]
     
