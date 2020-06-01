@@ -63,7 +63,7 @@ def sign_package_on_macos(blender_dir) -> None:
     ]
     
     # must be run from work_dir to avoid having full paths in the archive
-    ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
+    ec = run(cmd, shell=True, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
     check_ec(ec, cmd)  
     
 
