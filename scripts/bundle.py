@@ -33,12 +33,13 @@ def copy_prebuilt_blender_w_python(opts) -> None:
         
     recursive_overwrite(opts.prebuilt_blender_w_python_base, opts.work_dir) 
         
-    # Linux build also needs an override directory
-    if platform.system() == 'Linux':
-        if not os.path.exists(opts.prebuilt_blender_w_python_override):
-            fatal_error("Could not find prebuilt blender + python package " + opts.prebuilt_blender_w_python_override)
-            
-        recursive_overwrite(opts.prebuilt_blender_w_python_override, opts.work_dir) 
+        
+def copy_override_files(opts) -> None:        
+    log("Copying pre-built override files from '" + opts.prebuilt_blender_w_python_override + "'.")
+    if not os.path.exists(opts.prebuilt_blender_w_python_override):
+        fatal_error("Could not find prebuilt blender + python package " + opts.prebuilt_blender_w_python_override)
+        
+    recursive_overwrite(opts.prebuilt_blender_w_python_override, opts.work_dir) 
 
 
 def sign_package_on_macos(blender_dir) -> None:
@@ -245,6 +246,9 @@ def create_bundle(opts) -> None:
         os.path.join(opts.work_dir, RELEASE_INFO_FILE),
         blender_subdir
     )
+    
+    # add additional system-specific files
+    copy_override_files(opts)
     
     # sign on MacOS
     if platform.system() == 'Darwin':
