@@ -90,7 +90,6 @@ def fetch(name, opts):
 
 
 def get_default_branch(name, branch):
-    print("!!! get_default_branch " + name + " - " + branch)
     if branch.startswith(BRANCH_PREFIX_MCELL4):
         return DEFAULT_BRANCH_MCELL4
     elif name in FORKED_REPOSITORIES:
@@ -111,6 +110,12 @@ def checkout(name, opts, branch):
         orig_branch = branch
         branch = get_default_branch(name, branch)
         warning("Remote branch '" + orig_branch + "' does not exit in repo '" + name + "', defaulting to '" + branch + "'.")
+
+    full_name2 = ORIGIN + '/' + branch 
+    if not full_name2 in branches: # FIXME: improve check, we are just checking a substring
+        orig_branch = branch
+        branch = DEFAULT_BRANCH
+        warning("Remote default branch '" + orig_branch + "' does not exit in repo '" + name + "', defaulting to '" + branch + "'.")
     
     # then we need to check that the branch is clean before we switch
     status = run_git_w_ascii_output(['status'], repo_dir)
