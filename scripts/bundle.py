@@ -220,8 +220,10 @@ def create_bundle(opts) -> None:
     )
     
     # neuropil_tools and mesh_tools 
-    neuropil_tools_dir = os.path.join(blender_dir, INSTALL_SUBDIR_NEUROPIL_TOOLS)
-    install_neuropil_tools(opts, neuropil_tools_dir)
+    if 'Windows' not in platform.system():
+        build_mesh_tools(opts)
+        neuropil_tools_dir = os.path.join(blender_dir, INSTALL_SUBDIR_NEUROPIL_TOOLS)
+        install_neuropil_tools(opts, neuropil_tools_dir)
         
     # gamer
     if not opts.do_not_build_gamer:
