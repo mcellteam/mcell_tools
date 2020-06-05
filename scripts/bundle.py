@@ -253,7 +253,7 @@ def create_bundle(opts) -> None:
     copy_override_files(opts)
     
     # sign on MacOS
-    if platform.system() == 'Darwin':
+    if platform.system() == 'Darwin' and not opts.do_not_sign_package:
         sign_package_on_macos(blender_dir)        
         
     # make a package with current date
