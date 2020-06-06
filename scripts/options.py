@@ -17,6 +17,7 @@ class Options:
         self.use_private_repos = False
         
         self.do_not_build_gamer = False
+        self.do_not_sign_package = False
         
         self.do_repos = False
         self.do_build = False
@@ -113,6 +114,7 @@ class Options:
         parser.add_argument('-s', '--ssh', action='store_true', help='use ssh to clone repositories')
         parser.add_argument('-z', '--use-private-repos', action='store_true', help='use mcell private repositories')
         parser.add_argument('-g', '--do-not-build-gamer', action='store_true', help='do not build gamer')
+        parser.add_argument('-n', '--do-not-sign-package', action='store_true', help='do not sign package on MacOS')
     
         parser.add_argument('-m', '--mcell-infrastructure-dir', type=str, help='path to mcell_build_infrastructure_data directory')
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
@@ -150,6 +152,9 @@ class Options:
 
         if args.do_not_build_gamer:
             self.do_not_build_gamer = True
+
+        if args.do_not_sign_package:
+            self.do_not_sign_package = True
 
         if args.use_private_repos:
             self.use_private_repos = True
