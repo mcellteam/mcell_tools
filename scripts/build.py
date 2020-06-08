@@ -152,7 +152,8 @@ def build_all(opts):
     # in-source build for now, should be fixed but it can work like this
     build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
     
-    build_mesh_tools(opts)
+    if 'Windows' not in platform.system():
+        build_mesh_tools(opts)
     
     return build_dirs
     
