@@ -73,6 +73,15 @@ if __name__ == "__main__":
             fatal_error("Command reset-hard does not have any extra arguments")
         print("Reseting all repositories")
         repositories.reset_hard(opts)
+
+    elif a1 == 'tag':
+        if argc == 3:
+            # misusing branch argument for tag
+            opts.branch = sys.argv[2]
+        else:
+            fatal_error("Missing tag argument")
+        print("Tagging all repositories")
+        repositories.tag(opts)
     
     else:
         print("Error: unknown command '" + a1 + "'")
