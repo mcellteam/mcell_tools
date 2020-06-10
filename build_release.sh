@@ -44,5 +44,7 @@ if [ ! -d $BUILD_INFRA_DIR ]; then
 	exit 1
 fi
 
+# note, there must not be system python other than 3.5 installed on MacOS otherwise cmake always selects that one
+# maybe it can be fixed somehow but not sure how yet
 
 ./run.py $EXTRA_ARG -1234 -u -z -b $BRANCH -i -r $VER --store-build -m $BUILD_INFRA_DIR
