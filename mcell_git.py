@@ -68,6 +68,13 @@ if __name__ == "__main__":
         print("Pushing all repositories")
         repositories.push(opts)
 
+    elif a1 == 'merge':
+        if argc == 3:
+            opts.branch = sys.argv[2]
+            
+        print("Merging all repositories")
+        repositories.merge(opts)
+
     elif a1 == 'reset-hard':
         if argc > 2:
             fatal_error("Command reset-hard does not have any extra arguments")
