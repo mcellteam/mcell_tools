@@ -198,7 +198,7 @@ def push(opts):
 
 def merge(opts):
     check_git_version()
-    run_on_all_repositories(opts, push_repository)
+    run_on_all_repositories(opts, merge_repository)
 
 
 def reset_hard(opts):
