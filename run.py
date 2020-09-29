@@ -67,9 +67,6 @@ def test_all(opts, install_dirs):
     if PYTHON_BLENDER_EXECUTABLE in install_dirs:
         test_cmd += [ '-t', install_dirs[PYTHON_BLENDER_EXECUTABLE] ]
         
-    if 'mcell4' in opts.branch:
-        test_cmd += [ '-c', 'test_configs/mcell4_all.toml' ]
-    
     # for some reason the script dos not terminate without the shell=True
     ec = run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path, shell=True)
     if ec != 0:
