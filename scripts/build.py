@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 """
-Copyright (C) 2019 by
-The Salk Institute for Biological Studies and
-Pittsburgh Supercomputing Center, Carnegie Mellon University
+Copyright (C) 2019,2020 by
+The Salk Institute for Biological Studies
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -148,7 +147,7 @@ def build_vtk(opts):
 
     vtk_build_dir = os.path.join(opts.work_dir, BUILD_DIR_VTK)
     
-    log("Running mcell build...")
+    log("Running VTK build...")
     
     # create working directory
     if not os.path.exists(vtk_build_dir):
@@ -159,12 +158,26 @@ def build_vtk(opts):
     cmd_cmake += CMAKE_EXTRA_ARGS
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_VTK))
 
-    # always built as release
-    cmd_cmake.append('-DCMAKE_BUILD_TYPE=Release')
-
-    # other VTK options
-    cmd_cmake.append('-DBUILD_TESTING=OFF')
-    cmd_cmake.append('-DBUILD_SHARED_LIBS=OFF')
+    # always built as release, select only the moldules that we need
+    cmd_cmake += [
+        '-DCMAKE_BUILD_TYPE=Release',
+        '-DVTK_BUILD_TESTING=OFF',
+        '-DVTK_BUILD_ALL_MODULES=OFF',
+        '-DBUILD_SHARED_LIBS=OFF',
+        '-DVTK_GROUP_ENABLE_Imaging=NO',
+        '-DVTK_GROUP_ENABLE_MPI=NO',
+        '-DVTK_GROUP_ENABLE_Qt=NO',
+        '-DVTK_GROUP_ENABLE_Rendering=NO',
+        '-DVTK_GROUP_ENABLE_StandAlone=YES',
+        '-DVTK_GROUP_ENABLE_Views=NO',
+        '-DVTK_GROUP_ENABLE_Web=NO',
+        '-DVTK_MODULE_ENABLE_VTK_RenderingCore=YES',
+        '-DVTK_MODULE_ENABLE_VTK_RenderingContext2D=YES',
+        '-DVTK_MODULE_ENABLE_VTK_RenderingFreeType=YES',
+        '-DVTK_MODULE_ENABLE_VTK_FiltersCore=YES',
+        '-DVTK_MODULE_ENABLE_VTK_FiltersGeneral=YES',
+        '-DVTK_MODULE_ENABLE_VTK_FiltersPoints=YES'
+    ]
 
     # run cmake
     ec = run(cmd_cmake, vtk_build_dir)
@@ -177,42 +190,7 @@ def build_vtk(opts):
     
     # run make, will fail 
     ec = run(cmd_make, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
-        
-    
-def build_vtk(opts):
-
-    vtk_build_dir = os.path.join(opts.work_dir, BUILD_DIR_VTK)
-    
-    log("Running mcell build...")
-    
-    # create working directory
-    if not os.path.exists(vtk_build_dir):
-        os.makedirs(vtk_build_dir)
-    
-    # setup cmake build arguments
-    cmd_cmake = [opts.cmake_executable]
-    cmd_cmake += CMAKE_EXTRA_ARGS
-    cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_VTK))
-
-    # always built as release
-    cmd_cmake.append('-DCMAKE_BUILD_TYPE=Release')
-
-    # other VTK options
-    cmd_cmake.append('-DBUILD_TESTING=OFF')
-    cmd_cmake.append('-DBUILD_SHARED_LIBS=OFF')
-
-    # run cmake
-    ec = run(cmd_cmake, vtk_build_dir)
-    check_ec(ec, cmd_cmake)
-    
-    # setup make build arguments
-    cmd_make = ['make']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    cmd_make.append('-k') # do not stop on errors 
-    
-    # run make, will fail 
-    ec = run(cmd_make, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
-    
+            
         
 def build_all(opts):
     build_dirs = {}
