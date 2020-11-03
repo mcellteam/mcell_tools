@@ -85,7 +85,7 @@ def download_and_build_cmake(work_dir):
     # 1) download
     ec = run(['wget', CMAKE_SRC_URL], cwd=work_dir)
     if ec != 0:
-        fatal_error("Could not download cmake sources, cmake of sufficient version must be buillt manually")
+        fatal_error("Could not download cmake sources, cmake of sufficient version must be built manually")
         
     # 2) unzip
     ec = run(TAR_BASE_CMD + ['-xzf', CMAKE_SRC_FILENAME], cwd=work_dir)

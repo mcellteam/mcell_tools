@@ -63,6 +63,8 @@ BUILD_DIR_VTK = 'build_vtk'
 
 INSTALL_DIR_GAMER = 'install_gamer'
 
+INSTALL_DIR_MCELL = 'mcell'
+
 BLENDER_VERSION = '2.79'
 BLENDER_FULL_VERSION = '2.79b'  
 BUILD_DIR_BLENDER = 'blender' #

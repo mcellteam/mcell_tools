@@ -68,13 +68,13 @@ def sign_package_on_macos(blender_dir) -> None:
     check_ec(ec, cmd)  
     
 
-def archive_resulting_bundle(opts, blender_dir) -> None:
+def archive_resulting_bundle(opts, blender_dir, dir_to_archive=BUILD_SUBDIR_BLENDER) -> None:
     log("Creating resulting archive '" + opts.result_bundle_archive_path + "'.")
     
     if platform.system() == 'Linux':
-        cmd = TAR_BASE_CMD + ['-zcf', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
+        cmd = TAR_BASE_CMD + ['-zcf', os.path.basename(opts.result_bundle_archive_path), dir_to_archive]
     else:
-        cmd = ZIP_CMD + ['-r', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
+        cmd = ZIP_CMD + ['-r', os.path.basename(opts.result_bundle_archive_path), dir_to_archive]
         
     # must be run from work_dir to avoid having full paths in the archive
     ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)

@@ -10,7 +10,7 @@ if [ "$VER" == "" ]; then
 fi
 
 if [ "$BRANCH" == "" ]; then 
-   BRANCH="development"
+   BRANCH="mcell4_dev"
 fi
 
 PVER=`python --version`
