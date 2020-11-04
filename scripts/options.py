@@ -96,6 +96,13 @@ class Options:
                 os_name = info[-2] + '-' + info[-1]
             else:  
                 os_name = platform.platform()
+                
+            # this is a bit ad-hoc, only for the VMs that we are using 
+            if 'Final' in os_name:
+                os_name = 'CentOS-6'
+            elif 'Core' in os_name:
+                os_name = 'CentOS-7'
+                
         else:
             os_name = platform.system()
         
