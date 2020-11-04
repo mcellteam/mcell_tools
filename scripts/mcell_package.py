@@ -35,7 +35,7 @@ def extract_resulting_package(opts) -> List[str]:
         
     install_dir = get_install_dir(opts) 
     install_dirs = {}
-    install_dirs[REPO_NAME_CELLBLENDER] = os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER)  
+    install_dirs[REPO_NAME_CELLBLENDER] = os.path.join(opts.work_dir, BUILD_DIR_CELLBLENDER)  
     install_dirs[REPO_NAME_MCELL] = os.path.join(install_dir, INSTALL_DIR_MCELL)
     install_dirs[PYTHON_BLENDER_EXECUTABLE] = sys.executable
     return install_dirs 
@@ -55,6 +55,15 @@ def create_package(opts) -> None:
         os.path.join(opts.work_dir, BUILD_DIR_MCELL),
         mcell_dir,
         ignore=shutil.ignore_patterns('CMakeFiles', 'deps', '*.a')
+    )
+    
+    # copy cellblender because we need it for testing to be at this location
+    cellblender_dir = os.path.join(blender_dir, INSTALL_SUBDIR_CELLBLENDER)
+    log("Installing cellblender to '" + cellblender_dir + "'.")
+    shutil.copytree(
+        os.path.join(os.path.join(opts.work_dir), BUILD_DIR_CELLBLENDER, REPO_NAME_CELLBLENDER),
+        cellblender_dir,
+        symlinks=True
     )
     
     # E) bionetgen
