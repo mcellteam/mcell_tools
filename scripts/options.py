@@ -108,7 +108,7 @@ class Options:
         
         if self.do_mcell_package:
             archive_name = \
-                INSTALL_DIR_MCELL + '-' + self.release_version + '-' + \
+                CELLBLENDER_MCELL_PLUGIN + '-' + self.release_version + '-' + \
                 os_name + '-' + now.strftime("%Y%m%d") + '.' + BUNDLE_EXT
             self.result_bundle_archive_path = os.path.join(self.work_dir, archive_name)
         else:
@@ -134,7 +134,7 @@ class Options:
         parser.add_argument('-m', '--mcell-infrastructure-dir', type=str, help='path to mcell_build_infrastructure_data directory')
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
         parser.add_argument('-t', '--store-build', action='store_true', help='store build in mcelldata directory')
-        parser.add_argument('-o', '--only-mcell', action='store_true', help='build only mcell, not the cellblender package')
+        parser.add_argument('-o', '--only-cellblender-mcell', action='store_true', help='build only mcell and cellblender as a blender plugin, do not include blender or other plugins')
     
         parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
         
@@ -166,7 +166,7 @@ class Options:
         if args.debug:
             self.debug = True
             
-        if args.only_mcell:
+        if args.only_cellblender_mcell:
             self.do_mcell_package = True
 
         if args.do_not_build_gamer:

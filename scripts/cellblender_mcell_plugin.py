@@ -33,10 +33,14 @@ def extract_resulting_package(opts) -> List[str]:
     
     extract_resulting_bundle(opts)
         
-    install_dir = get_install_dir(opts) 
+    install_dir = get_install_dir(opts)
     install_dirs = {}
-    install_dirs[REPO_NAME_CELLBLENDER] = os.path.join(opts.work_dir, BUILD_DIR_CELLBLENDER)  
-    install_dirs[REPO_NAME_MCELL] = os.path.join(install_dir, INSTALL_DIR_MCELL)
+    
+    cellblender_dir = os.path.join(install_dir, REPO_NAME_CELLBLENDER)
+    install_dirs[REPO_NAME_CELLBLENDER] = cellblender_dir  
+    
+    mcell_dir = os.path.join(cellblender_dir, DIR_EXTENSIONS, REPO_NAME_MCELL)
+    install_dirs[REPO_NAME_MCELL] = mcell_dir
     install_dirs[PYTHON_BLENDER_EXECUTABLE] = sys.executable
     return install_dirs 
   
@@ -44,12 +48,21 @@ def extract_resulting_package(opts) -> List[str]:
 def create_package(opts) -> None:
 
     # clear target directory
-    mcell_dir = os.path.join(opts.work_dir, INSTALL_DIR_MCELL)
+    plugin_dir = os.path.join(opts.work_dir, CELLBLENDER_MCELL_PLUGIN, REPO_NAME_CELLBLENDER)
+    if os.path.exists(plugin_dir):  
+        log("Cleaning '" + plugin_dir)
+        shutil.rmtree(plugin_dir)
     
-    if os.path.exists(mcell_dir):  
-        log("Cleaning '" + mcell_dir)
-        shutil.rmtree(mcell_dir)
+    # B) copy cellblender
+    log("Installing cellblender to '" + plugin_dir + "'.")
+    shutil.copytree(
+        os.path.join(opts.work_dir, BUILD_DIR_CELLBLENDER, REPO_NAME_CELLBLENDER),
+        plugin_dir,
+        symlinks=True
+    )
     
+    # C) copy mcell
+    mcell_dir = os.path.join(plugin_dir, DIR_EXTENSIONS, REPO_NAME_MCELL)
     log("Installing mcell to '" + mcell_dir + "'.")
     shutil.copytree(
         os.path.join(opts.work_dir, BUILD_DIR_MCELL),
@@ -57,29 +70,23 @@ def create_package(opts) -> None:
         ignore=shutil.ignore_patterns('CMakeFiles', 'deps', '*.a')
     )
     
-    # copy cellblender because we need it for testing to be at this location
-    cellblender_dir = os.path.join(blender_dir, INSTALL_SUBDIR_CELLBLENDER)
-    log("Installing cellblender to '" + cellblender_dir + "'.")
-    shutil.copytree(
-        os.path.join(os.path.join(opts.work_dir), BUILD_DIR_CELLBLENDER, REPO_NAME_CELLBLENDER),
-        cellblender_dir,
-        symlinks=True
-    )
-    
-    # E) bionetgen
-    # NOTE: mcell build already copies all the needed tools, probably that's all we need for now
-
     # add a version file
-    log("Copying version file to '" + mcell_dir + "'.")
+    log("Copying version file to '" + plugin_dir + "'.")
     shutil.copy(
         os.path.join(opts.work_dir, RELEASE_INFO_FILE),
-        mcell_dir
+        plugin_dir
     )
     
     # sign on MacOS (not sure if this works)
     if platform.system() == 'Darwin' and not opts.do_not_sign_package:
-        sign_package_on_macos(mcell_dir)        
+        sign_package_on_macos(plugin_dir)        
         
     # make a package with current date
-    archive_resulting_bundle(opts, opts.work_dir, os.path.basename(mcell_dir))
+    top_plugin_dir = os.path.join(opts.work_dir, CELLBLENDER_MCELL_PLUGIN)
+    archive_resulting_bundle(opts, top_plugin_dir, REPO_NAME_CELLBLENDER)
     
+    # move resulting archive one level up because that's where it is expected
+    log("Moving prepared plugin to " + opts.result_bundle_archive_path + ".")
+    shutil.move(
+        os.path.join(top_plugin_dir, os.path.basename(opts.result_bundle_archive_path)),
+        opts.result_bundle_archive_path) 

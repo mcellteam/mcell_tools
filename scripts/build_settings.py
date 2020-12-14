@@ -68,6 +68,7 @@ INSTALL_DIR_MCELL = 'mcell'
 BLENDER_VERSION = '2.79'
 BLENDER_FULL_VERSION = '2.79b'  
 BUILD_DIR_BLENDER = 'blender' #
+BUILD_DIR_CELLBLENDER_MCELL = 'cellblender_mcell'
 BUILD_SUBDIR_BLENDER = 'Blender-' + BLENDER_VERSION + '-CellBlender' # name of directory in the resulting arguve
 
 RELEASE_INFO_FILE = 'cellblender_bundle_release_info.txt'
@@ -138,12 +139,15 @@ INSTALL_SUBDIR_PYTHON_BIN = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, BUILD_D
 
 INSTALL_SUBDIR_ADDONS = os.path.join(INSTALL_VERSION_SUBDIR_BLENDER, 'scripts', 'addons')
 INSTALL_SUBDIR_CELLBLENDER = os.path.join(INSTALL_SUBDIR_ADDONS, 'cellblender')
-INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, 'extensions', 'mcell')
+DIR_EXTENSIONS = 'extensions'
+INSTALL_SUBDIR_MCELL = os.path.join(INSTALL_SUBDIR_CELLBLENDER, DIR_EXTENSIONS, 'mcell')
 INSTALL_SUBDIR_NEUROPIL_TOOLS = os.path.join(INSTALL_SUBDIR_ADDONS, 'neuropil_tools')
 
+CELLBLENDER_MCELL_PLUGIN = 'cellblender-mcell-plugin'
 
 BUNDLE_NAME = 'Blender-2.79-CellBlender.' + platform.system()
 
 TEST_BUNDLE_DIR = 'bundle_install'
+
 
 

@@ -30,7 +30,7 @@ sys.path.append(os.path.join(THIS_DIR, 'scripts'))
 import repositories
 import build
 import bundle
-import mcell_package
+import cellblender_mcell_plugin
 import cmake_builder
 
 from utils import log, fatal_error, get_cwd_no_link
@@ -127,9 +127,9 @@ def main():
         install_dirs = bundle.extract_resulting_bundle(opts)
         
     elif opts.do_mcell_package:
-        mcell_package.create_package(opts)
+        cellblender_mcell_plugin.create_package(opts)
         
-        install_dirs = mcell_package.extract_resulting_package(opts)
+        install_dirs = cellblender_mcell_plugin.extract_resulting_package(opts)
         
     
     # 4) test
