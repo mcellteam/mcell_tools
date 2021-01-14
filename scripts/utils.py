@@ -66,12 +66,12 @@ def run_with_ascii_output_err(cmd, cwd):
     return Popen(cmd, cwd=cwd, stderr=PIPE).communicate()[1].strip().decode('ascii')
 
 
-def execute(cmd, cwd, timeout_sec, timeout_is_fatal, outfile, shell=False):
+def execute(cmd, cwd, timeout_sec, timeout_is_fatal, outfile, shell=False, env=None):
     if shell:
         # for shell=True, the command must be a single string
         cmd = str.join(" ", cmd)
     
-    proc = Popen(cmd, shell=shell, cwd=cwd, stdout=outfile, stderr=subprocess.STDOUT)
+    proc = Popen(cmd, shell=shell, cwd=cwd, stdout=outfile, stderr=subprocess.STDOUT, env=env)
     timer = Timer(timeout_sec, kill_proc, [proc, outfile, timeout_is_fatal])
     try:
         timer.start()
@@ -92,10 +92,17 @@ def run(
         timeout_sec=300,
         timeout_is_fatal = True, 
         verbose=True,
-        shell=False 
+        shell=False,
+        extra_env=None  # this can be
         ):
     if verbose:
         log("    Executing: '" + str.join(" ", cmd) + "' " + str(cmd) + " in '" + cwd + "'")
+
+    extended_env = os.environ.copy()
+    if extra_env is not None:
+        # append extra env vars
+        for k,v in extra_env.items():
+            extended_env[k] = v    
 
     if fout_name:
         if append_path_to_output:
@@ -108,13 +115,13 @@ def run(
             f.write(str.join(" ", cmd) + "\n")  # first item is the command being executed
             
             # run the actual command
-            exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, f, shell=shell)
+            exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, f, shell=shell, env=extended_env)
 
         if (print_redirected_output):
             print_file(full_fout_path)
             
     else:
-        exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, sys.stdout, shell=shell)
+        exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, sys.stdout, shell=shell, env=env)
 
     if verbose:
         log("Exit code: " + str(exit_code))

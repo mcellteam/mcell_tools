@@ -227,7 +227,7 @@ def create_version_file(opts):
         os.makedirs(opts.work_dir)
     
     version_file = os.path.join(opts.work_dir, RELEASE_INFO_FILE)
-    with open(version_file, "w") as f:
+    with open(version_file, "w", encoding="utf-8") as f:
         f.write("CellBlender release: " + opts.release_version + "\n")
         now = datetime.datetime.now()
         f.write("Built on " + now.strftime("%Y-%m-%d %H:%M") + " " + str(time.tzname) + "\n")
