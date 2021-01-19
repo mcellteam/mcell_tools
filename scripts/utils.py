@@ -121,7 +121,7 @@ def run(
             print_file(full_fout_path)
             
     else:
-        exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, sys.stdout, shell=shell, env=env)
+        exit_code = execute(cmd, cwd, timeout_sec, timeout_is_fatal, sys.stdout, shell=shell, env=extended_env)
 
     if verbose:
         log("Exit code: " + str(exit_code))
