@@ -22,6 +22,10 @@ import platform
 from utils import *
 from build_settings import *
 
+def get_cmake_build_cmd():
+    # used with MSCV on Windows
+    return ['cmake', '--build', '.', '--target', 'ALL_BUILD', '--config', 'Release', '-j', str(get_nr_cores())]
+
 
 def get_cmake_build_type_arg(opts):
     if opts.debug:
@@ -85,14 +89,19 @@ def build_mcell(opts):
         cmd_cmake.insert(0, "CXX=g++-7")    
         ec = run(cmd_cmake, mcell_build_dir, shell=True)
     check_ec(ec, cmd_cmake)
-    
-    # setup make build arguments
-    cmd_make = ['make']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    
-    # run make 
-    ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_make)
+
+    if os.name != 'nt':    
+        # setup make build arguments
+        cmd_make = ['make']
+        cmd_make.append('-j' + str(get_nr_cores())) 
+        
+        # run make 
+        ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
+        check_ec(ec, cmd_make)
+    else:
+        cmd_build = get_cmake_build_cmd()
+        ec = run(cmd_build, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
+        check_ec(ec, cmd_build)
     
     return mcell_build_dir
         
@@ -158,38 +167,47 @@ def build_vtk(opts):
     cmd_cmake += CMAKE_EXTRA_ARGS
     cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_VTK))
 
-    # always built as release, select only the moldules that we need
+    # always built as release
     cmd_cmake += [
         '-DCMAKE_BUILD_TYPE=Release',
         '-DVTK_BUILD_TESTING=OFF',
         '-DVTK_BUILD_ALL_MODULES=OFF',
-        '-DBUILD_SHARED_LIBS=OFF',
-        '-DVTK_GROUP_ENABLE_Imaging=NO',
-        '-DVTK_GROUP_ENABLE_MPI=NO',
-        '-DVTK_GROUP_ENABLE_Qt=NO',
-        '-DVTK_GROUP_ENABLE_Rendering=NO',
-        '-DVTK_GROUP_ENABLE_StandAlone=YES',
-        '-DVTK_GROUP_ENABLE_Views=NO',
-        '-DVTK_GROUP_ENABLE_Web=NO',
-        '-DVTK_MODULE_ENABLE_VTK_RenderingCore=YES',
-        '-DVTK_MODULE_ENABLE_VTK_RenderingContext2D=YES',
-        '-DVTK_MODULE_ENABLE_VTK_RenderingFreeType=YES',
-        '-DVTK_MODULE_ENABLE_VTK_FiltersCore=YES',
-        '-DVTK_MODULE_ENABLE_VTK_FiltersGeneral=YES',
-        '-DVTK_MODULE_ENABLE_VTK_FiltersPoints=YES'
+        '-DBUILD_SHARED_LIBS=OFF'
     ]
+        
+    # select only the modules that we need
+    if os.name != 'nt':  
+        cmd_cmake += [      
+            '-DVTK_GROUP_ENABLE_Imaging=NO',
+            '-DVTK_GROUP_ENABLE_MPI=NO',
+            '-DVTK_GROUP_ENABLE_Qt=NO',
+            '-DVTK_GROUP_ENABLE_Rendering=NO',
+            '-DVTK_GROUP_ENABLE_StandAlone=YES',
+            '-DVTK_GROUP_ENABLE_Views=NO',
+            '-DVTK_GROUP_ENABLE_Web=NO',
+            '-DVTK_MODULE_ENABLE_VTK_RenderingCore=YES',
+            '-DVTK_MODULE_ENABLE_VTK_RenderingContext2D=YES',
+            '-DVTK_MODULE_ENABLE_VTK_RenderingFreeType=YES',
+            '-DVTK_MODULE_ENABLE_VTK_FiltersCore=YES',
+            '-DVTK_MODULE_ENABLE_VTK_FiltersGeneral=YES',
+            '-DVTK_MODULE_ENABLE_VTK_FiltersPoints=YES'
+        ]
 
     # run cmake
     ec = run(cmd_cmake, vtk_build_dir)
     check_ec(ec, cmd_cmake)
     
-    # setup make build arguments
-    cmd_make = ['make']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    cmd_make.append('-k') # do not stop on errors 
-    
     # run make, will fail 
-    ec = run(cmd_make, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
+    if os.name != 'nt': 
+        # setup make build arguments
+        cmd_make = ['make']
+        cmd_make.append('-j' + str(get_nr_cores())) 
+        cmd_make.append('-k') # do not stop on errors 
+    
+        ec = run(cmd_make, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
+    else:
+        cmd_build = get_cmake_build_cmd()
+        ec = run(cmd_build, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
             
         
 def build_all(opts):

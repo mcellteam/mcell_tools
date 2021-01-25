@@ -106,10 +106,11 @@ if 'Windows' in platform.system():
     # tar interprets colons (:) in file names as meaning it is a file on another machine.
     # TODO: fix this, we really do not want to have an absolute path here but even putting the path into $PATH
     #   somehow did not help 
-    TAR_BASE_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/tar', '--force-local']
+    #TAR_BASE_CMD = ['c:/tools/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/tar', '--force-local']
+    TAR_BASE_CMD = ['tar.exe'] # used with bsdtar 3.3.2 - libarchive 3.3.2 zlib/1.2.5.f-ipp
     PYTHON_BLENDER_EXECUTABLE = 'python.exe'
-    # cmake on Windows tries to use Visual Studio generator by default 
-    CMAKE_EXTRA_ARGS = [ '-G', 'Unix Makefiles' ]
+    # cmake on Windows uses Visual Studio generator by default 
+    CMAKE_EXTRA_ARGS = [] #  '-G', 'Unix Makefiles' 
 else:
     TAR_BASE_CMD = ['tar']
     PYTHON_BLENDER_EXECUTABLE = 'python3.5'
