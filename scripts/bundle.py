@@ -96,13 +96,17 @@ def build_gamer(opts, blender_dir):
     ec = run(cmd_bash_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, cmd_bash_cmake)
     
-    # setup make build arguments
-    cmd_make = ['make']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    
-    # run make 
-    ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_make)
+    if os.name != 'nt':
+        # setup make build arguments
+        cmd_make = ['make']
+        cmd_make.append('-j' + str(get_nr_cores())) 
+        
+        # run make 
+        ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+        check_ec(ec, cmd_make)
+    else:
+        cmd_build = get_cmake_build_cmd()
+        ec = run(cmd_build, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
 
 
 def unpack_blendgamer(opts, blender_dir):
