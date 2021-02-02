@@ -71,6 +71,9 @@ def test_all(opts, install_dirs):
     # the current MacOS VM crashes if too many tests are run in parallel
     if platform.system() == 'Darwin':
         test_cmd += [ '-s' ]
+        
+    # clean the test data immediatelly after pass
+    test_cmd += [ '-e' ]
     
     # for some reason the script dos not terminate without the shell=True
     ec = run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path, shell=True)
