@@ -33,7 +33,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	BUILD_INFRA_DIR=/Volumes/mcell_build_infrastructure_data
 elif [[ "$OSTYPE" == "msys" ]]; then
-	BUILD_INFRA_DIR=C://husar//mcell//mcell_build_infrastructure_data
+	BUILD_INFRA_DIR=Z://
 else
 	echo "Unsupported OS."
 	exit 1

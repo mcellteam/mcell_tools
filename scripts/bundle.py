@@ -25,6 +25,7 @@ from typing import List, Dict
 
 from utils import *
 from build_settings import *
+from build import get_cmake_build_cmd
 
 def copy_prebuilt_blender_w_python(opts) -> None:
     log("Copying pre-built blender with python from '" + opts.prebuilt_blender_w_python_base + "'.") 
