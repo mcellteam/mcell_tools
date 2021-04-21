@@ -38,7 +38,7 @@ WORK_DIR_NAME = 'work'
 BUILD_OPTS_USE_LTO = False  # higher performnce but slower build
 
 BUILD_TIMEOUT = 60*30 # in seconds, Windows build can be slow
-TEST_ALL_TIMEOUT = 60*60# 1 hour
+TEST_ALL_TIMEOUT = 60*60*4# 4 hours
 
 INTERNAL_RELEASE_NO_VERSION = 'internal'
 

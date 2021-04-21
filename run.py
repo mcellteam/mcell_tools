@@ -75,6 +75,9 @@ def test_all(opts, install_dirs):
     # clean the test data immediatelly after pass
     test_cmd += [ '-e' ]
     
+    with open(os.path.join(THIS_DIR, WORK_DIR_NAME, "test_command.sh"), 'w') as f:
+    	f.write(' '.join(test_cmd))
+    
     # for some reason the script dos not terminate without the shell=True
     ec = run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path, shell=True)
     if ec != 0:
