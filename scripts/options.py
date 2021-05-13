@@ -19,7 +19,7 @@ class Options:
         self.do_not_build_gamer = False
         self.do_not_sign_package = False
         
-        self.do_mcell_package = False
+        self.only_cellblender_mcell = False
         
         self.do_repos = False
         self.do_build = False
@@ -106,7 +106,7 @@ class Options:
         else:
             os_name = platform.system()
         
-        if self.do_mcell_package:
+        if self.only_cellblender_mcell:
             archive_name = \
                 CELLBLENDER_MCELL_PLUGIN + '-' + self.release_version + '-' + \
                 os_name + '-' + now.strftime("%Y%m%d") + '.' + BUNDLE_EXT
@@ -135,6 +135,7 @@ class Options:
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
         parser.add_argument('-t', '--store-build', action='store_true', help='store build in mcelldata directory')
         parser.add_argument('-o', '--only-cellblender-mcell', action='store_true', help='build only mcell and cellblender as a blender plugin, do not include blender or other plugins')
+        parser.add_argument('-w', '--bdist-wheel', action='store_true', help='build only mcell.so/dyl and build a wheel as a PyPi package')
     
         parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
         
@@ -167,7 +168,7 @@ class Options:
             self.debug = True
             
         if args.only_cellblender_mcell:
-            self.do_mcell_package = True
+            self.only_cellblender_mcell = True
 
         if args.do_not_build_gamer:
             self.do_not_build_gamer = True
@@ -195,7 +196,7 @@ class Options:
         self.do_bundle = args.do_bundle
         self.do_test = args.do_test
         
-        if self.do_bundle and self.do_mcell_package:
+        if self.do_bundle and self.only_cellblender_mcell:
             print("Error: cannot build cellblender bundle and mcell package at the same time")
             sys.exit(1)
     
@@ -208,7 +209,7 @@ class Options:
         # final processing
         
         # no specific task was set, do all
-        if not (self.do_repos or self.do_build or self.do_bundle or self.do_test or self.do_mcell_package):
+        if not (self.do_repos or self.do_build or self.do_bundle or self.do_test or self.only_cellblender_mcell):
             self.do_repos = True
             self.do_build = True
             #self.do_bundle = True

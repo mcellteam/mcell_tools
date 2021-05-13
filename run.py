@@ -136,7 +136,7 @@ def main():
         # also extract it right away if testing is needed
         install_dirs = bundle.extract_resulting_bundle(opts)
         
-    elif opts.do_mcell_package:
+    elif opts.only_cellblender_mcell:
         cellblender_mcell_plugin.create_package(opts)
         
         install_dirs = cellblender_mcell_plugin.extract_resulting_package(opts)

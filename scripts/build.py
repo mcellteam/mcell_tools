@@ -222,10 +222,10 @@ def build_all(opts):
     build_dirs[REPO_NAME_MCELL] = build_mcell(opts)
     
     # in-source build for now, should be fixed but it can work like this
-    # needed for testing even for 'do_mcell_package'
+    # needed for testing even for 'only_cellblender_mcell'
     build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
         
-    if not opts.do_mcell_package:
+    if not opts.only_cellblender_mcell:
         if 'Windows' not in platform.system():
             build_mesh_tools(opts)
     
