@@ -1,0 +1,4 @@
+This directory contains tentative scripts used to build 
+a pypi package. However, it was not clear where to put the 
+mcell.so file so that it is always reliably in sys.path so this 
+approach was replaced with conda build system.
