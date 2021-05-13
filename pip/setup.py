@@ -7,26 +7,23 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_DIR = 'mcell/utils/pybind11_test/build/'
 
 if platform.system() == 'Linux':
-    lib_name = 'mcell.cpython-35m-x86_64-linux-gnu.so'
-    dst_dir = 'lib/python3.5/lib-dynload' # requires version-specific path...
+    # TODO: copy mcell library to the current directory
+    pass
 elif platform.system() == 'Darwin':
-    assert False, "TODO"
-    lib_name = 'mcell.cpython-35m-x86_64-darwin.so' # ???
-    dst_dir = 'lib-dynload/python3.5' # requires specific path...
+    #
+    pass
 elif 'Windows' in platform.system():
-    assert False, "TODO"
-    lib_name = 'mcell.cpython-35m-x86_64-darwin.so' # ???
-    dst_dir = 'DLLs' # seem ok
+    pass
 else:
     sys.exit("Operating system '" + platform.system() + "' is not supported in this build system yet.")
     
-lib_path = os.path.join(THIS_DIR, '..', '..', BUILD_DIR, lib_name)     
+
     
 setuptools.setup(
      name='mcell',  
-     version='4.98.4', # todo: set automatically - has to be number
+     version='3.99.0', # todo: set automatically - has to be number
       
-     data_files=[(dst_dir, [lib_path])], 
+     py_modules=['mcell'], 
      author="Salk Institute for Biologocal Studies",
      author_email="ahusar@salk.edu",
      description="MCell4",
