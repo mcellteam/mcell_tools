@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright (C) 2019 by
+Copyright (C) 2019-2021 by
 The Salk Institute for Biological Studies and
 Pittsburgh Supercomputing Center, Carnegie Mellon University
 
@@ -31,6 +31,7 @@ import repositories
 import build
 import bundle
 import cellblender_mcell_plugin
+import pypi_wheel
 import cmake_builder
 
 from utils import log, fatal_error, get_cwd_no_link
@@ -132,15 +133,20 @@ def main():
     # 3) create bundle
     # overwrite install_dirs with new values
     if opts.do_bundle:
-        bundle.create_bundle(opts)
-        # also extract it right away if testing is needed
-        install_dirs = bundle.extract_resulting_bundle(opts)
+        if opts.only_cellblender_mcell:
+            cellblender_mcell_plugin.create_package(opts)
+            
+            install_dirs = cellblender_mcell_plugin.extract_resulting_package(opts)
+            
+        elif opts.only_pypi_wheel:
+            install_dirs = pypi_wheel.create_pypi_wheel(opts)
+            
+        else:
+            bundle.create_bundle(opts)
+            # also extract it right away if testing is needed
+            install_dirs = bundle.extract_resulting_bundle(opts)
         
-    elif opts.only_cellblender_mcell:
-        cellblender_mcell_plugin.create_package(opts)
-        
-        install_dirs = cellblender_mcell_plugin.extract_resulting_package(opts)
-        
+
     
     # 4) test
     if opts.do_test:

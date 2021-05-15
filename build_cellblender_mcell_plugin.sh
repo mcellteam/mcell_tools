@@ -24,4 +24,4 @@ if [ "$PVER_SHORT" != "Python 3.5" ]; then
   conda activate py35 || exit 1
 fi
 
-./run.py $EXTRA_ARG -12 -o -4 -u -z -b $BRANCH -i -r $VER --store-build
+./run.py $EXTRA_ARG -o -1234 -u -z -b $BRANCH -i -r $VER --store-build

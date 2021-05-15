@@ -26,6 +26,6 @@ if [ ! -d $BUILD_INFRA_DIR ]; then
 	exit 1
 fi
 
-./run.py $EXTRA_ARG -12 -y -u -z -b $BRANCH -i -r $VER -m $BUILD_INFRA_DIR 
+./run.py $EXTRA_ARG -w -1234 -u -z -b $BRANCH -i -r $VER -m $BUILD_INFRA_DIR 
 
 

@@ -23,8 +23,14 @@ from utils import *
 from build_settings import *
 
 def get_cmake_build_cmd():
+    
+    if not opts.only_pypi_wheel:
+        target = 'ALL_BUILD'
+    else:
+        target = 'mcell4_so'
+        
     # used with MSCV on Windows
-    return ['cmake', '--build', '.', '--target', 'ALL_BUILD', '--config', 'Release', '-j', str(get_nr_cores())]
+    return ['cmake', '--build', '.', '--target', target, '--config', 'Release', '-j', str(get_nr_cores())]
 
 
 def get_cmake_build_type_arg(opts):
@@ -59,7 +65,10 @@ def is_default_compiler_supported_by_mcell() -> bool:
 
 def build_mcell(opts):
 
-    mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
+    if not opts.only_pypi_wheel:
+        mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
+    else:
+        mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL_PYPI)
     
     log("Running mcell build...")
     
@@ -75,8 +84,12 @@ def build_mcell(opts):
     cmd_cmake.append(get_cmake_build_type_arg(opts))
 
     if BUILD_OPTS_USE_LTO:
-        cmd_cmake.append('-DUSE_LTO=ON')
-        
+        cmd_cmake.append('-DENABLE_LTO=ON')
+
+    if opts.only_pypi_wheel:
+        # default is 3.5
+        cmd_cmake.append('-DPYTHON_VERSION=3.8')
+
     # run cmake
     
     # issue (TODO - insert this into the issue tracking system)
@@ -89,17 +102,22 @@ def build_mcell(opts):
         cmd_cmake.insert(0, "CXX=g++-7")    
         ec = run(cmd_cmake, mcell_build_dir, shell=True)
     check_ec(ec, cmd_cmake)
-
-    if os.name != 'nt':    
+    
+    if os.name != 'nt':
         # setup make build arguments
         cmd_make = ['make']
+        
+        if opts.only_pypi_wheel:
+            cmd_make.append('mcell4_so')
+
         cmd_make.append('-j' + str(get_nr_cores())) 
         
         # run make 
         ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
         check_ec(ec, cmd_make)
     else:
-        cmd_build = get_cmake_build_cmd()
+        # building everything on Windows even whem building just mcell.
+        cmd_build = get_cmake_build_cmd(opts)
         ec = run(cmd_build, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
         check_ec(ec, cmd_build)
     
@@ -221,11 +239,12 @@ def build_all(opts):
     
     build_dirs[REPO_NAME_MCELL] = build_mcell(opts)
     
-    # in-source build for now, should be fixed but it can work like this
-    # needed for testing even for 'only_cellblender_mcell'
-    build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
+    if not opts.only_pypi_wheel:
+        # in-source build for now, should be fixed but it can work like this
+        # needed for testing even for 'only_cellblender_mcell'
+        build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
         
-    if not opts.only_cellblender_mcell:
+    if not opts.only_cellblender_mcell and not opts.only_pypi_wheel:
         if 'Windows' not in platform.system():
             build_mesh_tools(opts)
     

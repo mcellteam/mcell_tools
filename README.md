@@ -14,7 +14,7 @@ To checkout all the repositories and build mcell along with other tools, run the
   mkdir mcell
   git clone https://github.com/mcellteam/mcell_tools.git
   cd mcell_tools
-  python3 run.py # optional argument -b BRANCH_NAME selects branch, testing_infrastructure is the default branch
+  python3 run.py # optional argument -b BRANCH_NAME selects branch, mcell4_dev is the default branch
 ```
   
 The resulting build directory of mcell is then located in work/build_mcell.

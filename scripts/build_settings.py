@@ -58,6 +58,7 @@ REPO_NAME_MCELL_TEST_PRIVATE = 'mcell_tests_private'
 REPO_NAME_VTK = 'VTK'
 
 BUILD_DIR_MCELL = 'build_mcell'
+BUILD_DIR_MCELL_PYPI = 'build_mcell_pypi'
 BUILD_DIR_CELLBLENDER = 'build_cellblender' # this in fact an install dir for now
 BUILD_DIR_GAMER = 'build_gamer'
 BUILD_DIR_VTK = 'build_vtk'
