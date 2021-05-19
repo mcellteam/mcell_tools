@@ -43,7 +43,7 @@ TEST_ALL_TIMEOUT = 60*60*4# 4 hours
 INTERNAL_RELEASE_NO_VERSION = 'internal'
 
 REPO_NAME_MCELL = 'mcell'
-REPO_NAME_BNGLIB = 'bnglib'
+REPO_NAME_LIBBNG = 'libbng'
 REPO_NAME_CELLBLENDER = 'cellblender'
 REPO_NAME_NEUROPIL_TOOLS = 'neuropil_tools'
 REPO_NAME_MESH_TOOLS = 'mesh_tools'
