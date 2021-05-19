@@ -60,7 +60,7 @@ def sign_package_on_macos(blender_dir) -> None:
     # then we can sign it     
     cmd = [
         'codesign', '--verbose', '--deep', '--force', 
-        '--sign', '"3rd Party Mac Developer Application: Adam Husar (342MS8AP75)"',
+        '--sign', '"Developer ID Application: Adam Husar (342MS8AP75)"',
         os.path.join(blender279_dir, 'blender.app')
     ]
     
