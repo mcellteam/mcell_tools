@@ -22,9 +22,9 @@ import platform
 from utils import *
 from build_settings import *
 
-def get_cmake_build_cmd():
+def get_cmake_build_cmd(opts = None):
     
-    if not opts.only_pypi_wheel:
+    if not opts or not opts.only_pypi_wheel:
         target = 'ALL_BUILD'
     else:
         target = 'mcell4_so'
