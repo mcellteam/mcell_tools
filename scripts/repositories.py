@@ -30,7 +30,7 @@ BASE_URL = 'https://github.com/mcellteam/'
 
 BASE_URL_HTTPS = 'https://github.com/mcellteam/'
 BASE_URL_SSH = 'git@github.com:mcellteam/'
-PRIVATE_BASE_URL_SSH = 'git@gitlab.snl.salk.edu:mcellteam/'
+PRIVATE_BASE_URL_SSH = 'git@github.com:mcellteam/'
 GIT_SUFFIX = '.git'
 BASE_REPOSITORIES = [
     REPO_NAME_MCELL, REPO_NAME_LIBBNG, REPO_NAME_CELLBLENDER, 
