@@ -221,7 +221,7 @@ def create_bundle(opts) -> None:
     shutil.copytree(
         os.path.join(opts.work_dir, BUILD_DIR_MCELL),
         mcell_dir,
-        ignore=shutil.ignore_patterns('CMakeFiles', 'deps', '*.a')
+        ignore=shutil.ignore_patterns('CMakeFiles', 'deps', '*.a', '*.tlog', '*.log', '*.dir')
     )
     
     # neuropil_tools and mesh_tools 
