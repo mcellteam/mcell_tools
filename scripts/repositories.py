@@ -193,6 +193,7 @@ def run_on_all_repositories(opts, function):
         function(name, opts, base_url_w_prefix, branch_name)
     
     if opts.use_private_repos:
+        log("--- Preparing repository '" + REPO_NAME_MCELL_TEST_PRIVATE + "' ---")
         function(REPO_NAME_MCELL_TEST_PRIVATE, opts, PRIVATE_BASE_URL_SSH, opts.branch) 
     
 

@@ -49,6 +49,7 @@ if __name__ == "__main__":
     a1 = sys.argv[1]
     
     opts = Options()
+    opts.use_private_repos = True
     if a1 == 'clone' or a1 == 'checkout': 
         if argc == 3:
             opts.branch = sys.argv[2]
