@@ -200,10 +200,6 @@ class Options:
         self.do_bundle = args.do_bundle
         self.do_test = args.do_test
         
-        if self.do_bundle and self.only_cellblender_mcell:
-            print("Error: cannot build cellblender bundle and mcell package at the same time")
-            sys.exit(1)
-    
         self.set_result_bundle_archive_path()
 
         if args.print_platform_info:

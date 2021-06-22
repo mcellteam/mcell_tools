@@ -13,9 +13,9 @@ if [ "$BRANCH" == "" ]; then
    BRANCH="mcell4_dev"
 fi
 
-PVER=`python3 --version`
-PVER_SHORT=${PVER%.*}
-if [ "$PVER_SHORT" != "Python 3.5" ]; then
+PVER=`python --version 2>&1`
+echo $PVER
+if [[ $PVER != Python\ 3.5* ]]; then
   # gamer and other components need to be built with python3.5 libraries
   # and they use the default python3 executable to determine the location 
   # of the libraries  
@@ -24,6 +24,5 @@ if [ "$PVER_SHORT" != "Python 3.5" ]; then
   conda activate py35 || exit 1
 fi
 
-#./run.py $EXTRA_ARG -o -1234 -u -z -b $BRANCH -i -r $VER --store-build
-./run.py $EXTRA_ARG -12 -o -4 -u -z -b $BRANCH -i -r $VER --store-build
+./run.py $EXTRA_ARG -o -1234 -u -z -b $BRANCH -i -r $VER --store-build
 
