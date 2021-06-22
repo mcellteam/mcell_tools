@@ -89,7 +89,7 @@ def run(
         fout_name="", 
         append_path_to_output=False, 
         print_redirected_output=False, 
-        timeout_sec=300,
+        timeout_sec=600,
         timeout_is_fatal = True, 
         verbose=True,
         shell=False,
