@@ -83,7 +83,7 @@ def build_python(opts, python_dir, blender_python_subdir) -> None:
     log("Building python sources ...")
     
     # there should be a single subdirectory for now fixed name is expected 
-    # e.g. .../mcell_tools/work/blender/blender-2.79b-linux-glibc219-x86_64/2.79/python 
+    # e.g. .../mcell_tools/work/blender/blender-2.93b-linux-glibc219-x86_64/2.93/python 
     python_subdir = os.path.join(python_dir, BUILD_SUBDIR_PYTHON)
     
     cmd_configure = ['bash', './configure', '--enable-optimizations', '--prefix=' + blender_python_subdir]

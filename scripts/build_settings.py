@@ -67,8 +67,8 @@ INSTALL_DIR_GAMER = 'install_gamer'
 
 INSTALL_DIR_MCELL = 'mcell'
 
-BLENDER_VERSION = '2.79'
-BLENDER_FULL_VERSION = '2.79b'  
+BLENDER_VERSION = '2.93'
+BLENDER_FULL_VERSION = '2.93'  
 BUILD_DIR_BLENDER = 'blender' #
 BUILD_DIR_CELLBLENDER_MCELL = 'cellblender_mcell'
 BUILD_SUBDIR_BLENDER = 'Blender-' + BLENDER_VERSION + '-CellBlender' # name of directory in the resulting arguve
@@ -76,20 +76,20 @@ BUILD_SUBDIR_BLENDER = 'Blender-' + BLENDER_VERSION + '-CellBlender' # name of d
 RELEASE_INFO_FILE = 'cellblender_bundle_release_info.txt'
 
 if platform.system() == 'Linux':
-    BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
-    BLENDER_ARCHIVE = 'blender-2.79b-linux-glibc219-x86_64.tar.gz'
+    BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.93-linux-glibc219-x86_64'
+    BLENDER_ARCHIVE = 'blender-2.93-linux-glibc219-x86_64.tar.gz'
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/mcelldata/mcell_build_infrastructure_data'
     EXE_EXT=""
     BUNDLE_EXT = 'tar.gz'
 elif platform.system() == 'Darwin':
-    BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-linux-glibc219-x86_64'
-    BLENDER_ARCHIVE = 'blender-2.79b-Darwin-18.6.0-x86_64-i386-64bit.tar'
+    BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.93-linux-glibc219-x86_64'
+    BLENDER_ARCHIVE = 'blender-2.93-Darwin-18.6.0-x86_64-i386-64bit.tar'
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/Volumes/mcell/mcell_build_infrastructure_data/'
     EXE_EXT=""
     BUNDLE_EXT = 'zip'        
 elif 'Windows' in platform.system():
-    BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.79b-windows64'
-    BLENDER_ARCHIVE = 'blender-2.79b-windows64.zip'
+    BUILD_SUBDIR_BLENDER_OS_BASED = 'blender-2.93-windows64'
+    BLENDER_ARCHIVE = 'blender-2.93-windows64.zip'
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = 'Z:\\'
     EXE_EXT=".exe"
     BUNDLE_EXT = 'zip'
@@ -148,7 +148,7 @@ INSTALL_SUBDIR_NEUROPIL_TOOLS = os.path.join(INSTALL_SUBDIR_ADDONS, 'neuropil_to
 
 CELLBLENDER_MCELL_PLUGIN = 'cellblender-mcell-plugin'
 
-BUNDLE_NAME = 'Blender-2.79-CellBlender.' + platform.system()
+BUNDLE_NAME = 'Blender-2.93-CellBlender.' + platform.system()
 
 TEST_BUNDLE_DIR = 'bundle_install'
 
