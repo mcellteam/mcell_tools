@@ -31,8 +31,11 @@ def copy_prebuilt_blender_w_python(opts) -> None:
     log("Copying pre-built blender with python from '" + opts.prebuilt_blender_w_python_base + "'.") 
     if not os.path.exists(opts.prebuilt_blender_w_python_base):
         fatal_error("Could not find prebuilt blender + python package " + opts.prebuilt_blender_w_python_base)
-        
-    recursive_overwrite(opts.prebuilt_blender_w_python_base, opts.work_dir) 
+    
+    
+    cmd = ['cp', '-r', os.path.join(opts.prebuilt_blender_w_python_base, '*'), opts.work_dir]
+    ec = run(cmd, shell=True)
+    check_ec(ec, cmd) 
         
         
 def copy_override_files(opts) -> None:        
@@ -40,19 +43,21 @@ def copy_override_files(opts) -> None:
     if not os.path.exists(opts.prebuilt_blender_w_python_override):
         fatal_error("Could not find prebuilt blender + python package " + opts.prebuilt_blender_w_python_override)
         
-    recursive_overwrite(opts.prebuilt_blender_w_python_override, opts.work_dir) 
-
+    cmd = ['cp', '-r', os.path.join(opts.prebuilt_blender_w_python_override, '*'), opts.work_dir]        
+    ec = run(cmd, shell=True)
+    check_ec(ec, cmd) 
 
 def sign_package_on_macos(blender_dir) -> None:
     log("Signing MacOS package in '" + blender_dir + "'.")
     
-    blender279_dir = os.path.join(blender_dir, BUILD_SUBDIR_BLENDER)
+    blender293_dir = os.path.join(blender_dir, BUILD_SUBDIR_BLENDER)
     
     # need to pack and unpack it first with tar gfor some reason otherwise codesign prints
     # "unsealed contents present in the bundle root"
     tar_cmd = TAR_BASE_CMD + ['-zcf', 'tmp.tar.gz', BUILD_SUBDIR_BLENDER]
     ec = run(tar_cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
-    shutil.rmtree(blender279_dir)
+    #shutil.rmtree(blender293_dir)
+    os.rename(blender293_dir, blender293_dir+'bak')
 
     untar_cmd = TAR_BASE_CMD + ['-xzf', 'tmp.tar.gz']
     ec = run(untar_cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
@@ -61,7 +66,7 @@ def sign_package_on_macos(blender_dir) -> None:
     cmd = [
         'codesign', '--verbose', '--deep', '--force', 
         '--sign', '"Developer ID Application: Adam Husar (342MS8AP75)"',
-        os.path.join(blender279_dir, 'blender.app')
+        os.path.join(blender293_dir, 'Blender.app')
     ]
     
     # must be run from work_dir to avoid having full paths in the archive
