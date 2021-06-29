@@ -97,10 +97,10 @@ else:
     fatal_error("Operating system '" + platform.system() + "' is not supported in this build system yet.")
 
 BUILD_SUBDIR_PYTHON_UNDER_BLENDER = os.path.join(BLENDER_VERSION, 'python/')
-BUILD_SUBDIR_BIN_PYTHON_DIR = 'bin/python3.5'
+BUILD_SUBDIR_BIN_PYTHON_DIR = 'bin/python3.9'
 
 BUILD_DIR_PYTHON = 'python'
-BUILD_SUBDIR_PYTHON = 'Python-3.5.3'
+BUILD_SUBDIR_PYTHON = 'Python-3.9.2'
 
 PYTHON_SYSTEM_EXECUTABLE = 'python3'
 
@@ -115,7 +115,7 @@ if 'Windows' in platform.system():
     CMAKE_EXTRA_ARGS = [] #  '-G', 'Unix Makefiles' 
 else:
     TAR_BASE_CMD = ['tar']
-    PYTHON_BLENDER_EXECUTABLE = 'python3.5'
+    PYTHON_BLENDER_EXECUTABLE = 'python3.9'
     # keep default generator for cmake 
     CMAKE_EXTRA_ARGS = []
 
