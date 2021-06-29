@@ -90,6 +90,10 @@ def build_mcell(opts):
         # default is 3.5
         cmd_cmake.append('-DPYTHON_VERSION=3.8')
 
+    if os.name == 'nt':
+        # note: may need to rename python39.lib to python3.9 lib on Windows
+        cmd_cmake.append('-DSYSTEM_PYTHON_LIB_DIR=' + os.path.join(os.path.dirname(sys.executable), 'libs'))
+
     # run cmake
     
     # issue (TODO - insert this into the issue tracking system)
