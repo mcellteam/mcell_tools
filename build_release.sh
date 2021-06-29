@@ -47,4 +47,10 @@ fi
 # note, there must not be system python other than 3.5 installed on MacOS otherwise cmake always selects that one
 # maybe it can be fixed somehow but not sure how yet
 
-./run.py $EXTRA_ARG -1234 -u -z -b $BRANCH -i -r $VER --store-build -m $BUILD_INFRA_DIR
+if "$EXTRA_ARG" == "pkgtest"; then
+	STEPS="-34"
+else
+	STEPS="-1234"	 
+fi
+	
+./run.py $EXTRA_ARG $STEPS -u -z -b $BRANCH -i -r $VER --store-build -m $BUILD_INFRA_DIR
