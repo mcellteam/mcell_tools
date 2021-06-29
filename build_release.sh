@@ -49,6 +49,7 @@ fi
 
 if "$EXTRA_ARG" == "pkgtest"; then
 	STEPS="-34"
+	EXTRA_ARG=""
 else
 	STEPS="-1234"	 
 fi
