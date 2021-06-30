@@ -31,7 +31,8 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		BUILD_INFRA_DIR=/cnl/mcelldata/mcell_build_infrastructure_data/
 	fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-	BUILD_INFRA_DIR=/Volumes/mcell_build_infrastructure_data
+    # samba started to work very randomly with switch to Blender 2.93
+	BUILD_INFRA_DIR=~/mcell_build_infrastructure_data
 elif [[ "$OSTYPE" == "msys" ]]; then
 	BUILD_INFRA_DIR=Z://
 else
