@@ -45,7 +45,8 @@ REPO_NAME_MCELL_TOOLS = 'mcell_tools'
 REPO_NAME_NFSIM = 'nfsim'
 REPO_NAME_NFSIMCINTERFACE = 'nfsimCInterface'
 REPO_NAME_BIONETGEN = 'bionetgen'
-REPO_NAME_GAMER = 'gamer'
+REPO_NAME_GAMER = 'gamer' # gamer v2
+REPO_NAME_GAMER1 = 'gamer1'
 REPO_NAME_MCELL_TEST_PRIVATE = 'mcell_tests_private'
 REPO_NAME_VTK = 'VTK'
 
