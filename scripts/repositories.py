@@ -171,7 +171,7 @@ def tag_repository(name, opts, base_url, branch):
     run_git_w_ec_check(['tag', branch, '-m', branch], os.path.join(opts.top_dir, name))
 
 
-def tag_repository(name, opts, base_url, branch):
+def merge_repository(name, opts, base_url, branch):
     run_git_w_ec_check(['merge', branch], os.path.join(opts.top_dir, name))
 
 
@@ -226,7 +226,7 @@ def tag(opts):
     check_git_version()
     run_on_all_repositories(opts, tag_repository)
 
-def tag(opts):
+def merge(opts):
     check_git_version()
     run_on_all_repositories(opts, merge_repository)
     
