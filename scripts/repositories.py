@@ -171,6 +171,10 @@ def tag_repository(name, opts, base_url, branch):
     run_git_w_ec_check(['tag', branch, '-m', branch], os.path.join(opts.top_dir, name))
 
 
+def tag_repository(name, opts, base_url, branch):
+    run_git_w_ec_check(['merge', branch], os.path.join(opts.top_dir, name))
+
+
 def run_on_all_repositories(opts, function):
     if opts.ssh:
         base_url_w_prefix = BASE_URL_SSH
@@ -222,6 +226,9 @@ def tag(opts):
     check_git_version()
     run_on_all_repositories(opts, tag_repository)
 
+def tag(opts):
+    check_git_version()
+    run_on_all_repositories(opts, merge_repository)
     
 def create_version_file(opts):
     if not os.path.exists(opts.work_dir):

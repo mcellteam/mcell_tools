@@ -83,7 +83,15 @@ if __name__ == "__main__":
             fatal_error("Missing tag argument")
         print("Tagging all repositories")
         repositories.tag(opts)
-    
+        
+    elif a1 == 'merge':
+        if argc == 3:
+            opts.branch = sys.argv[2]
+        else:
+            fatal_error("Missing branch argument")
+        print("Merging all repositories")
+        repositories.merge(opts)
+        
     else:
         print("Error: unknown command '" + a1 + "'")
         print_help()
