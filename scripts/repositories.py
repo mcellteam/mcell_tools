@@ -165,7 +165,9 @@ def tag_repository(name, opts, base_url, branch):
 
 
 def merge_repository(name, opts, base_url, branch):
-    run_git_w_ec_check(['merge', branch], os.path.join(opts.top_dir, name))
+    # not all branches must be present
+    out = run_git_w_ascii_output(['merge', branch], os.path.join(opts.top_dir, name))
+    print(out)
 
 
 def run_on_all_repositories(opts, function):
