@@ -3,17 +3,9 @@ Copyright (C) 2019 by
 The Salk Institute for Biological Studies and
 Pittsburgh Supercomputing Center, Carnegie Mellon University
 
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-For the complete terms of the GNU General Public License, please see this URL:
-http://www.gnu.org/licenses/gpl-2.0.html
+Use of this source code is governed by an MIT-style
+license that can be found in the LICENSE file or at
+https://opensource.org/licenses/MIT.
 """
 
 """
@@ -83,7 +75,7 @@ def build_python(opts, python_dir, blender_python_subdir) -> None:
     log("Building python sources ...")
     
     # there should be a single subdirectory for now fixed name is expected 
-    # e.g. .../mcell_tools/work/blender/blender-2.79b-linux-glibc219-x86_64/2.79/python 
+    # e.g. .../mcell_tools/work/blender/blender-2.93b-linux-glibc219-x86_64/2.93/python 
     python_subdir = os.path.join(python_dir, BUILD_SUBDIR_PYTHON)
     
     cmd_configure = ['bash', './configure', '--enable-optimizations', '--prefix=' + blender_python_subdir]

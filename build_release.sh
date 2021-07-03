@@ -15,13 +15,13 @@ fi
 
 PVER=`python --version 2>&1`
 echo $PVER
-if [[ $PVER != Python\ 3.5* ]]; then
+if [[ $PVER != Python\ 3.9* ]]; then
   # gamer and other components need to be built with python3.5 libraries
   # and they use the default python3 executable to determine the location 
   # of the libraries  
-  echo "Switching to conda python 3.5"
+  echo "Switching to conda python 3.9"
   eval "$(conda shell.bash hook)"
-  conda activate py35 || exit 1
+  conda activate py39 || exit 1
 fi
 
 # TODO: check that mcell_tools has the right branch 
@@ -31,7 +31,8 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		BUILD_INFRA_DIR=/cnl/mcelldata/mcell_build_infrastructure_data/
 	fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-	BUILD_INFRA_DIR=/Volumes/mcell_build_infrastructure_data
+    # samba started to work very randomly with switch to Blender 2.93
+	BUILD_INFRA_DIR=~/mcell_build_infrastructure_data
 elif [[ "$OSTYPE" == "msys" ]]; then
 	BUILD_INFRA_DIR=Z://
 else
@@ -47,4 +48,12 @@ fi
 # note, there must not be system python other than 3.5 installed on MacOS otherwise cmake always selects that one
 # maybe it can be fixed somehow but not sure how yet
 
-./run.py $EXTRA_ARG -1234 -u -z -b $BRANCH -i -r $VER --store-build -m $BUILD_INFRA_DIR
+if [ "$EXTRA_ARG" == "pkgtest" ]; then
+	STEPS="-34"
+	EXTRA_ARG=""
+else
+	STEPS="-1234"	 
+fi
+	
+echo "./run.py $EXTRA_ARG $STEPS -u -z -b $BRANCH -i -r $VER --store-build -m $BUILD_INFRA_DIR"	
+./run.py $EXTRA_ARG $STEPS -u -z -b $BRANCH -i -r $VER --store-build -m $BUILD_INFRA_DIR

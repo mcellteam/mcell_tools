@@ -3,17 +3,9 @@ Copyright (C) 2019 by
 The Salk Institute for Biological Studies and
 Pittsburgh Supercomputing Center, Carnegie Mellon University
 
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-For the complete terms of the GNU General Public License, please see this URL:
-http://www.gnu.org/licenses/gpl-2.0.html
+Use of this source code is governed by an MIT-style
+license that can be found in the LICENSE file or at
+https://opensource.org/licenses/MIT.
 """
 
 # NOTE: usage of some a git library was considered, however, it was not clear whether they
@@ -36,13 +28,14 @@ BASE_REPOSITORIES = [
     REPO_NAME_MCELL, REPO_NAME_LIBBNG, REPO_NAME_CELLBLENDER, 
     REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS, 
     REPO_NAME_NEUROPIL_TOOLS, REPO_NAME_MESH_TOOLS,
+    # REPO_NAME_GAMER1, - TODO
     REPO_NAME_VTK
 ]
 
 FORKED_REPOSITORIES = [REPO_NAME_NFSIM, REPO_NAME_NFSIMCINTERFACE, REPO_NAME_BIONETGEN, REPO_NAME_GAMER]
 
 
-ALL_REPOSITORIES = BASE_REPOSITORIES + FORKED_REPOSITORIES + [REPO_NAME_GAMER]
+ALL_REPOSITORIES = BASE_REPOSITORIES + FORKED_REPOSITORIES
  
 
 REPOSITORIES_ALLOWED_TO_BE_DIRTY = [REPO_NAME_MCELL_TESTS, REPO_NAME_MCELL_TOOLS, REPO_NAME_GAMER, REPO_NAME_BIONETGEN]
