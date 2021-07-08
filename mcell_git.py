@@ -5,17 +5,9 @@ Copyright (C) 2019 by
 The Salk Institute for Biological Studies and
 Pittsburgh Supercomputing Center, Carnegie Mellon University
 
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-For the complete terms of the GNU General Public License, please see this URL:
-http://www.gnu.org/licenses/gpl-2.0.html
+Use of this source code is governed by an MIT-style
+license that can be found in the LICENSE file or at
+https://opensource.org/licenses/MIT.
 """
 
 """
@@ -49,6 +41,7 @@ if __name__ == "__main__":
     a1 = sys.argv[1]
     
     opts = Options()
+    opts.use_private_repos = True
     if a1 == 'clone' or a1 == 'checkout': 
         if argc == 3:
             opts.branch = sys.argv[2]
@@ -68,13 +61,6 @@ if __name__ == "__main__":
         print("Pushing all repositories")
         repositories.push(opts)
 
-    elif a1 == 'merge':
-        if argc == 3:
-            opts.branch = sys.argv[2]
-            
-        print("Merging all repositories")
-        repositories.merge(opts)
-
     elif a1 == 'reset-hard':
         if argc > 2:
             fatal_error("Command reset-hard does not have any extra arguments")
@@ -89,7 +75,15 @@ if __name__ == "__main__":
             fatal_error("Missing tag argument")
         print("Tagging all repositories")
         repositories.tag(opts)
-    
+        
+    elif a1 == 'merge':
+        if argc == 3:
+            opts.branch = sys.argv[2]
+        else:
+            fatal_error("Missing branch argument")
+        print("Merging all repositories")
+        repositories.merge(opts)
+        
     else:
         print("Error: unknown command '" + a1 + "'")
         print_help()

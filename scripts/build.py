@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
 
 """
-Copyright (C) 2019 by
-The Salk Institute for Biological Studies and
-Pittsburgh Supercomputing Center, Carnegie Mellon University
+Copyright (C) 2019,2020 by
+The Salk Institute for Biological Studies
 
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-For the complete terms of the GNU General Public License, please see this URL:
-http://www.gnu.org/licenses/gpl-2.0.html
+Use of this source code is governed by an MIT-style
+license that can be found in the LICENSE file or at
+https://opensource.org/licenses/MIT.
 """
 
 import os
 import platform
 from utils import *
 from build_settings import *
+
+def get_cmake_build_cmd(opts = None):
+    
+    if not opts or not opts.only_pypi_wheel:
+        target = 'ALL_BUILD'
+    else:
+        target = 'mcell4_so'
+        
+    # used with MSCV on Windows
+    return ['cmake', '--build', '.', '--target', target, '--config', 'Release', '-j', str(get_nr_cores())]
 
 
 def get_cmake_build_type_arg(opts):
@@ -56,7 +57,10 @@ def is_default_compiler_supported_by_mcell() -> bool:
 
 def build_mcell(opts):
 
-    mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
+    if not opts.only_pypi_wheel:
+        mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL)
+    else:
+        mcell_build_dir = os.path.join(opts.work_dir, BUILD_DIR_MCELL_PYPI)
     
     log("Running mcell build...")
     
@@ -72,8 +76,16 @@ def build_mcell(opts):
     cmd_cmake.append(get_cmake_build_type_arg(opts))
 
     if BUILD_OPTS_USE_LTO:
-        cmd_cmake.append('-DUSE_LTO=ON')
-        
+        cmd_cmake.append('-DENABLE_LTO=ON')
+
+    if opts.only_pypi_wheel:
+        # default is 3.5
+        cmd_cmake.append('-DPYTHON_VERSION=3.8')
+
+    if os.name == 'nt':
+        # note: may need to rename python39.lib to python3.9 lib on Windows
+        cmd_cmake.append('-DSYSTEM_PYTHON_LIB_DIR=' + os.path.join(os.path.dirname(sys.executable), 'libs'))
+
     # run cmake
     
     # issue (TODO - insert this into the issue tracking system)
@@ -87,13 +99,23 @@ def build_mcell(opts):
         ec = run(cmd_cmake, mcell_build_dir, shell=True)
     check_ec(ec, cmd_cmake)
     
-    # setup make build arguments
-    cmd_make = ['make']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    
-    # run make 
-    ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_make)
+    if os.name != 'nt':
+        # setup make build arguments
+        cmd_make = ['make']
+        
+        if opts.only_pypi_wheel:
+            cmd_make.append('mcell4_so')
+
+        cmd_make.append('-j' + str(get_nr_cores())) 
+        
+        # run make 
+        ec = run(cmd_make, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
+        check_ec(ec, cmd_make)
+    else:
+        # building everything on Windows even whem building just mcell.
+        cmd_build = get_cmake_build_cmd(opts)
+        ec = run(cmd_build, mcell_build_dir, timeout_sec = BUILD_TIMEOUT)
+        check_ec(ec, cmd_build)
     
     return mcell_build_dir
         
@@ -120,7 +142,7 @@ def build_cellblender(opts):
 
     # first make a cellblender link directory becaue make creates it only sometimes
     if not os.path.exists(os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER, 'cellblender')): 
-        ec_mklink = run(cmd_mklink, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), timeout_sec = BUILD_TIMEOUT)
+        ec_mklink = run(cmd_mklink, os.path.join(opts.top_dir, REPO_NAME_CELLBLENDER), shell=True, timeout_sec = BUILD_TIMEOUT)
         check_ec(ec_mklink, cmd_mklink)
     
     cmd_make = ['make', 'all', '-f', 'makefile', 'install', 
@@ -142,18 +164,85 @@ def build_mesh_tools(opts):
     # run make (in-source build)
     ec = run(cmd_make, os.path.join(opts.top_dir, REPO_NAME_MESH_TOOLS), timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, cmd_make)
+   
+   
+def build_vtk(opts):
+
+    vtk_build_dir = os.path.join(opts.work_dir, BUILD_DIR_VTK)
     
+    log("Running VTK build...")
     
+    # create working directory
+    if not os.path.exists(vtk_build_dir):
+        os.makedirs(vtk_build_dir)
+    
+    # setup cmake build arguments
+    cmd_cmake = [opts.cmake_executable]
+    cmd_cmake += CMAKE_EXTRA_ARGS
+    cmd_cmake.append(os.path.join(opts.top_dir, REPO_NAME_VTK))
+
+    # always built as release
+    cmd_cmake += [
+        '-DCMAKE_BUILD_TYPE=Release',
+        '-DVTK_BUILD_TESTING=OFF',
+        '-DVTK_BUILD_ALL_MODULES=OFF',
+        '-DBUILD_SHARED_LIBS=OFF'
+    ]
+        
+    # select only the modules that we need
+    if os.name != 'nt':  
+        cmd_cmake += [      
+            '-DVTK_GROUP_ENABLE_Imaging=NO',
+            '-DVTK_GROUP_ENABLE_MPI=NO',
+            '-DVTK_GROUP_ENABLE_Qt=NO',
+            '-DVTK_GROUP_ENABLE_Rendering=YES',
+            '-DVTK_GROUP_ENABLE_StandAlone=YES',
+            '-DVTK_GROUP_ENABLE_Views=NO',
+            '-DVTK_GROUP_ENABLE_Web=NO',
+            '-DVTK_MODULE_ENABLE_VTK_opengl=NO',
+            '-DVTK_MODULE_ENABLE_VTK_RenderingVolumeOpenGL2=NO',
+            '-DVTK_MODULE_ENABLE_VTK_IOExport=YES',
+            '-DVTK_MODULE_ENABLE_VTK_IOExportGL2PS=NO',
+            '-DVTK_MODULE_ENABLE_VTK_RenderingCore=YES',
+            '-DVTK_MODULE_ENABLE_VTK_RenderingContext2D=YES',
+            '-DVTK_MODULE_ENABLE_VTK_RenderingFreeType=YES',
+            '-DVTK_MODULE_ENABLE_VTK_FiltersCore=YES',
+            '-DVTK_MODULE_ENABLE_VTK_FiltersGeneral=YES',
+            '-DVTK_MODULE_ENABLE_VTK_FiltersPoints=YES'
+        ]
+
+    # run cmake
+    ec = run(cmd_cmake, vtk_build_dir)
+    check_ec(ec, cmd_cmake)
+    
+    # run make, will fail 
+    if os.name != 'nt': 
+        # setup make build arguments
+        cmd_make = ['make']
+        cmd_make.append('-j' + str(get_nr_cores())) 
+        cmd_make.append('-k') # do not stop on errors 
+    
+        ec = run(cmd_make, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
+    else:
+        cmd_build = get_cmake_build_cmd()
+        ec = run(cmd_build, vtk_build_dir, timeout_sec = BUILD_TIMEOUT)
+            
+        
 def build_all(opts):
     build_dirs = {}
     
+    build_vtk(opts)
+    
     build_dirs[REPO_NAME_MCELL] = build_mcell(opts)
     
-    # in-source build for now, should be fixed but it can work like this
-    build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
-    
-    if 'Windows' not in platform.system():
-        build_mesh_tools(opts)
+    if not opts.only_pypi_wheel:
+        # in-source build for now, should be fixed but it can work like this
+        # needed for testing even for 'only_cellblender_mcell'
+        build_dirs[REPO_NAME_CELLBLENDER] = build_cellblender(opts)
+        
+    if not opts.only_cellblender_mcell and not opts.only_pypi_wheel:
+        if 'Windows' not in platform.system():
+            build_mesh_tools(opts)
     
     return build_dirs
     

@@ -1,21 +1,13 @@
 #!/usr/bin/env python3
 
 """
-Copyright (C) 2019 by
+Copyright (C) 2019-2021 by
 The Salk Institute for Biological Studies and
 Pittsburgh Supercomputing Center, Carnegie Mellon University
 
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-For the complete terms of the GNU General Public License, please see this URL:
-http://www.gnu.org/licenses/gpl-2.0.html
+Use of this source code is governed by an MIT-style
+license that can be found in the LICENSE file or at
+https://opensource.org/licenses/MIT.
 """
 
 import os
@@ -30,6 +22,8 @@ sys.path.append(os.path.join(THIS_DIR, 'scripts'))
 import repositories
 import build
 import bundle
+import cellblender_mcell_plugin
+import pypi_wheel
 import cmake_builder
 
 from utils import log, fatal_error, get_cwd_no_link
@@ -52,7 +46,7 @@ def test_all(opts, install_dirs):
     if not install_dirs:
         install_dirs = bundle.get_extracted_bundle_install_dirs(opts)
 
-    # running testting as a new process
+    # running testing as a new process
     tests_path = os.path.join(THIS_DIR, '..', REPO_NAME_MCELL_TESTS)
     test_cmd = [
         PYTHON_SYSTEM_EXECUTABLE, 
@@ -67,6 +61,16 @@ def test_all(opts, install_dirs):
     if PYTHON_BLENDER_EXECUTABLE in install_dirs:
         test_cmd += [ '-t', install_dirs[PYTHON_BLENDER_EXECUTABLE] ]
         
+    # the current MacOS VM crashes if too many tests are run in parallel
+    if platform.system() == 'Darwin':
+        test_cmd += [ '-s' ]
+        
+    # clean the test data immediatelly after pass
+    test_cmd += [ '-e' ]
+    
+    with open(os.path.join(THIS_DIR, WORK_DIR_NAME, "test_command.sh"), 'w') as f:
+    	f.write(' '.join(test_cmd))
+    
     # for some reason the script dos not terminate without the shell=True
     ec = run(test_cmd, timeout_sec=TEST_ALL_TIMEOUT, cwd=tests_path, shell=True)
     if ec != 0:
@@ -121,9 +125,20 @@ def main():
     # 3) create bundle
     # overwrite install_dirs with new values
     if opts.do_bundle:
-        bundle.create_bundle(opts)
-        # also extract it right away if testing is needed
-        install_dirs = bundle.extract_resulting_bundle(opts)
+        if opts.only_cellblender_mcell:
+            cellblender_mcell_plugin.create_package(opts)
+            
+            install_dirs = cellblender_mcell_plugin.extract_resulting_package(opts)
+            
+        elif opts.only_pypi_wheel:
+            install_dirs = pypi_wheel.create_pypi_wheel(opts)
+            
+        else:
+            bundle.create_bundle(opts)
+            # also extract it right away if testing is needed
+            install_dirs = bundle.extract_resulting_bundle(opts)
+        
+
     
     # 4) test
     if opts.do_test:

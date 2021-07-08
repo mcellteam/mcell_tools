@@ -1,3 +1,13 @@
+"""
+Copyright (C) 2019 by
+The Salk Institute for Biological Studies and
+Pittsburgh Supercomputing Center, Carnegie Mellon University
+
+Use of this source code is governed by an MIT-style
+license that can be found in the LICENSE file or at
+https://opensource.org/licenses/MIT.
+"""
+
 import os
 import platform
 import socket
@@ -18,6 +28,9 @@ class Options:
         
         self.do_not_build_gamer = False
         self.do_not_sign_package = False
+        
+        self.only_cellblender_mcell = False
+        self.only_pypi_wheel = False
         
         self.do_repos = False
         self.do_build = False
@@ -89,19 +102,25 @@ class Options:
         now = datetime.datetime.now()
         
         if platform.system() == 'Linux':
-            info = platform.platform().split('-')
-            if len(info) > 2:
-                os_name = info[-2] + '-' + info[-1]
-            else:  
-                os_name = platform.platform()
+            import distro
+            
+            info = distro.linux_distribution()
+            os_name = info[0] + ' ' + info[1] 
+            os_name = os_name.replace(' ', '-').replace('/', '-')
         else:
             os_name = platform.system()
         
-        archive_name = \
-            BUILD_SUBDIR_BLENDER + '-' + self.release_version + '-' + \
-            os_name + '-' + now.strftime("%Y%m%d") + '.' + BUNDLE_EXT
-            
-        self.result_bundle_archive_path = os.path.join(self.work_dir, BUILD_DIR_BLENDER, archive_name)
+        if self.only_cellblender_mcell:
+            archive_name = \
+                CELLBLENDER_MCELL_PLUGIN + '-' + self.release_version + '-' + \
+                os_name + '-' + now.strftime("%Y%m%d") + '.' + BUNDLE_EXT
+            self.result_bundle_archive_path = os.path.join(self.work_dir, archive_name)
+        else:
+            archive_name = \
+                BUILD_SUBDIR_BLENDER + '-' + self.release_version + '-' + \
+                os_name + '-' + now.strftime("%Y%m%d") + '.' + BUNDLE_EXT
+                
+            self.result_bundle_archive_path = os.path.join(self.work_dir, BUILD_DIR_BLENDER, archive_name)
 
     @staticmethod
     def create_argparse():
@@ -119,6 +138,8 @@ class Options:
         parser.add_argument('-m', '--mcell-infrastructure-dir', type=str, help='path to mcell_build_infrastructure_data directory')
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
         parser.add_argument('-t', '--store-build', action='store_true', help='store build in mcelldata directory')
+        parser.add_argument('-o', '--only-cellblender-mcell', action='store_true', help='build only mcell and cellblender as a blender plugin, do not include blender or other plugins')
+        parser.add_argument('-w', '--only-pypi-wheel', action='store_true', help='build only mcell.so/dyl and build a wheel as a PyPi package')
     
         parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
         
@@ -149,6 +170,12 @@ class Options:
             self.ignore_dirty = True
         if args.debug:
             self.debug = True
+            
+        if args.only_cellblender_mcell:
+            self.only_cellblender_mcell = True
+            
+        if args.only_pypi_wheel:
+            self.only_pypi_wheel = True
 
         if args.do_not_build_gamer:
             self.do_not_build_gamer = True
@@ -175,7 +202,7 @@ class Options:
         self.do_build = args.do_build
         self.do_bundle = args.do_bundle
         self.do_test = args.do_test
-    
+        
         self.set_result_bundle_archive_path()
 
         if args.print_platform_info:
@@ -185,7 +212,7 @@ class Options:
         # final processing
         
         # no specific task was set, do all
-        if not (self.do_repos or self.do_build or self.do_bundle or self.do_test):
+        if not (self.do_repos or self.do_build or self.do_bundle or self.do_test or self.only_cellblender_mcell):
             self.do_repos = True
             self.do_build = True
             #self.do_bundle = True

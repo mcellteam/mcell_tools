@@ -3,17 +3,9 @@ Copyright (C) 2019 by
 The Salk Institute for Biological Studies and
 Pittsburgh Supercomputing Center, Carnegie Mellon University
 
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-For the complete terms of the GNU General Public License, please see this URL:
-http://www.gnu.org/licenses/gpl-2.0.html
+Use of this source code is governed by an MIT-style
+license that can be found in the LICENSE file or at
+https://opensource.org/licenses/MIT.
 """
 
 import os
@@ -25,6 +17,7 @@ from typing import List, Dict
 
 from utils import *
 from build_settings import *
+from build import get_cmake_build_cmd
 
 def copy_prebuilt_blender_w_python(opts) -> None:
     log("Copying pre-built blender with python from '" + opts.prebuilt_blender_w_python_base + "'.") 
@@ -59,7 +52,7 @@ def sign_package_on_macos(blender_dir) -> None:
     # then we can sign it     
     cmd = [
         'codesign', '--verbose', '--deep', '--force', 
-        '--sign', '"3rd Party Mac Developer Application: Adam Husar (342MS8AP75)"',
+        '--sign', '"Developer ID Application: Adam Husar (342MS8AP75)"',
         os.path.join(blender279_dir, 'blender.app')
     ]
     
@@ -68,13 +61,13 @@ def sign_package_on_macos(blender_dir) -> None:
     check_ec(ec, cmd)  
     
 
-def archive_resulting_bundle(opts, blender_dir) -> None:
+def archive_resulting_bundle(opts, blender_dir, dir_to_archive=BUILD_SUBDIR_BLENDER) -> None:
     log("Creating resulting archive '" + opts.result_bundle_archive_path + "'.")
     
     if platform.system() == 'Linux':
-        cmd = TAR_BASE_CMD + ['-zcf', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
+        cmd = TAR_BASE_CMD + ['-zcf', os.path.basename(opts.result_bundle_archive_path), dir_to_archive]
     else:
-        cmd = ZIP_CMD + ['-r', os.path.basename(opts.result_bundle_archive_path), BUILD_SUBDIR_BLENDER]
+        cmd = ZIP_CMD + ['-r', os.path.basename(opts.result_bundle_archive_path), dir_to_archive]
         
     # must be run from work_dir to avoid having full paths in the archive
     ec = run(cmd, cwd=blender_dir, timeout_sec=BUILD_TIMEOUT)
@@ -96,13 +89,17 @@ def build_gamer(opts, blender_dir):
     ec = run(cmd_bash_cmake, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
     check_ec(ec, cmd_bash_cmake)
     
-    # setup make build arguments
-    cmd_make = ['make']
-    cmd_make.append('-j' + str(get_nr_cores())) 
-    
-    # run make 
-    ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
-    check_ec(ec, cmd_make)
+    if os.name != 'nt':
+        # setup make build arguments
+        cmd_make = ['make']
+        cmd_make.append('-j' + str(get_nr_cores())) 
+        
+        # run make 
+        ec = run(cmd_make, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
+        check_ec(ec, cmd_make)
+    else:
+        cmd_build = get_cmake_build_cmd()
+        ec = run(cmd_build, gamer_build_dir, timeout_sec = BUILD_TIMEOUT)
 
 
 def unpack_blendgamer(opts, blender_dir):
@@ -216,7 +213,7 @@ def create_bundle(opts) -> None:
     shutil.copytree(
         os.path.join(opts.work_dir, BUILD_DIR_MCELL),
         mcell_dir,
-        ignore=shutil.ignore_patterns('CMakeFiles', 'deps', '*.a')
+        ignore=shutil.ignore_patterns('CMakeFiles', 'deps', '*.a', '*.tlog', '*.log', '*.dir')
     )
     
     # neuropil_tools and mesh_tools 
