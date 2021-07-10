@@ -13,7 +13,7 @@ if [ "$BRANCH" == "" ]; then
    BRANCH="mcell4_dev"
 fi
 
-PVER=`python --version 2>&1`
+PVER=`python3 --version 2>&1`
 echo $PVER
 if [[ $PVER != Python\ 3.9* ]]; then
   # gamer and other components need to be built with python3.5 libraries

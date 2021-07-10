@@ -8,7 +8,7 @@ echo "BLENDER_DIR: $BLENDER_DIR"
 echo "GAMER_BUILD_DIR: $GAMER_BUILD_DIR"
 
 
-VER=`python --version 2>&1`
+VER=`python3 --version 2>&1`
 if [[ $VER == *"Python 3.9"* ]]; then
   echo "It's there!"
 fi
