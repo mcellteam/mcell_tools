@@ -143,10 +143,10 @@ class Options:
     
         parser.add_argument('-b', '--branch', type=str, help='branch to checkout, tries to change the current branch if the branch is different from what is selected and there are no changes')
         
-        parser.add_argument('-1', '--do-repos', action='store_true', help='get repositories (done by default when none of "qwer" args are set)')
-        parser.add_argument('-2', '--do-build', action='store_true', help='run build (done by default when none of "qwer" args are set)')
-        parser.add_argument('-3', '--do-bundle', action='store_true', help='build bundle (done by default when none of "qwer" args are set)')
-        parser.add_argument('-4', '--do-test', action='store_true', help='run tests (done by default when none of "qwer" args are set)')
+        parser.add_argument('-1', '--do-repos', action='store_true', help='get repositories (done by default when none of the "1234" args are set)')
+        parser.add_argument('-2', '--do-build', action='store_true', help='run build (done by default when none of the "1234" args are set)')
+        parser.add_argument('-3', '--do-bundle', action='store_true', help='build bundle (done by default when none of the "1234" args are set)')
+        parser.add_argument('-4', '--do-test', action='store_true', help='run tests (done by default when none of the "1234" args are set)')
         
         parser.add_argument('-p', '--print-platform-info', action='store_true', help='print platform-dependent names of packages')
         
