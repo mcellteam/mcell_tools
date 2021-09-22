@@ -25,6 +25,7 @@ class Options:
         self.debug = False
         self.ssh = False
         self.use_private_repos = False
+        self.mcell_python = None
         
         self.do_not_build_gamer = False
         self.do_not_sign_package = False
@@ -134,6 +135,8 @@ class Options:
         parser.add_argument('-z', '--use-private-repos', action='store_true', help='use mcell private repositories')
         parser.add_argument('-g', '--do-not-build-gamer', action='store_true', help='do not build gamer')
         parser.add_argument('-n', '--do-not-sign-package', action='store_true', help='do not sign package on MacOS')
+        
+        parser.add_argument('-y', '--mcell-python', type=str, help='Python version to be used in MCell build, allowed values: 3.5 and 3.9')
     
         parser.add_argument('-m', '--mcell-infrastructure-dir', type=str, help='path to mcell_build_infrastructure_data directory')
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
@@ -185,6 +188,12 @@ class Options:
 
         if args.use_private_repos:
             self.use_private_repos = True
+            
+        if args.mcell_python:
+            ver = args.mcell_python
+            if ver != '3.5' and ver != '3.9':
+                sys.exit("The only supported Python versions are 3.5 and 3.9") 
+            self.mcell_python = args.mcell_python
             
         if args.branch:
             self.branch = args.branch

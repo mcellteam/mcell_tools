@@ -78,9 +78,9 @@ def build_mcell(opts):
     if BUILD_OPTS_USE_LTO:
         cmd_cmake.append('-DENABLE_LTO=ON')
 
-    if opts.only_pypi_wheel:
-        # default is 3.5
-        cmd_cmake.append('-DPYTHON_VERSION=3.8')
+    if opts.mcell_python:
+        # default is 3.9
+        cmd_cmake.append('-DPYTHON_VERSION=' + opts.mcell_python)
 
     if os.name == 'nt':
         # note: may need to rename python39.lib to python3.9 lib on Windows
