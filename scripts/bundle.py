@@ -222,7 +222,7 @@ def create_bundle(opts) -> None:
         install_neuropil_tools(opts, neuropil_tools_dir)
 
     # gamer
-    if not opts.do_not_build_gamer:
+    if False:  # not opts.do_not_build_gamer: # disable building gamer for now
         # gamer must be built at this phase because we need the blender executable
         build_gamer(opts, blender_dir)
         unpack_blendgamer(opts, blender_dir)
@@ -249,7 +249,7 @@ def create_bundle(opts) -> None:
     copy_override_files(opts)
 
     # sign on MacOS
-    if platform.system() == 'Darwin' and not opts.do_not_sign_package:
+    if False:  # platform.system() == 'Darwin' and not opts.do_not_sign_package:  # False unless we want to sign it
         sign_package_on_macos(blender_dir)
 
     # make a package with current date
