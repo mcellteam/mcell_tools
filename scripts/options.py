@@ -83,11 +83,11 @@ class Options:
         else:
             assert False
 
-        common_name = BUILD_DIR_BLENDER + '-' + BLENDER_FULL_VERSION + '-' + platform.system()
+        common_name = BUILD_DIR_BLENDER + '-' + BLENDER_FULL_VERSION + '-' + simpler_system + '-' + platform.machine()
         self.prebuilt_blender_w_python_base = \
             os.path.join(self.mcell_build_infrastructure_dir, 'prebuilt_blender_w_python', 'base', common_name)
 
-        versions_info = BUILD_SUBDIR_BLENDER_OS_BASED
+        # versions_info = BUILD_SUBDIR_BLENDER_OS_BASED
         self.prebuilt_blender_w_python_override = \
             os.path.join(self.mcell_build_infrastructure_dir, 'prebuilt_blender_w_python', 'overrides', common_name)
 

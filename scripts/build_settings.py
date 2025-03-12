@@ -68,6 +68,7 @@ BUILD_SUBDIR_BLENDER = 'Blender-' + BLENDER_FULL_VERSION + '-CellBlender' # name
 
 RELEASE_INFO_FILE = 'cellblender_bundle_release_info.txt'
 
+# BUILD_SUBDIR_BLENDER_OS_BASED is no longer in use in options.py
 if platform.system() == 'Linux':
     BUILD_SUBDIR_BLENDER_OS_BASED = BUILD_DIR_BLENDER + '-' + BLENDER_FULL_VERSION + '-' + platform.platform()
     DEFAULT_MCELL_BUILD_INFRASTRUCTURE_DATA_DIR = '/cnl/mcelldata/mcell_build_infrastructure_data'

@@ -222,7 +222,7 @@ def create_bundle(opts) -> None:
         install_neuropil_tools(opts, neuropil_tools_dir)
 
     # gamer
-    if False:  # not opts.do_not_build_gamer: # disable building gamer for now
+    if not opts.do_not_build_gamer:
         # gamer must be built at this phase because we need the blender executable
         build_gamer(opts, blender_dir)
         unpack_blendgamer(opts, blender_dir)
