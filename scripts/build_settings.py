@@ -61,7 +61,7 @@ INSTALL_DIR_GAMER = 'install_gamer'
 INSTALL_DIR_MCELL = 'mcell'
 
 BLENDER_VERSION = '4.4'
-BLENDER_FULL_VERSION = '4.4.0'
+BLENDER_FULL_VERSION = '4.4.3'
 BUILD_DIR_BLENDER = 'blender'
 BUILD_DIR_CELLBLENDER_MCELL = 'cellblender_mcell'
 BUILD_SUBDIR_BLENDER = 'Blender-' + BLENDER_FULL_VERSION + '-CellBlender' # name of directory in the resulting arguve
