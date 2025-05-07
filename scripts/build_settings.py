@@ -139,7 +139,7 @@ INSTALL_SUBDIR_NEUROPIL_TOOLS = os.path.join(INSTALL_SUBDIR_ADDONS, 'neuropil_to
 
 CELLBLENDER_MCELL_PLUGIN = 'cellblender-mcell-plugin'
 
-BUNDLE_NAME = 'Blender-4.3.2-CellBlender.' + platform.system()
+BUNDLE_NAME = 'Blender-4.4.3-CellBlender.' + platform.system()
 
 TEST_BUNDLE_DIR = 'bundle_install'
 

@@ -31,6 +31,6 @@ fi
 
 # override -DPYBIND11_PYTHON_VERSION=3.5 is needed for MacOS because even with
 # the default python being the one from conda, pybind11 uses the system libs
-cmake ../../../gamer -DBUILD_BLENDGAMER=ON -DCMAKE_BUILD_TYPE=Release -DBLENDER_VERSION=4.3.2 -DPYBIND11_PYTHON_VERSION=3.11 $COMPILER_OVERRIDE || exit 1
+cmake ../../../gamer -DBUILD_BLENDGAMER=ON -DCMAKE_BUILD_TYPE=Release -DBLENDER_VERSION=4.4.3 -DPYBIND11_PYTHON_VERSION=3.11 $COMPILER_OVERRIDE || exit 1
 
 
