@@ -79,7 +79,7 @@ def build_mcell(opts):
         cmd_cmake.append('-DENABLE_LTO=ON')
 
     if opts.mcell_python:
-        # default is 3.11
+        # default is 3.13
         cmd_cmake.append('-DPYTHON_VERSION=' + opts.mcell_python)
 
     if os.name == 'nt':

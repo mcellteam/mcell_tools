@@ -138,7 +138,7 @@ class Options:
         parser.add_argument('-g', '--do-not-build-gamer', action='store_true', help='do not build gamer')
         parser.add_argument('-n', '--do-not-sign-package', action='store_true', help='do not sign package on MacOS')
 
-        parser.add_argument('-y', '--mcell-python', type=str, help='Python version to be used in MCell build, allowed values: 3.11 or higher')
+        parser.add_argument('-y', '--mcell-python', type=str, help='Python version to be used in MCell build, allowed values: 3.13 or higher')
 
         parser.add_argument('-m', '--mcell-infrastructure-dir', type=str, help='path to mcell_build_infrastructure_data directory')
         parser.add_argument('-r', '--release', type=str, help='make a release, set release version')
@@ -193,8 +193,8 @@ class Options:
 
         if args.mcell_python:
             ver = args.mcell_python
-            if ver >= '3.11':
-                sys.exit("The only supported Python versions are 3.11 and higher")
+            if ver >= '3.13':
+                sys.exit("The only supported Python versions are 3.13 and higher")
             self.mcell_python = args.mcell_python
 
         if args.branch:

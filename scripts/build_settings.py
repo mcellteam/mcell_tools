@@ -60,8 +60,8 @@ INSTALL_DIR_GAMER = 'install_gamer'
 
 INSTALL_DIR_MCELL = 'mcell'
 
-BLENDER_VERSION = '4.4'
-BLENDER_FULL_VERSION = '4.4.3'
+BLENDER_VERSION = '5.1'
+BLENDER_FULL_VERSION = '5.1.0'
 BUILD_DIR_BLENDER = 'blender'
 BUILD_DIR_CELLBLENDER_MCELL = 'cellblender_mcell'
 BUILD_SUBDIR_BLENDER = 'Blender-' + BLENDER_FULL_VERSION + '-CellBlender' # name of directory in the resulting arguve
@@ -88,10 +88,10 @@ else:
     fatal_error("Operating system '" + platform.system() + "' is not supported in this build system yet.")
 
 BUILD_SUBDIR_PYTHON_UNDER_BLENDER = os.path.join(BLENDER_VERSION, 'python/')
-BUILD_SUBDIR_BIN_PYTHON_DIR = 'bin/python3.11'
+BUILD_SUBDIR_BIN_PYTHON_DIR = 'bin/python3.13'
 
 BUILD_DIR_PYTHON = 'python'
-BUILD_SUBDIR_PYTHON = 'Python-3.11.11'
+BUILD_SUBDIR_PYTHON = 'Python-3.13.9'
 
 PYTHON_SYSTEM_EXECUTABLE = 'python3'
 
@@ -106,7 +106,7 @@ if 'Windows' in platform.system():
     CMAKE_EXTRA_ARGS = [] #  '-G', 'Unix Makefiles'
 else:
     TAR_BASE_CMD = ['tar']
-    PYTHON_BLENDER_EXECUTABLE = 'python3.11'
+    PYTHON_BLENDER_EXECUTABLE = 'python3.13'
     # keep default generator for cmake
     CMAKE_EXTRA_ARGS = []
 
@@ -139,7 +139,7 @@ INSTALL_SUBDIR_NEUROPIL_TOOLS = os.path.join(INSTALL_SUBDIR_ADDONS, 'neuropil_to
 
 CELLBLENDER_MCELL_PLUGIN = 'cellblender-mcell-plugin'
 
-BUNDLE_NAME = 'Blender-4.4.3-CellBlender.' + platform.system()
+BUNDLE_NAME = 'Blender-5.1.0-CellBlender.' + platform.system()
 
 TEST_BUNDLE_DIR = 'bundle_install'
 

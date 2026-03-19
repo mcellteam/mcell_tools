@@ -32,9 +32,9 @@ from options import Options
 
 
 def check_prerequisites(opts):
-    if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 11):
+    if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 13):
         # this is what cellblender was using, not sure, maybe just version 3.* suffices
-        fatal_error("Required Python version is at least 3.11")
+        fatal_error("Required Python version is at least 3.13")
 
 
     # also check cmake (although it is not needed for all task types)
